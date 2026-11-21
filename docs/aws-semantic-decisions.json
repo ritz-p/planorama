@@ -94174,6 +94174,1532 @@
         "managedDataContract": "Managed newUserResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
+    },
+    "aws_elastictranscoder_pipeline": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1652,
+      "gap": "#1652 — Verify input_bucket, output_bucket, role, aws_kms_key_arn for aws_elastictranscoder_pipeline.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "input_bucket",
+          "output_bucket",
+          "role",
+          "aws_kms_key_arn",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elastic Transcoder. Provides an Elastic Transcoder pipeline resource.",
+        "ownership": "Not applicable: Keep AWS Elastic Transcoder node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an Elastic Transcoder pipeline resource. No direct subnet placement follows from input_bucket.",
+        "references": "Missing: Resolve known input_bucket, output_bucket, role, aws_kms_key_arn only against unique compatible managed endpoints (#1652).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit input_bucket, output_bucket, role, aws_kms_key_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/elastictranscoder_pipeline.html.markdown",
+        "shapes": {
+          "input_bucket": [
+            "string"
+          ],
+          "output_bucket": [
+            "string"
+          ],
+          "role": [
+            "string"
+          ],
+          "aws_kms_key_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "input_bucket": "required",
+          "output_bucket": "optional/computed",
+          "role": "required",
+          "aws_kms_key_arn": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourcePipeline. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_elastictranscoder_preset": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides an Elastic Transcoder preset resource. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elastic Transcoder. Provides an Elastic Transcoder preset resource.",
+        "ownership": "Not applicable: Keep AWS Elastic Transcoder node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an Elastic Transcoder preset resource. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS Elastic Transcoder configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/elastictranscoder_preset.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "optional/computed",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourcePreset. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_gamelift_alias": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1653,
+      "gap": "#1653 — Verify routing_strategy.fleet_id for aws_gamelift_alias.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "routing_strategy.fleet_id",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Alias resource.",
+        "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a GameLift Alias resource. No direct subnet placement follows from routing_strategy.fleet_id.",
+        "references": "Missing: Resolve known routing_strategy.fleet_id only against unique compatible managed endpoints (#1653).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit routing_strategy.fleet_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/gamelift_alias.html.markdown",
+        "shapes": {
+          "routing_strategy.fleet_id": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "routing_strategy.fleet_id": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceAlias. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_gamelift_build": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1653,
+      "gap": "#1653 — Verify storage_location.bucket, storage_location.role_arn for aws_gamelift_build.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "storage_location.bucket",
+          "storage_location.role_arn",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Build resource.",
+        "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a GameLift Build resource. No direct subnet placement follows from storage_location.bucket.",
+        "references": "Missing: Resolve known storage_location.bucket, storage_location.role_arn only against unique compatible managed endpoints (#1653).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit storage_location.bucket, storage_location.role_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/gamelift_build.html.markdown",
+        "shapes": {
+          "storage_location.bucket": [
+            "list",
+            "string"
+          ],
+          "storage_location.role_arn": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "storage_location.bucket": "required",
+          "storage_location.role_arn": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceBuild. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_gamelift_fleet": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1653,
+      "gap": "#1653 — Verify build_id, script_id, instance_role_arn for aws_gamelift_fleet.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "build_id",
+          "script_id",
+          "instance_role_arn",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Spatial Node for AWS GameLift. Provides a GameLift Fleet resource.",
+        "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a GameLift Fleet resource. No direct subnet placement follows from build_id.",
+        "references": "Missing: Resolve known build_id, script_id, instance_role_arn only against unique compatible managed endpoints (#1653).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit build_id, script_id, instance_role_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/gamelift_fleet.html.markdown",
+        "shapes": {
+          "build_id": [
+            "string"
+          ],
+          "script_id": [
+            "string"
+          ],
+          "instance_role_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "build_id": "optional",
+          "script_id": "optional",
+          "instance_role_arn": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceFleet. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_gamelift_game_server_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1653,
+      "gap": "#1653 — Verify role_arn, vpc_subnets for aws_gamelift_game_server_group.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn",
+          "vpc_subnets",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Game Server Group resource.",
+        "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Missing: Check vpc_subnets against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1653).",
+        "references": "Missing: Resolve known role_arn, vpc_subnets only against unique compatible managed endpoints (#1653).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit role_arn, vpc_subnets values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/gamelift_game_server_group.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ],
+          "vpc_subnets": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "role_arn": "required",
+          "vpc_subnets": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceGameServerGroup. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_gamelift_game_session_queue": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1653,
+      "gap": "#1653 — Verify destinations for aws_gamelift_game_session_queue.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "destinations",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Game Session Queue resource.",
+        "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a GameLift Game Session Queue resource. No direct subnet placement follows from destinations.",
+        "references": "Missing: Resolve known destinations only against unique compatible managed endpoints (#1653).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destinations values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/gamelift_game_session_queue.html.markdown",
+        "shapes": {
+          "destinations": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "destinations": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceGameSessionQueue. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_gamelift_script": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1653,
+      "gap": "#1653 — Verify storage_location.bucket, storage_location.role_arn for aws_gamelift_script.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "storage_location.bucket",
+          "storage_location.role_arn",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Script resource.",
+        "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a GameLift Script resource. No direct subnet placement follows from storage_location.bucket.",
+        "references": "Missing: Resolve known storage_location.bucket, storage_location.role_arn only against unique compatible managed endpoints (#1653).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit storage_location.bucket, storage_location.role_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/gamelift_script.html.markdown",
+        "shapes": {
+          "storage_location.bucket": [
+            "list",
+            "string"
+          ],
+          "storage_location.role_arn": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "storage_location.bucket": "required",
+          "storage_location.role_arn": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceScript. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ivs_channel": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1654,
+      "gap": "#1654 — Verify recording_configuration_arn for aws_ivs_channel.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "recording_configuration_arn",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS IVS (Interactive Video). Terraform resource for managing an AWS IVS (Interactive Video) Channel.",
+        "ownership": "Not applicable: Keep AWS IVS (Interactive Video) node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Channel. No direct subnet placement follows from recording_configuration_arn.",
+        "references": "Missing: Resolve known recording_configuration_arn only against unique compatible managed endpoints (#1654).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit recording_configuration_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ivs_channel.html.markdown",
+        "shapes": {
+          "recording_configuration_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "recording_configuration_arn": "optional/computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceChannel. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ivs_playback_key_pair": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing an AWS IVS (Interactive Video) Playback Key Pair. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS IVS (Interactive Video). Terraform resource for managing an AWS IVS (Interactive Video) Playback Key Pair.",
+        "ownership": "Not applicable: Keep AWS IVS (Interactive Video) node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Playback Key Pair. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS IVS (Interactive Video) configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ivs_playback_key_pair.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "optional/computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourcePlaybackKeyPair. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ivs_recording_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1654,
+      "gap": "#1654 — Verify destination_configuration.s3.bucket_name for aws_ivs_recording_configuration.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "destination_configuration.s3.bucket_name",
+          "arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS IVS (Interactive Video). Terraform resource for managing an AWS IVS (Interactive Video) Recording Configuration.",
+        "ownership": "Not applicable: Keep AWS IVS (Interactive Video) controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Recording Configuration. No direct subnet placement follows from destination_configuration.s3.bucket_name.",
+        "references": "Missing: Resolve known destination_configuration.s3.bucket_name only against unique compatible managed endpoints (#1654).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destination_configuration.s3.bucket_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ivs_recording_configuration.html.markdown",
+        "shapes": {
+          "destination_configuration.s3.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "destination_configuration.s3.bucket_name": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceRecordingConfiguration. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ivschat_logging_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1654,
+      "gap": "#1654 — Verify destination_configuration.cloudwatch_logs.log_group_name, destination_configuration.firehose.delivery_stream_name, destination_configuration.s3.bucket_name for aws_ivschat_logging_configuration.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "destination_configuration.cloudwatch_logs.log_group_name",
+          "destination_configuration.firehose.delivery_stream_name",
+          "destination_configuration.s3.bucket_name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Controller for AWS IVS (Interactive Video) Chat. Terraform resource for managing an AWS IVS (Interactive Video) Chat Logging Configuration.",
+        "ownership": "Not applicable: Keep AWS IVS (Interactive Video) Chat controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Chat Logging Configuration. No direct subnet placement follows from destination_configuration.cloudwatch_logs.log_group_name.",
+        "references": "Missing: Resolve known destination_configuration.cloudwatch_logs.log_group_name, destination_configuration.firehose.delivery_stream_name, destination_configuration.s3.bucket_name only against unique compatible managed endpoints (#1654).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destination_configuration.cloudwatch_logs.log_group_name, destination_configuration.firehose.delivery_stream_name, destination_configuration.s3.bucket_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ivschat_logging_configuration.html.markdown",
+        "shapes": {
+          "destination_configuration.cloudwatch_logs.log_group_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "destination_configuration.firehose.delivery_stream_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "destination_configuration.s3.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "destination_configuration.cloudwatch_logs.log_group_name": "required",
+          "destination_configuration.firehose.delivery_stream_name": "required",
+          "destination_configuration.s3.bucket_name": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceLoggingConfiguration. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ivschat_room": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1654,
+      "gap": "#1654 — Verify logging_configuration_identifiers for aws_ivschat_room.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "logging_configuration_identifiers",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS IVS (Interactive Video) Chat. Terraform resource for managing an AWS IVS (Interactive Video) Chat Room.",
+        "ownership": "Not applicable: Keep AWS IVS (Interactive Video) Chat node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Chat Room. No direct subnet placement follows from logging_configuration_identifiers.",
+        "references": "Missing: Resolve known logging_configuration_identifiers only against unique compatible managed endpoints (#1654).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit logging_configuration_identifiers values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ivschat_room.html.markdown",
+        "shapes": {
+          "logging_configuration_identifiers": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "logging_configuration_identifiers": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceRoom. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_location_geofence_collection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1655,
+      "gap": "#1655 — Verify kms_key_id for aws_location_geofence_collection.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_key_id"
+        ],
+        "placement": "Supported: Logical Node for AWS Location. Terraform resource for managing an AWS Location Geofence Collection.",
+        "ownership": "Not applicable: Keep AWS Location node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS Location Geofence Collection. No direct subnet placement follows from kms_key_id.",
+        "references": "Missing: Resolve known kms_key_id only against unique compatible managed endpoints (#1655).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit kms_key_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/location_geofence_collection.html.markdown",
+        "shapes": {
+          "kms_key_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "kms_key_id": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceGeofenceCollection. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "collection_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "kms_key_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_location_map": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides a Location Service Map. Retain basic logical presentation; map_name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "map_name"
+        ],
+        "placement": "Supported: Logical Node for AWS Location. Provides a Location Service Map.",
+        "ownership": "Not applicable: Keep AWS Location node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a Location Service Map. No direct subnet placement follows from map_name.",
+        "references": "Intentionally unsupported: map_name describes AWS Location configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit map_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/location_map.html.markdown",
+        "shapes": {
+          "map_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "map_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceMap. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "map_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_location_place_index": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides a Location Service Place Index. Retain basic logical presentation; index_name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "index_name"
+        ],
+        "placement": "Supported: Logical Node for AWS Location. Provides a Location Service Place Index.",
+        "ownership": "Not applicable: Keep AWS Location node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a Location Service Place Index. No direct subnet placement follows from index_name.",
+        "references": "Intentionally unsupported: index_name describes AWS Location configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit index_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/location_place_index.html.markdown",
+        "shapes": {
+          "index_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "index_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourcePlaceIndex. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "index_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_location_route_calculator": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides a Location Service Route Calculator. Retain basic logical presentation; calculator_name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "calculator_name"
+        ],
+        "placement": "Supported: Logical Node for AWS Location. Provides a Location Service Route Calculator.",
+        "ownership": "Not applicable: Keep AWS Location node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a Location Service Route Calculator. No direct subnet placement follows from calculator_name.",
+        "references": "Intentionally unsupported: calculator_name describes AWS Location configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit calculator_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/location_route_calculator.html.markdown",
+        "shapes": {
+          "calculator_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "calculator_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceRouteCalculator. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "calculator_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_location_tracker": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1655,
+      "gap": "#1655 — Verify kms_key_id for aws_location_tracker.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_key_id"
+        ],
+        "placement": "Supported: Logical Node for AWS Location. Provides a Location Service Tracker.",
+        "ownership": "Not applicable: Keep AWS Location node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a Location Service Tracker. No direct subnet placement follows from kms_key_id.",
+        "references": "Missing: Resolve known kms_key_id only against unique compatible managed endpoints (#1655).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit kms_key_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/location_tracker.html.markdown",
+        "shapes": {
+          "kms_key_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "kms_key_id": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceTracker. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "tracker_name": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_location_tracker_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1655,
+      "gap": "#1655 — Verify consumer_arn, tracker_name for aws_location_tracker_association.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "consumer_arn",
+          "tracker_name"
+        ],
+        "placement": "Supported: Logical Association for AWS Location. Terraform resource for managing an AWS Location Tracker Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS Location Tracker Association. No direct subnet placement follows from consumer_arn.",
+        "references": "Missing: Resolve known consumer_arn, tracker_name only against unique compatible managed endpoints (#1655).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit consumer_arn, tracker_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/location_tracker_association.html.markdown",
+        "shapes": {
+          "consumer_arn": [
+            "string"
+          ],
+          "tracker_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "consumer_arn": "required",
+          "tracker_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceTrackerAssociation. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "consumer_arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tracker_name": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_media_convert_queue": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides an AWS Elemental MediaConvert Queue. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaConvert. Provides an AWS Elemental MediaConvert Queue.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaConvert node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an AWS Elemental MediaConvert Queue. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS Elemental MediaConvert configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/media_convert_queue.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceQueue. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_media_package_channel": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides an AWS Elemental MediaPackage Channel. Retain basic logical presentation; channel_id supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "channel_id",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaPackage. Provides an AWS Elemental MediaPackage Channel.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaPackage node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an AWS Elemental MediaPackage Channel. No direct subnet placement follows from channel_id.",
+        "references": "Intentionally unsupported: channel_id describes AWS Elemental MediaPackage configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit channel_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/media_package_channel.html.markdown",
+        "shapes": {
+          "channel_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "channel_id": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceChannel. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_media_packagev2_channel_group": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Creates an AWS Elemental MediaPackage Version 2 Channel Group. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaPackage Version 2. Creates an AWS Elemental MediaPackage Version 2 Channel Group.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaPackage Version 2 node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Creates an AWS Elemental MediaPackage Version 2 Channel Group. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS Elemental MediaPackage Version 2 configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/media_packagev2_channel_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newChannelGroupResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_media_store_container": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides a MediaStore Container. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaStore. Provides a MediaStore Container.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaStore node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a MediaStore Container. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS Elemental MediaStore configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/media_store_container.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceContainer. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_media_store_container_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1656,
+      "gap": "#1656 — Verify container_name for aws_media_store_container_policy.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "container_name"
+        ],
+        "placement": "Supported: Logical Policy for AWS Elemental MediaStore. Provides a MediaStore Container Policy.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaStore policy independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a MediaStore Container Policy. No direct subnet placement follows from container_name.",
+        "references": "Missing: Resolve known container_name only against unique compatible managed endpoints (#1656).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit policy from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/media_store_container_policy.html.markdown",
+        "shapes": {
+          "container_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "container_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceContainerPolicy. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_medialive_channel": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1656,
+      "gap": "#1656 — Verify input_attachments.input_id, destinations.media_package_settings.channel_id, vpc.subnet_ids, vpc.security_group_ids, role_arn for aws_medialive_channel.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "input_attachments.input_id",
+          "destinations.media_package_settings.channel_id",
+          "vpc.subnet_ids",
+          "vpc.security_group_ids",
+          "role_arn",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaLive. Terraform resource for managing an AWS MediaLive Channel.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaLive node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Missing: Check vpc.subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1656).",
+        "references": "Missing: Resolve known input_attachments.input_id, destinations.media_package_settings.channel_id, vpc.subnet_ids, vpc.security_group_ids, role_arn only against unique compatible managed endpoints (#1656).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destinations.settings.password_param, destinations.settings.url, encoder_settings.avail_blanking.avail_blanking_image.password_param from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/medialive_channel.html.markdown",
+        "shapes": {
+          "input_attachments.input_id": [
+            "set",
+            "string"
+          ],
+          "destinations.media_package_settings.channel_id": [
+            "set",
+            "set",
+            "string"
+          ],
+          "vpc.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "input_attachments.input_id": "required",
+          "destinations.media_package_settings.channel_id": "required",
+          "vpc.subnet_ids": "required",
+          "vpc.security_group_ids": "optional/computed",
+          "role_arn": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceChannel. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_medialive_input": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1656,
+      "gap": "#1656 — Verify vpc.subnet_ids, vpc.security_group_ids, role_arn, media_connect_flows.flow_arn for aws_medialive_input.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc.subnet_ids",
+          "vpc.security_group_ids",
+          "role_arn",
+          "media_connect_flows.flow_arn",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaLive. Terraform resource for managing an AWS MediaLive Input.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaLive node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Missing: Check vpc.subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1656).",
+        "references": "Missing: Resolve known vpc.subnet_ids, vpc.security_group_ids, role_arn, media_connect_flows.flow_arn only against unique compatible managed endpoints (#1656).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit sources.password_param, sources.url from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/medialive_input.html.markdown",
+        "shapes": {
+          "vpc.subnet_ids": [
+            "list",
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "vpc.security_group_ids": [
+            "list",
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "media_connect_flows.flow_arn": [
+            "set",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpc.subnet_ids": "required",
+          "vpc.security_group_ids": "optional",
+          "role_arn": "optional/computed",
+          "media_connect_flows.flow_arn": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceInput. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_medialive_input_security_group": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Manages an AWS MediaLive Input Security Group. Retain basic logical presentation; whitelist_rules.cidr supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "whitelist_rules.cidr",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaLive. Manages an AWS MediaLive Input Security Group.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaLive node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages an AWS MediaLive Input Security Group. No direct subnet placement follows from whitelist_rules.cidr.",
+        "references": "Intentionally unsupported: whitelist_rules.cidr describes AWS Elemental MediaLive configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit whitelist_rules.cidr values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/medialive_input_security_group.html.markdown",
+        "shapes": {
+          "whitelist_rules.cidr": [
+            "set",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "whitelist_rules.cidr": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceInputSecurityGroup. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_medialive_multiplex": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing an AWS MediaLive Multiplex. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaLive. Terraform resource for managing an AWS MediaLive Multiplex.",
+        "ownership": "Not applicable: Keep AWS Elemental MediaLive node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS MediaLive Multiplex. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS Elemental MediaLive configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/medialive_multiplex.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceMultiplex. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_medialive_multiplex_program": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1656,
+      "gap": "#1656 — Verify multiplex_id for aws_medialive_multiplex_program.",
+      "review": {
+        "issue": 736,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "multiplex_id",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Elemental MediaLive. Terraform resource for managing an AWS MediaLive MultiplexProgram.",
+        "ownership": "Missing: Verify the service parent selected by multiplex_id before presenting this helper under that parent (#1656).",
+        "network": "Not applicable: Terraform resource for managing an AWS MediaLive MultiplexProgram. No direct subnet placement follows from multiplex_id.",
+        "references": "Missing: Resolve known multiplex_id only against unique compatible managed endpoints (#1656).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit multiplex_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/medialive_multiplex_program.html.markdown",
+        "shapes": {
+          "multiplex_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "multiplex_id": "required",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newMultiplexProgramResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
     }
   }
 }

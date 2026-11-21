@@ -906,3 +906,12 @@ test('#735 verifies messaging destinations and identity outputs', () => {
   assert.equal(review('ses_domain_identity').contracts.verification_token, 'computed');
   assert.deepEqual(review('pinpoint_event_stream').shapes.destination_stream_arn, ['string']);
 });
+
+test('#736 verifies streaming destinations and GameLift networking', () => {
+  const decisions = auditedServiceTypes(736, [
+    'mediaconvert', 'medialive', 'mediapackage', 'mediapackagev2', 'mediastore', 'elastictranscoder', 'ivs', 'ivschat', 'gamelift', 'location',
+  ], 29);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('gamelift_game_server_group').contracts.vpc_subnets, 'optional');
+  assert.deepEqual(review('ivs_channel').shapes.recording_configuration_arn, ['string']);
+});
