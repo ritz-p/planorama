@@ -915,3 +915,12 @@ test('#736 verifies streaming destinations and GameLift networking', () => {
   assert.equal(review('gamelift_game_server_group').contracts.vpc_subnets, 'optional');
   assert.deepEqual(review('ivs_channel').shapes.recording_configuration_arn, ['string']);
 });
+
+test('#737 verifies workspace associations and IoT certificate outputs', () => {
+  const decisions = auditedServiceTypes(737, [
+    'workspaces', 'workspacesweb', 'appstream', 'iot',
+  ], 49);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('iot_certificate').contracts.ca_certificate_id, 'computed');
+  assert.equal(review('workspacesweb_network_settings_association').contracts.network_settings_arn, 'required');
+});

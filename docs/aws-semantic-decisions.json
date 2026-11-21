@@ -95700,6 +95700,2257 @@
         "managedDataContract": "Managed newMultiplexProgramResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
+    },
+    "aws_appstream_directory_config": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1658,
+      "gap": "#1658 — Verify certificate_based_auth_properties.certificate_authority_arn for aws_appstream_directory_config.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "certificate_based_auth_properties.certificate_authority_arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Policy for AWS AppStream 2.0. Provides an AppStream Directory Config",
+        "ownership": "Not applicable: Keep AWS AppStream 2.0 policy independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an AppStream Directory Config No direct subnet placement follows from certificate_based_auth_properties.certificate_authority_arn.",
+        "references": "Missing: Resolve known certificate_based_auth_properties.certificate_authority_arn only against unique compatible managed endpoints (#1658).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit service_account_credentials.account_password from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/appstream_directory_config.html.markdown",
+        "shapes": {
+          "certificate_based_auth_properties.certificate_authority_arn": [
+            "list",
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "certificate_based_auth_properties.certificate_authority_arn": "optional",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDirectoryConfig. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appstream_fleet": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1658,
+      "gap": "#1658 — Verify iam_role_arn, vpc_config.subnet_ids, vpc_config.security_group_ids, domain_join_info.directory_name for aws_appstream_fleet.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "iam_role_arn",
+          "vpc_config.subnet_ids",
+          "vpc_config.security_group_ids",
+          "domain_join_info.directory_name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS AppStream 2.0. Provides an AppStream fleet",
+        "ownership": "Not applicable: Keep AWS AppStream 2.0 node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Missing: Check vpc_config.subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1658).",
+        "references": "Missing: Resolve known iam_role_arn, vpc_config.subnet_ids, vpc_config.security_group_ids, domain_join_info.directory_name only against unique compatible managed endpoints (#1658).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit iam_role_arn, vpc_config.subnet_ids, vpc_config.security_group_ids, domain_join_info.directory_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/appstream_fleet.html.markdown",
+        "shapes": {
+          "iam_role_arn": [
+            "string"
+          ],
+          "vpc_config.subnet_ids": [
+            "list",
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "vpc_config.security_group_ids": [
+            "list",
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "domain_join_info.directory_name": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "iam_role_arn": "optional/computed",
+          "vpc_config.subnet_ids": "optional/computed",
+          "vpc_config.security_group_ids": "optional/computed",
+          "domain_join_info.directory_name": "optional/computed",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceFleet. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appstream_fleet_stack_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1658,
+      "gap": "#1658 — Verify fleet_name, stack_name for aws_appstream_fleet_stack_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "fleet_name",
+          "stack_name",
+          "id"
+        ],
+        "placement": "Supported: Logical Association for AWS AppStream 2.0. Manages an AppStream Fleet Stack association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Manages an AppStream Fleet Stack association. No direct subnet placement follows from fleet_name.",
+        "references": "Missing: Resolve known fleet_name, stack_name only against unique compatible managed endpoints (#1658).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit fleet_name, stack_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/appstream_fleet_stack_association.html.markdown",
+        "shapes": {
+          "fleet_name": [
+            "string"
+          ],
+          "stack_name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "fleet_name": "required",
+          "stack_name": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceFleetStackAssociation. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appstream_image_builder": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1658,
+      "gap": "#1658 — Verify iam_role_arn, vpc_config.subnet_ids, access_endpoint.vpce_id for aws_appstream_image_builder.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "iam_role_arn",
+          "vpc_config.subnet_ids",
+          "access_endpoint.vpce_id",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS AppStream 2.0. Provides an AppStream image builder",
+        "ownership": "Not applicable: Keep AWS AppStream 2.0 node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Missing: Check vpc_config.subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1658).",
+        "references": "Missing: Resolve known iam_role_arn, vpc_config.subnet_ids, access_endpoint.vpce_id only against unique compatible managed endpoints (#1658).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit iam_role_arn, vpc_config.subnet_ids, access_endpoint.vpce_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/appstream_image_builder.html.markdown",
+        "shapes": {
+          "iam_role_arn": [
+            "string"
+          ],
+          "vpc_config.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "access_endpoint.vpce_id": [
+            "set",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "iam_role_arn": "optional/computed",
+          "vpc_config.subnet_ids": "optional/computed",
+          "access_endpoint.vpce_id": "optional/computed",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceImageBuilder. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appstream_stack": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1658,
+      "gap": "#1658 — Verify access_endpoints.vpce_id for aws_appstream_stack.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "access_endpoints.vpce_id",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS AppStream 2.0. Provides an AppStream stack",
+        "ownership": "Not applicable: Keep AWS AppStream 2.0 node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an AppStream stack No direct subnet placement follows from access_endpoints.vpce_id.",
+        "references": "Missing: Resolve known access_endpoints.vpce_id only against unique compatible managed endpoints (#1658).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit access_endpoints.vpce_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/appstream_stack.html.markdown",
+        "shapes": {
+          "access_endpoints.vpce_id": [
+            "set",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "access_endpoints.vpce_id": "optional/computed",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceStack. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appstream_user": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides an AppStream user Retain basic logical presentation; user_name supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Identity for AWS AppStream 2.0. Provides an AppStream user",
+        "ownership": "Not applicable: Keep AWS AppStream 2.0 identity independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an AppStream user No direct subnet placement follows from user_name.",
+        "references": "Intentionally unsupported: user_name describes AWS AppStream 2.0 configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit user_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/appstream_user.html.markdown",
+        "shapes": {
+          "user_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_name": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceUser. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appstream_user_stack_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1658,
+      "gap": "#1658 — Verify stack_name, user_name for aws_appstream_user_stack_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "stack_name",
+          "user_name",
+          "id"
+        ],
+        "placement": "Supported: Logical Association for AWS AppStream 2.0. Manages an AppStream User Stack association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Manages an AppStream User Stack association. No direct subnet placement follows from stack_name.",
+        "references": "Missing: Resolve known stack_name, user_name only against unique compatible managed endpoints (#1658).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit stack_name, user_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/appstream_user_stack_association.html.markdown",
+        "shapes": {
+          "stack_name": [
+            "string"
+          ],
+          "user_name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "stack_name": "required",
+          "user_name": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceUserStackAssociation. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_authorizer": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1659,
+      "gap": "#1659 — Verify authorizer_function_arn for aws_iot_authorizer.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "authorizer_function_arn",
+          "arn"
+        ],
+        "placement": "Supported: Logical Policy for AWS IoT Core. Creates and manages an AWS IoT Authorizer.",
+        "ownership": "Not applicable: Keep AWS IoT Core policy independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Creates and manages an AWS IoT Authorizer. No direct subnet placement follows from authorizer_function_arn.",
+        "references": "Missing: Resolve known authorizer_function_arn only against unique compatible managed endpoints (#1659).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit authorizer_function_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_authorizer.html.markdown",
+        "shapes": {
+          "authorizer_function_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "authorizer_function_arn": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceAuthorizer. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_billing_group": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Manages an AWS IoT Billing Group. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS IoT Core. Manages an AWS IoT Billing Group.",
+        "ownership": "Not applicable: Keep AWS IoT Core node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages an AWS IoT Billing Group. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS IoT Core configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_billing_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "arn": "computed",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newBillingGroupResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_ca_certificate": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1660,
+      "gap": "#1660 — Verify registration_config.role_arn, registration_config.template_name for aws_iot_ca_certificate.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "registration_config.role_arn",
+          "registration_config.template_name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Identity for AWS IoT Core. Creates and manages an AWS IoT CA Certificate.",
+        "ownership": "Not applicable: Keep AWS IoT Core identity independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Creates and manages an AWS IoT CA Certificate. No direct subnet placement follows from registration_config.role_arn.",
+        "references": "Missing: Resolve known registration_config.role_arn, registration_config.template_name only against unique compatible managed endpoints (#1660).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit registration_config.role_arn, registration_config.template_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_ca_certificate.html.markdown",
+        "shapes": {
+          "registration_config.role_arn": [
+            "list",
+            "string"
+          ],
+          "registration_config.template_name": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "registration_config.role_arn": "optional",
+          "registration_config.template_name": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceCACertificate. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_certificate": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Creates and manages an AWS IoT certificate. Retain basic logical presentation; ca_certificate_id supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "ca_certificate_id",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Identity for AWS IoT Core. Creates and manages an AWS IoT certificate.",
+        "ownership": "Not applicable: Keep AWS IoT Core identity independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Creates and manages an AWS IoT certificate. No direct subnet placement follows from ca_certificate_id.",
+        "references": "Intentionally unsupported: ca_certificate_id describes AWS IoT Core configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit private_key from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_certificate.html.markdown",
+        "shapes": {
+          "ca_certificate_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "ca_certificate_id": "computed",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceCertificate. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_domain_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1660,
+      "gap": "#1660 — Verify server_certificate_arns, validation_certificate_arn, authorizer_config.default_authorizer_name for aws_iot_domain_configuration.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "server_certificate_arns",
+          "validation_certificate_arn",
+          "authorizer_config.default_authorizer_name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Controller for AWS IoT Core. Creates and manages an AWS IoT domain configuration.",
+        "ownership": "Not applicable: Keep AWS IoT Core controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Creates and manages an AWS IoT domain configuration. No direct subnet placement follows from server_certificate_arns.",
+        "references": "Missing: Resolve known server_certificate_arns, validation_certificate_arn, authorizer_config.default_authorizer_name only against unique compatible managed endpoints (#1660).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit server_certificate_arns, validation_certificate_arn, authorizer_config.default_authorizer_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_domain_configuration.html.markdown",
+        "shapes": {
+          "server_certificate_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "validation_certificate_arn": [
+            "string"
+          ],
+          "authorizer_config.default_authorizer_name": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "server_certificate_arns": "optional",
+          "validation_certificate_arn": "optional",
+          "authorizer_config.default_authorizer_name": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDomainConfiguration. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_event_configurations": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Manages IoT event configurations. Retain basic logical presentation; event_configurations supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event_configurations"
+        ],
+        "placement": "Supported: Logical Node for AWS IoT Core. Manages IoT event configurations.",
+        "ownership": "Not applicable: Keep AWS IoT Core node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages IoT event configurations. No direct subnet placement follows from event_configurations.",
+        "references": "Intentionally unsupported: event_configurations describes AWS IoT Core configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit event_configurations values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_event_configurations.html.markdown",
+        "shapes": {
+          "event_configurations": [
+            [
+              "map",
+              "bool"
+            ]
+          ]
+        },
+        "contracts": {
+          "event_configurations": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceEventConfigurations. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_indexing_configuration": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Managing IoT Thing indexing. Retain basic logical presentation; thing_indexing_configuration.thing_indexing_mode supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "thing_indexing_configuration.thing_indexing_mode"
+        ],
+        "placement": "Supported: Logical Controller for AWS IoT Core. Managing IoT Thing indexing.",
+        "ownership": "Not applicable: Keep AWS IoT Core controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Managing IoT Thing indexing. No direct subnet placement follows from thing_indexing_configuration.thing_indexing_mode.",
+        "references": "Intentionally unsupported: thing_indexing_configuration.thing_indexing_mode describes AWS IoT Core configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit thing_indexing_configuration.thing_indexing_mode values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_indexing_configuration.html.markdown",
+        "shapes": {
+          "thing_indexing_configuration.thing_indexing_mode": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "thing_indexing_configuration.thing_indexing_mode": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceIndexingConfiguration. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_logging_options": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1659,
+      "gap": "#1659 — Verify role_arn for aws_iot_logging_options.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS IoT Core. Provides a resource to manage default logging options.",
+        "ownership": "Not applicable: Keep AWS IoT Core controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a resource to manage default logging options. No direct subnet placement follows from role_arn.",
+        "references": "Missing: Resolve known role_arn only against unique compatible managed endpoints (#1659).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit role_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_logging_options.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "role_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceLoggingOptions. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_policy": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides an IoT policy. Retain basic logical presentation; name, policy supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "policy",
+          "arn"
+        ],
+        "placement": "Supported: Logical Policy for AWS IoT Core. Provides an IoT policy.",
+        "ownership": "Not applicable: Keep AWS IoT Core policy independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an IoT policy. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name, policy describes AWS IoT Core configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit policy from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_policy.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "policy": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourcePolicy. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_policy_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1660,
+      "gap": "#1660 — Verify policy, target for aws_iot_policy_attachment.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "policy",
+          "target"
+        ],
+        "placement": "Supported: Logical Association for AWS IoT Core. Provides an IoT policy attachment.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Provides an IoT policy attachment. No direct subnet placement follows from policy.",
+        "references": "Missing: Resolve known policy, target only against unique compatible managed endpoints (#1660).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit policy from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_policy_attachment.html.markdown",
+        "shapes": {
+          "policy": [
+            "string"
+          ],
+          "target": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "policy": "required",
+          "target": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourcePolicyAttachment. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_provisioning_template": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1659,
+      "gap": "#1659 — Verify provisioning_role_arn, pre_provisioning_hook.target_arn for aws_iot_provisioning_template.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "provisioning_role_arn",
+          "pre_provisioning_hook.target_arn",
+          "arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS IoT Core. Manages an IoT fleet provisioning template.",
+        "ownership": "Not applicable: Keep AWS IoT Core controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages an IoT fleet provisioning template. No direct subnet placement follows from provisioning_role_arn.",
+        "references": "Missing: Resolve known provisioning_role_arn, pre_provisioning_hook.target_arn only against unique compatible managed endpoints (#1659).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit provisioning_role_arn, pre_provisioning_hook.target_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_provisioning_template.html.markdown",
+        "shapes": {
+          "provisioning_role_arn": [
+            "string"
+          ],
+          "pre_provisioning_hook.target_arn": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "provisioning_role_arn": "required",
+          "pre_provisioning_hook.target_arn": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceProvisioningTemplate. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_role_alias": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1659,
+      "gap": "#1659 — Verify role_arn for aws_iot_role_alias.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn",
+          "arn"
+        ],
+        "placement": "Supported: Logical Identity for AWS IoT Core. Provides an IoT role alias.",
+        "ownership": "Not applicable: Keep AWS IoT Core identity independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an IoT role alias. No direct subnet placement follows from role_arn.",
+        "references": "Missing: Resolve known role_arn only against unique compatible managed endpoints (#1659).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit role_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_role_alias.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "role_arn": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceRoleAlias. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_thing": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1660,
+      "gap": "#1660 — Verify thing_type_name for aws_iot_thing.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "thing_type_name",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS IoT Core. Creates and manages an AWS IoT Thing.",
+        "ownership": "Not applicable: Keep AWS IoT Core node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Creates and manages an AWS IoT Thing. No direct subnet placement follows from thing_type_name.",
+        "references": "Missing: Resolve known thing_type_name only against unique compatible managed endpoints (#1660). SageMaker already references a managed IoT thing by name.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit thing_type_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_thing.html.markdown",
+        "shapes": {
+          "thing_type_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "thing_type_name": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/sagemaker_catalog.rs"
+        ],
+        "managedDataContract": "Managed resourceThing. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_thing_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1660,
+      "gap": "#1660 — Verify parent_group_name for aws_iot_thing_group.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "parent_group_name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS IoT Core. Manages an AWS IoT Thing Group.",
+        "ownership": "Not applicable: Keep AWS IoT Core node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages an AWS IoT Thing Group. No direct subnet placement follows from parent_group_name.",
+        "references": "Missing: Resolve known parent_group_name only against unique compatible managed endpoints (#1660).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit parent_group_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_thing_group.html.markdown",
+        "shapes": {
+          "parent_group_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "parent_group_name": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceThingGroup. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_thing_group_membership": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1660,
+      "gap": "#1660 — Verify thing_group_name, thing_name for aws_iot_thing_group_membership.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "thing_group_name",
+          "thing_name",
+          "id"
+        ],
+        "placement": "Supported: Logical Association for AWS IoT Core. Adds an IoT Thing to an IoT Thing Group.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Adds an IoT Thing to an IoT Thing Group. No direct subnet placement follows from thing_group_name.",
+        "references": "Missing: Resolve known thing_group_name, thing_name only against unique compatible managed endpoints (#1660).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit thing_group_name, thing_name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_thing_group_membership.html.markdown",
+        "shapes": {
+          "thing_group_name": [
+            "string"
+          ],
+          "thing_name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "thing_group_name": "required",
+          "thing_name": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceThingGroupMembership. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_thing_principal_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1660,
+      "gap": "#1660 — Verify thing, principal for aws_iot_thing_principal_attachment.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "thing",
+          "principal"
+        ],
+        "placement": "Supported: Logical Association for AWS IoT Core. Provides AWS IoT Thing Principal attachment.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Provides AWS IoT Thing Principal attachment. No direct subnet placement follows from thing.",
+        "references": "Missing: Resolve known thing, principal only against unique compatible managed endpoints (#1660).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit thing, principal values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_thing_principal_attachment.html.markdown",
+        "shapes": {
+          "thing": [
+            "string"
+          ],
+          "principal": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "thing": "required",
+          "principal": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceThingPrincipalAttachment. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_thing_type": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Creates and manages an AWS IoT Thing Type. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS IoT Core. Creates and manages an AWS IoT Thing Type.",
+        "ownership": "Not applicable: Keep AWS IoT Core node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Creates and manages an AWS IoT Thing Type. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS IoT Core configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_thing_type.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceThingType. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_topic_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1659,
+      "gap": "#1659 — Verify lambda.function_arn, s3.bucket_name, sns.target_arn, error_action.lambda.function_arn for aws_iot_topic_rule.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "lambda.function_arn",
+          "s3.bucket_name",
+          "sns.target_arn",
+          "error_action.lambda.function_arn",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Policy for AWS IoT Core. Creates and manages an AWS IoT topic rule",
+        "ownership": "Not applicable: Keep AWS IoT Core policy independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Creates and manages an AWS IoT topic rule No direct subnet placement follows from lambda.function_arn.",
+        "references": "Missing: Resolve known lambda.function_arn, s3.bucket_name, sns.target_arn, error_action.lambda.function_arn only against unique compatible managed endpoints (#1659).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit error_action.http.url, http.url from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_topic_rule.html.markdown",
+        "shapes": {
+          "lambda.function_arn": [
+            "set",
+            "string"
+          ],
+          "s3.bucket_name": [
+            "set",
+            "string"
+          ],
+          "sns.target_arn": [
+            "set",
+            "string"
+          ],
+          "error_action.lambda.function_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "lambda.function_arn": "required",
+          "s3.bucket_name": "required",
+          "sns.target_arn": "required",
+          "error_action.lambda.function_arn": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceTopicRule. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_iot_topic_rule_destination": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1659,
+      "gap": "#1659 — Verify vpc_configuration.role_arn, vpc_configuration.subnet_ids, vpc_configuration.vpc_id for aws_iot_topic_rule_destination.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_configuration.role_arn",
+          "vpc_configuration.subnet_ids",
+          "vpc_configuration.vpc_id",
+          "arn"
+        ],
+        "placement": "Supported: Logical Policy for AWS IoT Core. Creates and manages an AWS IoT topic rule destination",
+        "ownership": "Not applicable: Keep AWS IoT Core policy independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Missing: Check vpc_configuration.subnet_ids, vpc_configuration.vpc_id against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1659).",
+        "references": "Missing: Resolve known vpc_configuration.role_arn, vpc_configuration.subnet_ids, vpc_configuration.vpc_id only against unique compatible managed endpoints (#1659).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit vpc_configuration.role_arn, vpc_configuration.subnet_ids, vpc_configuration.vpc_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/iot_topic_rule_destination.html.markdown",
+        "shapes": {
+          "vpc_configuration.role_arn": [
+            "list",
+            "string"
+          ],
+          "vpc_configuration.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_configuration.vpc_id": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpc_configuration.role_arn": "required",
+          "vpc_configuration.subnet_ids": "required",
+          "vpc_configuration.vpc_id": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceTopicRuleDestination. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspaces_connection_alias": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing an AWS WorkSpaces Connection Alias. Retain basic logical presentation; connection_string, owner_account_id supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "connection_string",
+          "owner_account_id",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS WorkSpaces. Terraform resource for managing an AWS WorkSpaces Connection Alias.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Connection Alias. No direct subnet placement follows from connection_string.",
+        "references": "Intentionally unsupported: connection_string, owner_account_id describes AWS WorkSpaces configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit connection_string from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspaces_connection_alias.html.markdown",
+        "shapes": {
+          "connection_string": [
+            "string"
+          ],
+          "owner_account_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "connection_string": "required",
+          "owner_account_id": "computed",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newConnectionAliasResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspaces_directory": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1661,
+      "gap": "#1661 — Verify directory_id, ip_group_ids, subnet_ids for aws_workspaces_directory.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "directory_id",
+          "ip_group_ids",
+          "subnet_ids",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS WorkSpaces. Provides a WorkSpaces directory in AWS WorkSpaces Service.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Missing: Check subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1661).",
+        "references": "Missing: Resolve known directory_id, ip_group_ids, subnet_ids only against unique compatible managed endpoints (#1661). CloudWatch already recognizes the directory as a monitored target.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit active_directory_config.service_account_secret_arn from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspaces_directory.html.markdown",
+        "shapes": {
+          "directory_id": [
+            "string"
+          ],
+          "ip_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "directory_id": "optional/computed",
+          "ip_group_ids": "optional/computed",
+          "subnet_ids": "optional/computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/observability_monitors.rs"
+        ],
+        "managedDataContract": "Managed resourceDirectory. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "directory_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_workspaces_ip_group": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides an IP access control group in AWS WorkSpaces Service. Retain basic logical presentation; name supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id"
+        ],
+        "placement": "Supported: Logical Policy for AWS WorkSpaces. Provides an IP access control group in AWS WorkSpaces Service.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces policy independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an IP access control group in AWS WorkSpaces Service. No direct subnet placement follows from name.",
+        "references": "Intentionally unsupported: name describes AWS WorkSpaces configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit name values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspaces_ip_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceIPGroup. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspaces_pool": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1661,
+      "gap": "#1661 — Verify bundle_id, directory_id for aws_workspaces_pool.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bundle_id",
+          "directory_id"
+        ],
+        "placement": "Supported: Logical Node for AWS WorkSpaces. Manages an AWS WorkSpaces Pool.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages an AWS WorkSpaces Pool. No direct subnet placement follows from bundle_id.",
+        "references": "Missing: Resolve known bundle_id, directory_id only against unique compatible managed endpoints (#1661).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit bundle_id, directory_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspaces_pool.html.markdown",
+        "shapes": {
+          "bundle_id": [
+            "string"
+          ],
+          "directory_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "bundle_id": "required",
+          "directory_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourcePool. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspaces_workspace": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1661,
+      "gap": "#1661 — Verify bundle_id, directory_id for aws_workspaces_workspace.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bundle_id",
+          "directory_id",
+          "id"
+        ],
+        "placement": "Supported: Spatial Node for AWS WorkSpaces. Provides a workspaces in AWS Workspaces Service.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a workspaces in AWS Workspaces Service. No direct subnet placement follows from bundle_id.",
+        "references": "Missing: Resolve known bundle_id, directory_id only against unique compatible managed endpoints (#1661).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit bundle_id, directory_id values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspaces_workspace.html.markdown",
+        "shapes": {
+          "bundle_id": [
+            "string"
+          ],
+          "directory_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "bundle_id": "required",
+          "directory_id": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceWorkspace. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "directory_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "user_name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "workspace_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_workspacesweb_browser_settings": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing an AWS WorkSpaces Web Browser Settings. Retain basic logical presentation; browser_settings_arn supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "browser_settings_arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Browser Settings.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Browser Settings. No direct subnet placement follows from browser_settings_arn.",
+        "references": "Intentionally unsupported: browser_settings_arn describes AWS WorkSpaces Web configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit browser_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_browser_settings.html.markdown",
+        "shapes": {
+          "browser_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "browser_settings_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newBrowserSettingsResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_browser_settings_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn, browser_settings_arn for aws_workspacesweb_browser_settings_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn",
+          "browser_settings_arn"
+        ],
+        "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Browser Settings Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Browser Settings Association. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn, browser_settings_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, browser_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_browser_settings_association.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ],
+          "browser_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required",
+          "browser_settings_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newBrowserSettingsAssociationResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_data_protection_settings": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing an AWS WorkSpaces Web Data Protection Settings. Retain basic logical presentation; data_protection_settings_arn supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "data_protection_settings_arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Data Protection Settings.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Data Protection Settings. No direct subnet placement follows from data_protection_settings_arn.",
+        "references": "Intentionally unsupported: data_protection_settings_arn describes AWS WorkSpaces Web configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit data_protection_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_data_protection_settings.html.markdown",
+        "shapes": {
+          "data_protection_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "data_protection_settings_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newDataProtectionSettingsResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_data_protection_settings_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn, data_protection_settings_arn for aws_workspacesweb_data_protection_settings_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn",
+          "data_protection_settings_arn"
+        ],
+        "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Data Protection Settings Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Data Protection Settings Association. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn, data_protection_settings_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, data_protection_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_data_protection_settings_association.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ],
+          "data_protection_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required",
+          "data_protection_settings_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newDataProtectionSettingsAssociationResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_identity_provider": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn for aws_workspacesweb_identity_provider.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn"
+        ],
+        "placement": "Supported: Logical Identity for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Identity Provider.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web identity independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Identity Provider. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_identity_provider.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newIdentityProviderResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_ip_access_settings": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing an AWS WorkSpaces Web IP Access Settings. Retain basic logical presentation; ip_access_settings_arn supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "ip_access_settings_arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web IP Access Settings.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web IP Access Settings. No direct subnet placement follows from ip_access_settings_arn.",
+        "references": "Intentionally unsupported: ip_access_settings_arn describes AWS WorkSpaces Web configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit ip_access_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_ip_access_settings.html.markdown",
+        "shapes": {
+          "ip_access_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "ip_access_settings_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newIPAccessSettingsResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_ip_access_settings_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn, ip_access_settings_arn for aws_workspacesweb_ip_access_settings_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn",
+          "ip_access_settings_arn"
+        ],
+        "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web IP Access Settings Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web IP Access Settings Association. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn, ip_access_settings_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, ip_access_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_ip_access_settings_association.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ],
+          "ip_access_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required",
+          "ip_access_settings_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newIPAccessSettingsAssociationResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_network_settings": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify vpc_id, subnet_ids, security_group_ids for aws_workspacesweb_network_settings.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_id",
+          "subnet_ids",
+          "security_group_ids"
+        ],
+        "placement": "Supported: Logical Controller for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Network Settings.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Missing: Check vpc_id, subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1662).",
+        "references": "Missing: Resolve known vpc_id, subnet_ids, security_group_ids only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit vpc_id, subnet_ids, security_group_ids values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_network_settings.html.markdown",
+        "shapes": {
+          "vpc_id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "vpc_id": "required",
+          "subnet_ids": "required",
+          "security_group_ids": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newNetworkSettingsResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_network_settings_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn, network_settings_arn for aws_workspacesweb_network_settings_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn",
+          "network_settings_arn"
+        ],
+        "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Network Settings Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Network Settings Association. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn, network_settings_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, network_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_network_settings_association.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ],
+          "network_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required",
+          "network_settings_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newNetworkSettingsAssociationResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_portal": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify customer_managed_key for aws_workspacesweb_portal.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "customer_managed_key"
+        ],
+        "placement": "Supported: Logical Node for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Portal.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Portal. No direct subnet placement follows from customer_managed_key.",
+        "references": "Missing: Resolve known customer_managed_key only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit customer_managed_key values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_portal.html.markdown",
+        "shapes": {
+          "customer_managed_key": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "customer_managed_key": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newPortalResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_session_logger": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify log_configuration.s3.bucket for aws_workspacesweb_session_logger.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "log_configuration.s3.bucket"
+        ],
+        "placement": "Supported: Logical Node for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Session Logger.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Session Logger. No direct subnet placement follows from log_configuration.s3.bucket.",
+        "references": "Missing: Resolve known log_configuration.s3.bucket only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit log_configuration.s3.bucket values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_session_logger.html.markdown",
+        "shapes": {
+          "log_configuration.s3.bucket": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "log_configuration.s3.bucket": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSessionLoggerResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_session_logger_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn, session_logger_arn for aws_workspacesweb_session_logger_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn",
+          "session_logger_arn"
+        ],
+        "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Session Logger Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Session Logger Association. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn, session_logger_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, session_logger_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_session_logger_association.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ],
+          "session_logger_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required",
+          "session_logger_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSessionLoggerAssociationResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_trust_store": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing an AWS WorkSpaces Web Trust Store. Retain basic logical presentation; trust_store_arn supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "trust_store_arn"
+        ],
+        "placement": "Supported: Logical Node for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Trust Store.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Trust Store. No direct subnet placement follows from trust_store_arn.",
+        "references": "Intentionally unsupported: trust_store_arn describes AWS WorkSpaces Web configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit trust_store_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_trust_store.html.markdown",
+        "shapes": {
+          "trust_store_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "trust_store_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newTrustStoreResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_trust_store_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn, trust_store_arn for aws_workspacesweb_trust_store_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn",
+          "trust_store_arn"
+        ],
+        "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Trust Store Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Trust Store Association. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn, trust_store_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, trust_store_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_trust_store_association.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ],
+          "trust_store_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required",
+          "trust_store_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newTrustStoreAssociationResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_user_access_logging_settings": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify kinesis_stream_arn for aws_workspacesweb_user_access_logging_settings.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kinesis_stream_arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web User Access Logging Settings.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web User Access Logging Settings. No direct subnet placement follows from kinesis_stream_arn.",
+        "references": "Missing: Resolve known kinesis_stream_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit kinesis_stream_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_user_access_logging_settings.html.markdown",
+        "shapes": {
+          "kinesis_stream_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "kinesis_stream_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newUserAccessLoggingSettingsResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_user_access_logging_settings_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn, user_access_logging_settings_arn for aws_workspacesweb_user_access_logging_settings_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn",
+          "user_access_logging_settings_arn"
+        ],
+        "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web User Access Logging Settings Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web User Access Logging Settings Association. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn, user_access_logging_settings_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, user_access_logging_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_user_access_logging_settings_association.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ],
+          "user_access_logging_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required",
+          "user_access_logging_settings_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newUserAccessLoggingSettingsAssociationResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_user_settings": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing an AWS WorkSpaces Web User Settings. Retain basic logical presentation; user_settings_arn supplies no dedicated relationship.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_settings_arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web User Settings.",
+        "ownership": "Not applicable: Keep AWS WorkSpaces Web controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web User Settings. No direct subnet placement follows from user_settings_arn.",
+        "references": "Intentionally unsupported: user_settings_arn describes AWS WorkSpaces Web configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit user_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_user_settings.html.markdown",
+        "shapes": {
+          "user_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_settings_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newUserSettingsResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_workspacesweb_user_settings_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1662,
+      "gap": "#1662 — Verify portal_arn, user_settings_arn for aws_workspacesweb_user_settings_association.",
+      "review": {
+        "issue": 737,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "portal_arn",
+          "user_settings_arn"
+        ],
+        "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web User Settings Association.",
+        "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
+        "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web User Settings Association. No direct subnet placement follows from portal_arn.",
+        "references": "Missing: Resolve known portal_arn, user_settings_arn only against unique compatible managed endpoints (#1662).",
+        "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, user_settings_arn values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/workspacesweb_user_settings_association.html.markdown",
+        "shapes": {
+          "portal_arn": [
+            "string"
+          ],
+          "user_settings_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "portal_arn": "required",
+          "user_settings_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newUserSettingsAssociationResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
     }
   }
 }
