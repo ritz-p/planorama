@@ -59,7 +59,7 @@ group by state/address and return `STATE:ADDRESS`. Pass selectors unchanged.
 | `address_format` | `qualified` (default), `terraform` |
 | `icon_mode` | `service-name` (default and only supported mode; renders resource/service labels) |
 | `hide_relationship_legend` | Boolean, false |
-| `omit_relationship_legend` | Boolean, false; omits the entire card, overriding `hide_relationship_legend` |
+| `omit_relationship_legend` | Boolean; defaults to true when neither legend key is supplied. Explicit true omits the entire card. With only `hide_relationship_legend` supplied, true shows action colors only and false shows the full card |
 | `html_semantic_diagnostics` | Boolean, false; requires `format: "html"` |
 | `cloudflare_value_matches` | Boolean, false; opt-in typed Cloudflare value matches, distinct from verified Terraform provenance |
 | `cloudflare_accounts`, `cloudflare_zones` | Arrays of exact Cloudflare scope IDs or `unknown`; OR within a dimension, AND across dimensions |
@@ -74,6 +74,8 @@ group by state/address and return `STATE:ADDRESS`. Pass selectors unchanged.
 | `remote_state_mappings` | Array of explicit named-state mappings, default empty; [schema below](#explicit-remote-state-mappings) |
 
 Unknown keys, invalid enum values and invalid combinations fail explicitly.
+In a Rust `Options` struct, set `omit_relationship_legend: false` to show the card.
+Also set `hide_relationship_legend: true` for action colors only.
 
 ### Sample UI settings
 

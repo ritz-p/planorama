@@ -44,8 +44,8 @@ input[type="text"] { width: min(95%, 40rem) }
     <label>Address format <select id="address-format"><option value="qualified">Qualified</option><option value="terraform">Terraform</option></select></label>
     <label>Service labels <select id="icon-mode"><option value="service-name">Service names</option></select></label>
     <label><input id="hide-legend" type="checkbox"> Hide relationship explanations (keep action colors)</label>
-    <label><input id="omit-legend" type="checkbox" aria-describedby="legend-help"> Omit entire relationship legend</label>
-    <p id="legend-help">Omits explanations and the relationship action color legend, overriding the partial hide setting. Lines, arrows, numbers and Relationship Resources remain visible.</p>
+    <label><input id="omit-legend" type="checkbox" checked aria-describedby="legend-help"> Omit entire relationship legend</label>
+    <p id="legend-help">The card is omitted by default. Clear this checkbox to show it, then choose whether to hide the explanations. Lines, arrows, numbers and Relationship Resources remain visible.</p>
     <fieldset aria-describedby="diagnostics-help">
       <legend>HTML diagnostics (optional)</legend>
       <label><input id="html-semantic-diagnostics" type="checkbox" aria-describedby="diagnostics-help"> Semantic findings</label>

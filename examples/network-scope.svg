@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="888" viewBox="0 0 1340 888" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="888" viewBox="0 0 1340 888" role="img" aria-labelledby="title description" data-legend-mode="omitted">
 <title id="title">Terraform plan</title>
 <desc id="description">8 resources (8 cards), 7 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>

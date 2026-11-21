@@ -277,7 +277,17 @@ pub(crate) async fn render_step(
             );
         }
         let document = namespace(
-            &super::render_with_index(graph, &layout, format, &index, &measured_sections, content),
+            &super::render_with_index(
+                graph,
+                &layout,
+                super::Options {
+                    omit_relationship_legend: true,
+                    ..options
+                },
+                &index,
+                &measured_sections,
+                content,
+            ),
             &prefix,
         );
         writeln!(
@@ -397,8 +407,9 @@ pub(crate) async fn render_step(
     if let (Some(scene), Some(report)) = (scene, report) {
         *report = scene.finish(width, top);
     }
+    let legend_mode = options.relationship_legend();
     format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
+        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description" data-legend-mode="{legend_mode}">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">{description}</desc>
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="{TITLE_FONT_SIZE}" fill="#0f172a">Terraform plans</text>
 {sections}</svg>

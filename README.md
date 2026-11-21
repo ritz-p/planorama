@@ -52,12 +52,12 @@ if ($LASTEXITCODE -ne 0) { throw 'terraform show failed' }
 ```sh
 planorama plan.json --changed-only -o changes.svg
 planorama plan.json --icon-mode service-name -o services.svg
-planorama plan.json --omit-relationship-legend -o without-legend.svg
+planorama plan.json --no-omit-relationship-legend -o with-legend.svg
 planorama plan.json --coverage-report coverage.md -o diagram.svg
 planorama plan.json --diagnostics -o diagram.svg
 ```
 
-[絞り込み](docs/filtering.md)では module の選択や特定リソース周辺への focus、[凡例の設定](docs/relationships.md)では関係の説明の省略ができます。[複数 plan](docs/multi-plan.md) は `--state ID=PATH` を使います。全オプションは `planorama --help` で確認してください。
+[絞り込み](docs/filtering.md)では module の選択や特定リソース周辺への focus ができます。関係線の凡例は既定で非表示です。[凡例の設定](docs/relationships.md)で説明付き表示や操作色のみの表示に切り替えられます。[複数 plan](docs/multi-plan.md) は `--state ID=PATH` を使います。全オプションは `planorama --help` で確認してください。
 
 繰り返し使う設定は [TOML ファイル](docs/configuration.md)にまとめられます。[サンプル](examples/planorama.toml)を保存した場合:
 

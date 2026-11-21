@@ -148,7 +148,10 @@ fn configured_version_percentages_have_a_legend_and_do_not_leak_masked_values() 
     ))
     .unwrap();
     for format in ["svg", "html"] {
-        let rendered = support::run_with_args(base.to_string().as_bytes(), &["--format", format]);
+        let rendered = support::run_with_args(
+            base.to_string().as_bytes(),
+            &["--format", format, "--no-omit-relationship-legend"],
+        );
         assert!(rendered.status.success());
         let text = String::from_utf8(rendered.stdout).unwrap();
         assert!(text.contains("75% configured") && text.contains("25% configured"));

@@ -2,41 +2,26 @@
 
 ## Legend and meaning
 
-The neutral **Relationship lines** card explains relationship colors, line
-patterns, attachment circles, directions and numbered markers separately from the
-resource action legend and the numbered **Relationship Resources** index.
-Use `--hide-relationship-legend` to omit line-kind, direction, containment and
-endpoint/number explanations, together with the cross-state header explanation.
-It works for SVG and self-contained HTML, including named states. Resource action
-colors remain, and relationship action colors retain a smaller **Relationship
-actions** card. Measurement reserves only that card's actual height; subsequent
-annotations and state sections move up. Actual lines, arrows, attachment points,
-numbers, links and **Relationship Resources** entries remain unchanged.
+SVG and HTML omit the relationship legend card and reserve no space for it by
+default. Lines, arrows, numbered markers, action colors on the diagram and the
+**Relationship Resources** index remain visible in single and named-state views.
 
-Use `--omit-relationship-legend` to omit the entire card, including its heading,
-background, explanations and action color legend. No **Relationship actions**
-replacement or reserved legend space remains. This setting defaults to `false`
-and takes precedence over `--hide-relationship-legend` when both are enabled.
-Resource action colors, actual relationship lines and the **Relationship Resources**
-index remain visible in SVG and HTML, for single and named states. With no
-relationship lines, there is already no card to remove.
+- `--no-omit-relationship-legend` shows the full **Relationship lines** card.
+- `--hide-relationship-legend` alone shows **Relationship actions** with the
+  action color key and hides the cross-state header explanation.
+- `--omit-relationship-legend` omits both presentations, even with partial hide enabled.
 
 ```sh
-planorama plan.json --hide-relationship-legend -o compact.svg
-planorama plan.json --format html --hide-relationship-legend --coverage-report coverage.md -o compact.html
-planorama plan.json --omit-relationship-legend -o without-legend.svg
-planorama plan.json --format html --omit-relationship-legend -o without-legend.html
+planorama plan.json --no-omit-relationship-legend -o explained.svg
+planorama plan.json --format html --hide-relationship-legend -o compact.html
 ```
 
-Compare the maintained [compact example](../examples/relationship-legend-hidden.svg)
-with its [full legend version](../examples/routes.svg) and
-[entirely omitted version](../examples/relationship-legend-omitted.svg). Regenerate all three using
-`docker compose exec -T dev sh scripts/update-examples.sh`. The option combines
-with service-name rendering and does not change graph analysis or local path routing.
+Compare the [action colors example](../examples/relationship-legend-hidden.svg)
+with the [default output](../examples/routes.svg). The root SVG exposes the
+resolved setting in `data-legend-mode` (`omitted`, `action-colors-only` or `full`).
 
-By default, the full card remains visible.
-Action colors and their explanation appear above a grid of relationship kinds.
-The card is capped at 960px, matching the maintained viewer example. The grid uses
+When the full card is shown, action colors and their explanation appear above a grid of relationship kinds.
+The card is capped at 960px. The grid uses
 at most two columns according to the available width, reading left
 to right before continuing on the next row: Dependency, Association, Directed
 Association, Connection, Containment. Subscription, Event source and Event target are appended when present in
@@ -46,8 +31,8 @@ the text; each row reserves the height of its tallest cell.
 Multiple columns require at least 398px per cell with a 24px gap; individual
 cells stop widening at 640px.
 
-Single-plan output reserves the measured legend height before checks and annotations.
-Named-state SVG and HTML show one shared legend above all state sections, using
+When shown, single-plan output reserves the measured legend height before checks and annotations.
+Named-state SVG and HTML use one shared legend above all state sections, using
 the widest state's content width up to the same cap, excluding the cross-state routing gutter.
 Its action colors come from all displayed states; if none has a non-containment
 relationship, no legend or legend height is added. State-local checks, annotations

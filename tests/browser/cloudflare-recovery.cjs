@@ -17,7 +17,7 @@ async function main() {
     driver = await Driver.start();
     for (const named of [false, true]) {
       const path = join(temp, 'diagram.html');
-      execFileSync(binary, [...(named ? ['--state', `one=${fixture}`, '--state', `two=${fixture}`] : [fixture]), '--cloudflare-value-matches', '--format', 'html', '-o', path]);
+      execFileSync(binary, [...(named ? ['--state', `one=${fixture}`, '--state', `two=${fixture}`] : [fixture]), '--cloudflare-value-matches', '--no-omit-relationship-legend', '--format', 'html', '-o', path]);
       driver.get(pathToFileURL(path).href);
       wait(() => driver.execute_script("return document.querySelector('#result-count')?.textContent.includes('resources')"), 'viewer ready');
       const find = selector => driver.find_element(By.CSS_SELECTOR, selector);

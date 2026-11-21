@@ -59,7 +59,7 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 | `icon-mode` | `"service-name"` (`"icon"` is rejected) | `"service-name"` |
 | `address-format` | `"qualified"` or `"terraform"` | `"qualified"` |
 | `hide-relationship-legend` | boolean | `false` |
-| `omit-relationship-legend` | boolean; entire card, overriding partial hide | `false` |
+| `omit-relationship-legend` | boolean; entire card, overriding partial hide | `true` when neither legend key is set |
 | `changed-only` | boolean | `false` |
 | `modules` | array of module selector strings | `[]` |
 | `spatial-types` | array of allowed AWS type strings (see below) | `[]` |
@@ -78,6 +78,8 @@ Every boolean can be disabled on the CLI with `--no-` followed by its key, for
 example `--no-changed-only`, `--no-hide-relationship-legend` or
 `--no-html-semantic-diagnostics`. Repeated scalar/boolean CLI options use the last
 value. Booleans use flags on the CLI, not `--key=false` syntax.
+
+After merging config, preset and CLI settings, an explicit `omit-relationship-legend` controls whether the card is present. If only `hide-relationship-legend` is set, `true` shows action colors only and `false` shows the full card. Use `--no-omit-relationship-legend` to restore a card omitted by a lower layer.
 
 Arrays replace the lower layer completely; they never concatenate across layers.
 `modules = []` or `--no-modules` clears module selection. Multiple CLI `--modules`

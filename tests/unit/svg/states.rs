@@ -186,6 +186,10 @@ fn shared_legend_collects_later_state_actions_and_omits_empty_height() {
     let input: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/association-plan.json")).unwrap();
     let mut later = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+    let full = crate::svg::Options {
+        omit_relationship_legend: false,
+        ..Default::default()
+    };
     for node in &mut later.0.nodes {
         node.action = crate::model::Action::Delete;
     }
@@ -209,8 +213,8 @@ fn shared_legend_collects_later_state_actions_and_omits_empty_height() {
             relationships: Vec::new(),
         };
         let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
-        let svg = render_states(&viewed, super::super::AddressFormat::Qualified);
-        let html = crate::html::render_states(&viewed, super::super::AddressFormat::Qualified);
+        let svg = render_states(&viewed, full);
+        let html = crate::html::render_states(&viewed, full);
         assert!(html.contains(&svg));
         let document = roxmltree::Document::parse(&svg).unwrap();
         let legends: Vec<_> = document.descendants().filter(|node| node.attribute("id") == Some("relationship-legend")).collect();
@@ -226,7 +230,7 @@ fn shared_legend_collects_later_state_actions_and_omits_empty_height() {
         relationships: Vec::new(),
     };
     let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
-    let svg = render_states(&viewed, super::super::AddressFormat::Qualified);
+    let svg = render_states(&viewed, full);
     assert!(!svg.contains("relationship-legend"));
     let document = roxmltree::Document::parse(&svg).unwrap();
     let first = document
@@ -373,8 +377,12 @@ fn mixed_width_state_legends_use_shared_content_width_outside_cross_state_gutter
         states: graphs,
         relationships: vec![relationship],
     };
+    let full = crate::svg::Options {
+        omit_relationship_legend: false,
+        ..Default::default()
+    };
     let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
-    let rendered = render_states(&viewed, super::super::AddressFormat::Qualified);
+    let rendered = render_states(&viewed, full);
     let document = roxmltree::Document::parse(&rendered).unwrap();
     let number =
         |node: roxmltree::Node, name| node.attribute(name).unwrap().parse::<usize>().unwrap();
@@ -382,7 +390,7 @@ fn mixed_width_state_legends_use_shared_content_width_outside_cross_state_gutter
     let mut maximum_width = 1120;
     for (id, graph) in &viewed.states {
         let local_layout = Layout::new(graph);
-        let local = super::super::render(graph, &local_layout);
+        let local = super::super::render_with_format(graph, &local_layout, full);
         let independent = roxmltree::Document::parse(&local).unwrap();
         let state_width = number(independent.root_element(), "width");
         maximum_width = maximum_width.max(state_width);
@@ -501,8 +509,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         1120,
     );
     let (_, height) = sections.dimensions(&local);
-    let legend_height = super::super::legend::MeasuredLegend::new(&projected, 1120).height;
-    let offset = 136 + legend_height + sections.height();
+    let offset = 136 + sections.height();
     let obstacles: Vec<_> = [offset, offset + height + 96]
         .into_iter()
         .flat_map(|offset| {
@@ -656,7 +663,6 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
 #[test]
 fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
     use crate::model::architecture::{Architecture, CrossStateEdge, CrossStateProvenance};
-    use crate::svg::AddressFormat;
 
     let mut narrow_input: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/relationship-index-plan.json")).unwrap();
@@ -719,7 +725,10 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
     let render = |architecture: &Architecture| {
         render_states(
             &crate::view::apply(architecture, &Default::default()).unwrap(),
-            AddressFormat::Qualified,
+            crate::svg::Options {
+                omit_relationship_legend: false,
+                ..Default::default()
+            },
         )
     };
     let svg = render(&architecture);

@@ -13,6 +13,12 @@ test('browser settings round trip exact selectors, all options, false, defaults 
   }
   const defaults = settings.parse('{"schema_version":1,"settings":{}}', types);
   assert.deepEqual(defaults, settings.defaults());
+  assert.equal(defaults.omit_relationship_legend, true);
+  for (const hide of [false, true]) {
+    const imported = settings.validate({hide_relationship_legend: hide}, types);
+    assert.equal(imported.omit_relationship_legend, false);
+    assert.equal(imported.hide_relationship_legend, hide);
+  }
   assert.equal(JSON.parse(settings.stringify(defaults, types)).schema_version, 1);
 });
 test('invalid files are rejected without mutation or raw error contents', () => {
