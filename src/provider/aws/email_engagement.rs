@@ -201,12 +201,14 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
-        ("aws_pinpointsmsvoicev2_pool", "origination_identities") => Rule::scalar_set(
+        ("aws_pinpointsmsvoicev2_pool", "origination_identities") => Rule::new(
             "Pool origination identities",
             &[
                 ("aws_pinpointsmsvoicev2_phone_number", &["arn"]),
                 ("aws_pinpointsmsvoicev2_sender_id", &["arn"]),
             ],
+            true,
+            &[],
         ),
         ("aws_pinpointsmsvoicev2_pool", "opt_out_list_name") => Rule::new(
             "Opt-out list",
