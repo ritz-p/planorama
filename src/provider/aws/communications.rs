@@ -93,6 +93,9 @@ fn voice_configuration(kind: &str) -> bool {
 }
 
 pub(crate) fn has_indexed(kind: &str) -> bool {
+    if super::lex_notifications::indexed_kind(kind) {
+        return true;
+    }
     matches!(
         kind,
         VOICE_GROUP
@@ -115,6 +118,9 @@ pub(crate) fn indexed(kind: &str, path: &str) -> bool {
 }
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
+    if let Some(rule) = super::lex_notifications::rule(kind, path) {
+        return Some(rule);
+    }
     Some(match (kind, path) {
         (SLACK | TEAMS, "iam_role_arn") => Rule::new(
             "Chatbot channel role",
@@ -286,6 +292,7 @@ pub(super) fn annotate(
     values: &[(&Value, &Value)],
 ) {
     configured_links::annotate(nodes, refs, values, rule, qualifies);
+    super::lex_notifications::annotate_map(nodes, refs, values);
 }
 
 pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
@@ -337,6 +344,9 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                     })));
     }
     let target = r.target;
+    if super::lex_notifications::rule(&e.nodes[target].resource_type, &r.attribute).is_some() {
+        return super::lex_notifications::qualifies(e, r, source, path);
+    }
     if r.attribute == INSIGHTS {
         return ["disabled", "media_insights_configuration.0.disabled"]
             .iter()
@@ -452,7 +462,7 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         .is_some_and(|value| qualified_arn(&e.nodes[source], value, service, prefix))
 }
 
-fn current(node: &TerraformEntity) -> bool {
+pub(super) fn current(node: &TerraformEntity) -> bool {
     node.provider.is_aws()
         && node.mode == crate::model::EntityMode::Managed
         && node.action != crate::model::Action::Delete
@@ -500,6 +510,9 @@ pub(crate) fn inherit_voice_region(nodes: &mut [TerraformEntity], refs: &[Attrib
 }
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
+    if let Some(owner) = super::lex_notifications::owner(kind) {
+        return Some(owner);
+    }
     if kind == CUSTOMER_PROFILE {
         return Some(("domain_name", "Customer Profiles domain", "Profiles"));
     }
@@ -556,13 +569,19 @@ fn recording_bucket<'a>(_: &str, value: &'a Value) -> Option<std::collections::B
     Some([value].into())
 }
 
-fn same_region(left: &TerraformEntity, right: &TerraformEntity) -> bool {
+pub(super) fn same_region(left: &TerraformEntity, right: &TerraformEntity) -> bool {
     super::scope::scope(left)
         .and_then(|s| s.region)
         .is_some_and(|region| super::scope::scope(right).and_then(|s| s.region) == Some(region))
 }
 
-fn endpoint(e: &Evidence<'_>, node: usize, path: &str, kind: &str, output: &str) -> Option<usize> {
+pub(super) fn endpoint(
+    e: &Evidence<'_>,
+    node: usize,
+    path: &str,
+    kind: &str,
+    output: &str,
+) -> Option<usize> {
     let r = super::lambda_core::unique(e.refs, node, path)?;
     let [source] = *r.sources.as_slice() else {
         return None;
@@ -615,7 +634,7 @@ fn media_element(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: 
         }
 }
 
-fn input_arn(
+pub(super) fn input_arn(
     e: &Evidence<'_>,
     target: usize,
     source: usize,
