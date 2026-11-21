@@ -12188,10 +12188,10 @@
       }
     },
     "aws_odb_autonomous_database": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 768,
-      "gap": "#717 reviewed: Missing: database architecture and ODB network relation #768. Deferred: source_configuration/leader/key references until source discriminator, OCI-versus-AWS identities and encryption provider are selected. Missing: architecture-bearing database currently Logical #768. Missing: ODB network reference #768; no EC2 subnet inference.",
+      "gap": "#717 audit: #768 — Verified ODB network ID. Source, leader and key selectors require separate OCI/AWS identity and encryption contracts.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12203,10 +12203,10 @@
           "kms_key_id",
           "resource_pool_leader_id"
         ],
-        "placement": "Missing: architecture-bearing database currently Logical #768.",
+        "placement": "Supported: Independent spatial Oracle Database@AWS card.",
         "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
-        "network": "Missing: ODB network reference #768; no EC2 subnet inference.",
-        "references": "Missing: database architecture and ODB network relation #768. Deferred: source_configuration/leader/key references until source discriminator, OCI-versus-AWS identities and encryption provider are selected.",
+        "network": "Supported: Configured ODB network references. ODB configuration is independent of EC2 network placement.",
+        "references": "Supported: Verified ODB network ID. Source, leader and key selectors require separate OCI/AWS identity and encryption contracts. See #768.",
         "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
         "summaries": "Intentionally unsupported: passwords, admin_password_source, connect strings and clone data; no secret extraction.",
         "officialDocumentation": "website/docs/r/odb_autonomous_database.html.markdown",
@@ -12226,7 +12226,11 @@
           "resource_pool_leader_id": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/odb.rs",
+          "tests/unit/semantic/odb.rs"
+        ]
       }
     },
     "aws_odb_autonomous_database_secrets_manager_integration": {
@@ -12260,10 +12264,10 @@
       }
     },
     "aws_odb_cloud_autonomous_vm_cluster": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 768,
-      "gap": "#717 reviewed: Missing: exact exclusive paired infrastructure/network ID-or-ARN forms #768; db_servers are OCI identifiers, not EC2 instances. Missing: independent VM cluster currently Logical; architecture presentation #768. Missing: ODB network association #768; not EC2 subnet containment.",
+      "gap": "#717 audit: #768 — Verified exclusive infrastructure/network ID pairs and ARN pairs.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12275,10 +12279,10 @@
           "odb_network_arn",
           "db_servers"
         ],
-        "placement": "Missing: independent VM cluster currently Logical; architecture presentation #768.",
+        "placement": "Supported: Independent spatial Oracle Database@AWS card.",
         "ownership": "Missing: verified infrastructure relation #768; not implicit embedded containment.",
-        "network": "Missing: ODB network association #768; not EC2 subnet containment.",
-        "references": "Missing: exact exclusive paired infrastructure/network ID-or-ARN forms #768; db_servers are OCI identifiers, not EC2 instances.",
+        "network": "Supported: Configured ODB network references. ODB configuration is independent of EC2 network placement.",
+        "references": "Supported: Verified exclusive infrastructure/network ID pairs and ARN pairs. See #768.",
         "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
         "summaries": "Intentionally unsupported: SSH keys, OCI/host endpoints and diagnostic values; capacity summary deferred until an explicit OCPU/ECPU/unit contract.",
         "officialDocumentation": "website/docs/r/odb_cloud_autonomous_vm_cluster.html.markdown",
@@ -12301,14 +12305,18 @@
               "string"
             ]
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/odb.rs",
+          "tests/unit/semantic/odb.rs"
+        ]
       }
     },
     "aws_odb_cloud_exadata_infrastructure": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 768,
-      "gap": "#717 reviewed: Missing: independent infrastructure presentation and incoming VM cluster references #768; no inference from OCI anchors. Missing: architecture-bearing infrastructure currently Logical #768. Not applicable: AZ label is not VPC/subnet evidence.",
+      "gap": "#717 audit: #768 — Verified incoming VM cluster links from explicit infrastructure IDs and ARNs.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12319,10 +12327,10 @@
           "availability_zone",
           "availability_zone_id"
         ],
-        "placement": "Missing: architecture-bearing infrastructure currently Logical #768.",
+        "placement": "Supported: Independent spatial Oracle Database@AWS card.",
         "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
         "network": "Not applicable: AZ label is not VPC/subnet evidence.",
-        "references": "Missing: independent infrastructure presentation and incoming VM cluster references #768; no inference from OCI anchors.",
+        "references": "Supported: Verified incoming VM cluster links from explicit infrastructure IDs and ARNs. See #768.",
         "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
         "summaries": "Intentionally unsupported: customer contacts/OCI URLs and live capacity/status; fixed hardware summary deferred until unit/type allowlist.",
         "officialDocumentation": "website/docs/r/odb_cloud_exadata_infrastructure.html.markdown",
@@ -12339,14 +12347,18 @@
           "availability_zone_id": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/odb.rs",
+          "tests/unit/semantic/odb.rs"
+        ]
       }
     },
     "aws_odb_cloud_vm_cluster": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 768,
-      "gap": "#717 reviewed: Missing: exact exclusive paired infrastructure/network ID-or-ARN forms #768; db_servers are OCI identifiers, not EC2 instances. Missing: independent VM cluster currently Logical; architecture presentation #768. Missing: ODB network association #768; not EC2 subnet containment.",
+      "gap": "#717 audit: #768 — Verified exclusive infrastructure/network ID pairs and ARN pairs.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12358,10 +12370,10 @@
           "odb_network_arn",
           "db_servers"
         ],
-        "placement": "Missing: independent VM cluster currently Logical; architecture presentation #768.",
+        "placement": "Supported: Independent spatial Oracle Database@AWS card.",
         "ownership": "Missing: verified infrastructure relation #768; not implicit embedded containment.",
-        "network": "Missing: ODB network association #768; not EC2 subnet containment.",
-        "references": "Missing: exact exclusive paired infrastructure/network ID-or-ARN forms #768; db_servers are OCI identifiers, not EC2 instances.",
+        "network": "Supported: Configured ODB network references. ODB configuration is independent of EC2 network placement.",
+        "references": "Supported: Verified exclusive infrastructure/network ID pairs and ARN pairs. See #768.",
         "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
         "summaries": "Intentionally unsupported: SSH keys, OCI/host endpoints and diagnostic values; capacity summary deferred until an explicit OCPU/ECPU/unit contract.",
         "officialDocumentation": "website/docs/r/odb_cloud_vm_cluster.html.markdown",
@@ -12384,14 +12396,18 @@
               "string"
             ]
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/odb.rs",
+          "tests/unit/semantic/odb.rs"
+        ]
       }
     },
     "aws_odb_iam_role_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 768,
-      "gap": "#717 reviewed: Missing: typed resource/IAM association #768; KmsTde discriminator cannot imply effective access.  Not applicable: role association does not place either endpoint.",
+      "gap": "#717 audit: #768 — Verified KmsTde cluster and IAM role ARNs.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12401,10 +12417,10 @@
           "iam_role_arn",
           "aws_integration"
         ],
-        "placement": "Supported: retain Logical presentation for aws_odb_iam_role_association; current classification/display is not complete semantic support.",
+        "placement": "Supported: Logical configuration with configured endpoint references.",
         "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
         "network": "Not applicable: role association does not place either endpoint.",
-        "references": "Missing: typed resource/IAM association #768; KmsTde discriminator cannot imply effective access.",
+        "references": "Supported: Verified KmsTde cluster and IAM role ARNs. See #768.",
         "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
         "summaries": "Deferred: no aws_odb_iam_role_association value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
         "officialDocumentation": "website/docs/r/odb_iam_role_association.html.markdown",
@@ -12418,14 +12434,18 @@
           "aws_integration": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/odb.rs",
+          "tests/unit/semantic/odb.rs"
+        ]
       }
     },
     "aws_odb_network": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 768,
-      "gap": "#717 reviewed: Missing: infrastructure network presentation and incoming cluster/peering navigation #768; CIDR ranges do not identify managed EC2 subnets. Missing: independent ODB network architecture #768; must not masquerade as EC2 VPC. Not applicable: OCI network and CIDRs cannot establish EC2 containment.",
+      "gap": "#717 audit: #768 — Verified incoming cluster, Autonomous Database and peering links.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12437,10 +12457,10 @@
           "client_subnet_cidr",
           "backup_subnet_cidr"
         ],
-        "placement": "Missing: independent ODB network architecture #768; must not masquerade as EC2 VPC.",
+        "placement": "Supported: Independent spatial Oracle Database@AWS card.",
         "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
         "network": "Not applicable: OCI network and CIDRs cannot establish EC2 containment.",
-        "references": "Missing: infrastructure network presentation and incoming cluster/peering navigation #768; CIDR ranges do not identify managed EC2 subnets.",
+        "references": "Supported: Verified incoming cluster, Autonomous Database and peering links. See #768.",
         "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
         "summaries": "Intentionally unsupported: policy documents, computed managed-service endpoints and OCI identifiers.",
         "officialDocumentation": "website/docs/r/odb_network.html.markdown",
@@ -12460,14 +12480,18 @@
           "backup_subnet_cidr": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/odb.rs",
+          "tests/unit/semantic/odb.rs"
+        ]
       }
     },
     "aws_odb_network_peering_connection": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 768,
-      "gap": "#717 reviewed: Missing: exact ODB and peer network references #768; docs have misleading connection-ID examples, require implementation contract.  Not applicable: peering is a relationship, not containment of either network.",
+      "gap": "#717 audit: #768 — Verified ODB initiator ID or ARN and a distinct managed ODB network or EC2 VPC peer ID.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12477,10 +12501,10 @@
           "odb_network_arn",
           "peer_network_id"
         ],
-        "placement": "Supported: retain Logical presentation for aws_odb_network_peering_connection; current classification/display is not complete semantic support.",
+        "placement": "Supported: Logical configuration with configured endpoint references.",
         "ownership": "Not applicable: independent network relationship.",
         "network": "Not applicable: peering is a relationship, not containment of either network.",
-        "references": "Missing: exact ODB and peer network references #768; docs have misleading connection-ID examples, require implementation contract.",
+        "references": "Supported: Verified ODB initiator ID or ARN and a distinct managed ODB network or EC2 VPC peer ID. See #768.",
         "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
         "summaries": "Deferred: no aws_odb_network_peering_connection value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
         "officialDocumentation": "website/docs/r/odb_network_peering_connection.html.markdown",
@@ -12494,7 +12518,11 @@
           "peer_network_id": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/odb.rs",
+          "tests/unit/semantic/odb.rs"
+        ]
       }
     },
     "aws_rds_certificate": {

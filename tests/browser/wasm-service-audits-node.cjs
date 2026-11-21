@@ -9,6 +9,7 @@ binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`), mem
 const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
 const native = require('../support/native-reference.cjs')(binary);
 const cases = [
+  {"fixture":"odb-plan","focus":"aws_odb_cloud_vm_cluster.cluster","target":2,"mask":{"odb_network_id":true}},
   {"fixture":"lakeformation-selectors-plan","focus":"aws_lakeformation_permissions.sample4","target":4,"mask":{"table":true}},
   {"fixture":"glue-encryption-plan","focus":"aws_glue_data_catalog_encryption_settings.sample3","target":3,"mask":{"data_catalog_encryption_settings":true}},
   {"fixture":"waf-destinations-plan","focus":"aws_wafv2_web_acl_logging_configuration.sample0","target":0,"mask":{"resource_arn":true}},
