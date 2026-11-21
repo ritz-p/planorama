@@ -381,3 +381,58 @@ fn elastictranscoder_pipeline_validates_reference_scope() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"aws_kms_key_arn":true});
     assert!(!verified(&input, kind, "Transcoder encryption key"));
 }
+
+#[test]
+fn gamelift_game_session_queue_validates_reference_scope() {
+    let kind = "aws_gamelift_game_session_queue";
+    let value = "arn:aws:gamelift:us-east-1:123456789012:alias/alias-example";
+    let mut input = reference_plan(
+        "aws_gamelift_alias",
+        json!({"arn":value}),
+        kind,
+        json!({"destinations":[value]}),
+        json!({"destinations":{"references":["aws_gamelift_alias.source.arn"]}}),
+    );
+    assert!(verified(&input, kind, "Session placement destinations"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Session placement destinations"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"destinations":[true]});
+    assert!(!verified(&input, kind, "Session placement destinations"));
+}
+
+#[test]
+fn gamelift_subnet_group_requires_common_vpc_evidence() {
+    let kind = "aws_gamelift_game_server_group";
+    let mut input = reference_plan(
+        "aws_subnet",
+        json!({"id":"subnet-a","vpc_id":"vpc-a"}),
+        kind,
+        json!({"vpc_subnets":["subnet-a","subnet-b"]}),
+        json!({"vpc_subnets":{"references":["aws_subnet.source.id","aws_subnet.second.id"]}}),
+    );
+    input["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_subnet.second","mode":"managed","type":"aws_subnet","name":"second",
+            "provider_name":"registry.terraform.io/hashicorp/aws",
+            "change":{"actions":["create"],"after":{"id":"subnet-b","vpc_id":"vpc-a"}}
+        }));
+    input["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_subnet.second","provider_config_key":"aws","expressions":{}
+        }));
+    assert!(verified(&input, kind, "FleetIQ subnets"));
+    input["resource_changes"][2]["change"]["after"]["vpc_id"] = json!("vpc-b");
+    assert!(!verified(&input, kind, "FleetIQ subnets"));
+}

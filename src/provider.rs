@@ -49,6 +49,10 @@ pub(crate) fn has_indexed_service_references(
                 resource,
                 "aws_sesv2_configuration_set" | "aws_sesv2_configuration_set_event_destination"
             )
+            || matches!(
+                resource,
+                "aws_gamelift_alias" | "aws_gamelift_build" | "aws_gamelift_script"
+            )
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
@@ -198,6 +202,7 @@ pub(crate) fn indexed_service_reference(
             || aws::sagemaker_studio::indexed(resource, attribute)
             || aws::sagemaker_jobs::indexed(resource, attribute)
             || aws::email_engagement::indexed(resource, attribute)
+            || aws::media_services::indexed(resource, attribute)
             || aws::sagemaker_catalog::indexed(resource, attribute)
             || aws::sagemaker_workforce::indexed(resource, attribute)
             || aws::msk_connect::indexed(resource, attribute)

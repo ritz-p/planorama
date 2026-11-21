@@ -94326,10 +94326,10 @@
       }
     },
     "aws_gamelift_alias": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1653,
-      "gap": "#1653 — Verify routing_strategy.fleet_id for aws_gamelift_alias.",
+      "gap": "#1653 — Verify routing_strategy.fleet_id.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94342,7 +94342,7 @@
         "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Alias resource.",
         "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a GameLift Alias resource. No direct subnet placement follows from routing_strategy.fleet_id.",
-        "references": "Missing: Resolve known routing_strategy.fleet_id only against unique compatible managed endpoints (#1653).",
+        "references": "Supported: Verified references for routing_strategy.fleet_id (#1653).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit routing_strategy.fleet_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/gamelift_alias.html.markdown",
@@ -94367,17 +94367,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed resourceAlias. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_gamelift_build": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1653,
-      "gap": "#1653 — Verify storage_location.bucket, storage_location.role_arn for aws_gamelift_build.",
+      "gap": "#1653 — Verify storage_location.bucket, storage_location.role_arn.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94391,7 +94392,7 @@
         "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Build resource.",
         "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a GameLift Build resource. No direct subnet placement follows from storage_location.bucket.",
-        "references": "Missing: Resolve known storage_location.bucket, storage_location.role_arn only against unique compatible managed endpoints (#1653).",
+        "references": "Supported: Verified references for storage_location.bucket, storage_location.role_arn (#1653).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit storage_location.bucket, storage_location.role_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/gamelift_build.html.markdown",
@@ -94421,17 +94422,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed resourceBuild. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_gamelift_fleet": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1653,
-      "gap": "#1653 — Verify build_id, script_id, instance_role_arn for aws_gamelift_fleet.",
+      "gap": "#1653 — Verify build_id, script_id, instance_role_arn.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94446,7 +94448,7 @@
         "placement": "Supported: Spatial Node for AWS GameLift. Provides a GameLift Fleet resource.",
         "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a GameLift Fleet resource. No direct subnet placement follows from build_id.",
-        "references": "Missing: Resolve known build_id, script_id, instance_role_arn only against unique compatible managed endpoints (#1653).",
+        "references": "Supported: Verified references for build_id, script_id, instance_role_arn (#1653).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit build_id, script_id, instance_role_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/gamelift_fleet.html.markdown",
@@ -94478,17 +94480,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed resourceFleet. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_gamelift_game_server_group": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1653,
-      "gap": "#1653 — Verify role_arn, vpc_subnets for aws_gamelift_game_server_group.",
+      "gap": "#1653 — Verify role_arn, vpc_subnets.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94501,8 +94504,8 @@
         ],
         "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Game Server Group resource.",
         "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
-        "network": "Missing: Check vpc_subnets against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1653).",
-        "references": "Missing: Resolve known role_arn, vpc_subnets only against unique compatible managed endpoints (#1653).",
+        "network": "Supported: Typed network references with common VPC evidence across multiple resolved endpoints (#1653). Service placement remains independent.",
+        "references": "Supported: Verified references for role_arn, vpc_subnets (#1653).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit role_arn, vpc_subnets values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/gamelift_game_server_group.html.markdown",
@@ -94533,17 +94536,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed resourceGameServerGroup. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_gamelift_game_session_queue": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1653,
-      "gap": "#1653 — Verify destinations for aws_gamelift_game_session_queue.",
+      "gap": "#1653 — Verify destinations.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94555,7 +94559,7 @@
         "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Game Session Queue resource.",
         "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a GameLift Game Session Queue resource. No direct subnet placement follows from destinations.",
-        "references": "Missing: Resolve known destinations only against unique compatible managed endpoints (#1653).",
+        "references": "Supported: Verified references for destinations (#1653).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destinations values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/gamelift_game_session_queue.html.markdown",
@@ -94578,17 +94582,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed resourceGameSessionQueue. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_gamelift_script": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1653,
-      "gap": "#1653 — Verify storage_location.bucket, storage_location.role_arn for aws_gamelift_script.",
+      "gap": "#1653 — Verify storage_location.bucket, storage_location.role_arn.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94602,7 +94607,7 @@
         "placement": "Supported: Logical Node for AWS GameLift. Provides a GameLift Script resource.",
         "ownership": "Not applicable: Keep AWS GameLift node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a GameLift Script resource. No direct subnet placement follows from storage_location.bucket.",
-        "references": "Missing: Resolve known storage_location.bucket, storage_location.role_arn only against unique compatible managed endpoints (#1653).",
+        "references": "Supported: Verified references for storage_location.bucket, storage_location.role_arn (#1653).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit storage_location.bucket, storage_location.role_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/gamelift_script.html.markdown",
@@ -94632,7 +94637,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed resourceScript. No same-name data registration in the pinned schema.",
         "dataContracts": {}
