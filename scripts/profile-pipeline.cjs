@@ -62,6 +62,23 @@ function wasm() {
   const input = workload.input ? fs.readFileSync(workload.input, 'utf8') :
     JSON.stringify(Object.entries(workload.states).map(([state, name]) => ({state, json: fs.readFileSync(name, 'utf8')})));
   const stages = [];
+  const spans = [], pending = [];
+  binding.set_profile_callback?.((stage, enter) => {
+    const now = performance.now(), usage = process.cpuUsage();
+    if (enter) {
+      const id = spans.length + 1;
+      spans.push({id, parent: pending.at(-1)?.id ?? 0, stage});
+      pending.push({id, time: now, usage});
+    } else {
+      const start = pending.pop();
+      const row = spans[start.id - 1];
+      if (row.stage !== stage) throw new Error('unbalanced Wasm timing spans');
+      Object.assign(row, {inclusive_ms: now - start.time,
+        process_cpu_ms: (usage.user - start.usage.user + usage.system - start.usage.system) / 1000,
+        linear_memory_bytes_at_end: instance.memory.buffer.byteLength,
+        process_peak_rss_kib_at_end: process.resourceUsage().maxRSS});
+    }
+  });
   const started = performance.now();
   let time = started, cpu = process.cpuUsage(), stage = 'input_transfer';
   function boundary(next) {
@@ -77,7 +94,8 @@ function wasm() {
   const generate = workload.input ? binding.generate_with_progress : binding.generate_named_with_progress;
   const result = generate(input, options, boundary);
   boundary('complete');
-  return {total_ms: time - started, result_bytes: Buffer.byteLength(result), stages};
+  binding.set_profile_callback?.(undefined);
+  return {total_ms: time - started, result_bytes: Buffer.byteLength(result), stages, spans};
 }
 
 const measurement = engine === 'native' ? native() : wasm();

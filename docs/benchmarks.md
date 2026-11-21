@@ -73,7 +73,7 @@ root in the development environment:
 
 ```sh
 cargo build --locked --release --no-default-features --bin planorama
-sh scripts/build-wasm-bindings.sh output/wasm-profile
+PLANORAMA_WASM_PROFILE=1 sh scripts/build-wasm-bindings.sh output/wasm-profile
 node scripts/profile-pipeline.cjs native target/release/planorama typical svg
 node scripts/profile-pipeline.cjs wasm output/wasm-profile typical svg
 ```
@@ -86,7 +86,10 @@ with comparisons. Both engines discard the diagram after measurement.
 On Linux, native timing rows also report inclusive CPU milliseconds for the
 calling thread from `/proc/thread-self/schedstat` and process peak resident KiB
 through the end of each span from `VmHWM`, when available. The scheduler counter
-can be coarse for short spans. Wasm measures elapsed and Node process CPU between
+can be coarse for short spans. The opt-in Wasm profile build records nested
+spans for the same parser, semantic transform, placement and routing operations.
+Load it with the profiling driver, which supplies the span callback. Standard
+distributions omit that instrumentation. Both builds measure elapsed and Node process CPU between
 existing progress callbacks. Selection includes semantic transformation, and
 output includes final transfer/serialization and any named-state gutter routing.
 Linear memory bytes are allocated Wasm capacity. Peak resident KiB includes
