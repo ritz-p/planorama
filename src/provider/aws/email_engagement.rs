@@ -332,6 +332,112 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[],
         )
         .unordered(&["workmail_action"]),
+        ("aws_sesv2_configuration_set", "delivery_options.sending_pool_name") => Rule::new(
+            "Dedicated IP pool",
+            &[("aws_sesv2_dedicated_ip_pool", &["pool_name"])],
+            false,
+            &["delivery_options"],
+        ),
+        ("aws_sesv2_configuration_set_event_destination", "configuration_set_name") => Rule::new(
+            "SES configuration set",
+            &[("aws_sesv2_configuration_set", &["configuration_set_name"])],
+            false,
+            &[],
+        ),
+        (
+            "aws_sesv2_configuration_set_event_destination",
+            "event_destination.event_bridge_destination.event_bus_arn",
+        ) => Rule::new(
+            "EventBridge event bus",
+            &[("aws_cloudwatch_event_bus", &["arn"])],
+            false,
+            &[
+                "event_destination",
+                "event_destination.event_bridge_destination",
+            ],
+        ),
+        (
+            "aws_sesv2_configuration_set_event_destination",
+            "event_destination.kinesis_firehose_destination.delivery_stream_arn",
+        ) => Rule::new(
+            "Firehose delivery stream",
+            &[("aws_kinesis_firehose_delivery_stream", &["arn"])],
+            false,
+            &[
+                "event_destination",
+                "event_destination.kinesis_firehose_destination",
+            ],
+        ),
+        (
+            "aws_sesv2_configuration_set_event_destination",
+            "event_destination.pinpoint_destination.application_arn",
+        ) => Rule::new(
+            "Pinpoint application",
+            &[("aws_pinpoint_app", &["arn"])],
+            false,
+            &[
+                "event_destination",
+                "event_destination.pinpoint_destination",
+            ],
+        ),
+        (
+            "aws_sesv2_configuration_set_event_destination",
+            "event_destination.sns_destination.topic_arn",
+        ) => Rule::new(
+            "SNS topic",
+            &[("aws_sns_topic", &["arn"])],
+            false,
+            &["event_destination", "event_destination.sns_destination"],
+        ),
+        ("aws_sesv2_dedicated_ip_assignment", "destination_pool_name") => Rule::new(
+            "Destination IP pool",
+            &[("aws_sesv2_dedicated_ip_pool", &["pool_name"])],
+            false,
+            &[],
+        ),
+        ("aws_sesv2_email_identity", "configuration_set_name") => Rule::new(
+            "Default configuration set",
+            &[("aws_sesv2_configuration_set", &["configuration_set_name"])],
+            false,
+            &[],
+        ),
+        ("aws_sesv2_email_identity_feedback_attributes", "email_identity") => Rule::new(
+            "SES email identity",
+            &[("aws_sesv2_email_identity", &["email_identity"])],
+            false,
+            &[],
+        ),
+        ("aws_sesv2_email_identity_mail_from_attributes", "email_identity") => Rule::new(
+            "SES email identity",
+            &[("aws_sesv2_email_identity", &["email_identity"])],
+            false,
+            &[],
+        ),
+        ("aws_sesv2_email_identity_policy", "email_identity") => Rule::new(
+            "SES email identity",
+            &[("aws_sesv2_email_identity", &["email_identity"])],
+            false,
+            &[],
+        ),
+        ("aws_sesv2_tenant_resource_association", "tenant_name") => Rule::new(
+            "SES tenant",
+            &[("aws_sesv2_tenant", &["tenant_name"])],
+            false,
+            &[],
+        ),
+        ("aws_sesv2_tenant_resource_association", "resource_arn") => Rule::new(
+            "Tenant SES resource",
+            &[
+                ("aws_ses_configuration_set", &["arn"]),
+                ("aws_sesv2_configuration_set", &["arn"]),
+                ("aws_ses_domain_identity", &["arn"]),
+                ("aws_ses_email_identity", &["arn"]),
+                ("aws_sesv2_email_identity", &["arn"]),
+                ("aws_ses_template", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }

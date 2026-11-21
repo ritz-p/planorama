@@ -267,3 +267,29 @@ fn ses_receipt_rule_validates_reference_scope() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"rule_set_name":true});
     assert!(!verified(&input, kind, "Receipt rule set"));
 }
+
+#[test]
+fn sesv2_tenant_resource_association_validates_reference_scope() {
+    let kind = "aws_sesv2_tenant_resource_association";
+    let value = "arn:aws:ses:us-east-1:123456789012:template/example";
+    let mut input = reference_plan(
+        "aws_ses_template",
+        json!({"arn":value}),
+        kind,
+        json!({"resource_arn":value}),
+        json!({"resource_arn":{"references":["aws_ses_template.source.arn"]}}),
+    );
+    assert!(verified(&input, kind, "Tenant SES resource"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Tenant SES resource"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"resource_arn":true});
+    assert!(!verified(&input, kind, "Tenant SES resource"));
+}

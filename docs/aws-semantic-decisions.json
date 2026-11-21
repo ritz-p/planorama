@@ -93387,10 +93387,10 @@
       }
     },
     "aws_sesv2_configuration_set": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1649,
-      "gap": "#1649 — Verify delivery_options.sending_pool_name for aws_sesv2_configuration_set.",
+      "gap": "#1649 — Verify delivery_options.sending_pool_name.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93402,7 +93402,7 @@
         "placement": "Supported: Logical Controller for AWS SESv2 (Simple Email V2). Terraform resource for managing an AWS SESv2 (Simple Email V2) Configuration Set.",
         "ownership": "Not applicable: Keep AWS SESv2 (Simple Email V2) controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS SESv2 (Simple Email V2) Configuration Set. No direct subnet placement follows from delivery_options.sending_pool_name.",
-        "references": "Missing: Resolve known delivery_options.sending_pool_name only against unique compatible managed endpoints (#1649).",
+        "references": "Supported: Verified references for delivery_options.sending_pool_name (#1649).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit delivery_options.sending_pool_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/sesv2_configuration_set.html.markdown",
@@ -93423,7 +93423,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationSet. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -93450,10 +93451,10 @@
       }
     },
     "aws_sesv2_configuration_set_event_destination": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1649,
-      "gap": "#1649 — Verify configuration_set_name, event_destination.event_bridge_destination.event_bus_arn, event_destination.kinesis_firehose_destination.delivery_stream_arn, event_destination.pinpoint_destination.application_arn, event_destination.sns_destination.topic_arn for aws_sesv2_configuration_set_event_destination.",
+      "gap": "#1649 — Verify configuration_set_name, event_destination.event_bridge_destination.event_bus_arn, event_destination.kinesis_firehose_destination.delivery_stream_arn, event_destination.pinpoint_destination.application_arn, event_destination.sns_destination.topic_arn.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93467,9 +93468,9 @@
           "id"
         ],
         "placement": "Supported: Logical Controller for AWS SESv2 (Simple Email V2). Terraform resource for managing an AWS SESv2 (Simple Email V2) Configuration Set Event Destination.",
-        "ownership": "Missing: Verify the service parent selected by configuration_set_name before presenting this helper under that parent (#1649).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1649).",
         "network": "Not applicable: Terraform resource for managing an AWS SESv2 (Simple Email V2) Configuration Set Event Destination. No direct subnet placement follows from configuration_set_name.",
-        "references": "Missing: Resolve known configuration_set_name, event_destination.event_bridge_destination.event_bus_arn, event_destination.kinesis_firehose_destination.delivery_stream_arn, event_destination.pinpoint_destination.application_arn, event_destination.sns_destination.topic_arn only against unique compatible managed endpoints (#1649).",
+        "references": "Supported: Verified references for configuration_set_name, event_destination.event_bridge_destination.event_bus_arn, event_destination.kinesis_firehose_destination.delivery_stream_arn, event_destination.pinpoint_destination.application_arn, event_destination.sns_destination.topic_arn (#1649).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit configuration_set_name, event_destination.event_bridge_destination.event_bus_arn, event_destination.kinesis_firehose_destination.delivery_stream_arn, event_destination.pinpoint_destination.application_arn, event_destination.sns_destination.topic_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/sesv2_configuration_set_event_destination.html.markdown",
@@ -93513,7 +93514,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationSetEventDestination. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -93572,10 +93574,10 @@
       }
     },
     "aws_sesv2_dedicated_ip_assignment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1649,
-      "gap": "#1649 — Verify destination_pool_name for aws_sesv2_dedicated_ip_assignment.",
+      "gap": "#1649 — Verify destination_pool_name.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93587,7 +93589,7 @@
         "placement": "Supported: Logical Association for AWS SESv2 (Simple Email V2). Terraform resource for managing an AWS SESv2 (Simple Email V2) Dedicated IP Assignment.",
         "ownership": "Not applicable: Keep AWS SESv2 (Simple Email V2) association independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS SESv2 (Simple Email V2) Dedicated IP Assignment. No direct subnet placement follows from destination_pool_name.",
-        "references": "Missing: Resolve known destination_pool_name only against unique compatible managed endpoints (#1649).",
+        "references": "Supported: Verified references for destination_pool_name (#1649).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destination_pool_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/sesv2_dedicated_ip_assignment.html.markdown",
@@ -93607,7 +93609,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceDedicatedIPAssignment. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -93680,10 +93683,10 @@
       }
     },
     "aws_sesv2_email_identity": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1649,
-      "gap": "#1649 — Verify configuration_set_name for aws_sesv2_email_identity.",
+      "gap": "#1649 — Verify configuration_set_name.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93693,9 +93696,9 @@
           "arn"
         ],
         "placement": "Supported: Logical Node for AWS SESv2 (Simple Email V2). Terraform resource for managing an AWS SESv2 (Simple Email V2) Email Identity.",
-        "ownership": "Missing: Verify the service parent selected by configuration_set_name before presenting this helper under that parent (#1649).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1649).",
         "network": "Not applicable: Terraform resource for managing an AWS SESv2 (Simple Email V2) Email Identity. No direct subnet placement follows from configuration_set_name.",
-        "references": "Missing: Resolve known configuration_set_name only against unique compatible managed endpoints (#1649). Cognito email configuration already accepts a verified identity ARN.",
+        "references": "Supported: Verified references for configuration_set_name (#1649).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit dkim_signing_attributes.domain_signing_private_key from dedicated summaries.",
         "officialDocumentation": "website/docs/r/sesv2_email_identity.html.markdown",
@@ -93716,7 +93719,8 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/cognito.rs"
+          "src/provider/aws/cognito.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceEmailIdentity. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -93743,10 +93747,10 @@
       }
     },
     "aws_sesv2_email_identity_feedback_attributes": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1649,
-      "gap": "#1649 — Verify email_identity for aws_sesv2_email_identity_feedback_attributes.",
+      "gap": "#1649 — Verify email_identity.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93755,9 +93759,9 @@
           "email_identity"
         ],
         "placement": "Supported: Logical Node for AWS SESv2 (Simple Email V2). Terraform resource for managing an AWS SESv2 (Simple Email V2) Email Identity Feedback Attributes.",
-        "ownership": "Missing: Verify the service parent selected by email_identity before presenting this helper under that parent (#1649).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1649).",
         "network": "Not applicable: Terraform resource for managing an AWS SESv2 (Simple Email V2) Email Identity Feedback Attributes. No direct subnet placement follows from email_identity.",
-        "references": "Missing: Resolve known email_identity only against unique compatible managed endpoints (#1649).",
+        "references": "Supported: Verified references for email_identity (#1649).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit email_identity values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/sesv2_email_identity_feedback_attributes.html.markdown",
@@ -93773,17 +93777,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceEmailIdentityFeedbackAttributes. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_sesv2_email_identity_mail_from_attributes": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1649,
-      "gap": "#1649 — Verify email_identity for aws_sesv2_email_identity_mail_from_attributes.",
+      "gap": "#1649 — Verify email_identity.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93792,9 +93797,9 @@
           "email_identity"
         ],
         "placement": "Supported: Logical Node for AWS SESv2 (Simple Email V2). Terraform resource for managing an AWS SESv2 (Simple Email V2) Email Identity Mail From Attributes.",
-        "ownership": "Missing: Verify the service parent selected by email_identity before presenting this helper under that parent (#1649).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1649).",
         "network": "Not applicable: Terraform resource for managing an AWS SESv2 (Simple Email V2) Email Identity Mail From Attributes. No direct subnet placement follows from email_identity.",
-        "references": "Missing: Resolve known email_identity only against unique compatible managed endpoints (#1649).",
+        "references": "Supported: Verified references for email_identity (#1649).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit email_identity values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/sesv2_email_identity_mail_from_attributes.html.markdown",
@@ -93810,7 +93815,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceEmailIdentityMailFromAttributes. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -93830,10 +93836,10 @@
       }
     },
     "aws_sesv2_email_identity_policy": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1649,
-      "gap": "#1649 — Verify email_identity for aws_sesv2_email_identity_policy.",
+      "gap": "#1649 — Verify email_identity.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93842,9 +93848,9 @@
           "email_identity"
         ],
         "placement": "Supported: Logical Policy for AWS SESv2 (Simple Email V2). Terraform resource for managing an AWS SESv2 (Simple Email V2) Email Identity Policy.",
-        "ownership": "Missing: Verify the service parent selected by email_identity before presenting this helper under that parent (#1649).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1649).",
         "network": "Not applicable: Terraform resource for managing an AWS SESv2 (Simple Email V2) Email Identity Policy. No direct subnet placement follows from email_identity.",
-        "references": "Missing: Resolve known email_identity only against unique compatible managed endpoints (#1649).",
+        "references": "Supported: Verified references for email_identity (#1649).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit policy from dedicated summaries.",
         "officialDocumentation": "website/docs/r/sesv2_email_identity_policy.html.markdown",
@@ -93860,7 +93866,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceEmailIdentityPolicy. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -93962,10 +93969,10 @@
       }
     },
     "aws_sesv2_tenant_resource_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1649,
-      "gap": "#1649 — Verify tenant_name, resource_arn for aws_sesv2_tenant_resource_association.",
+      "gap": "#1649 — Verify tenant_name, resource_arn.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93977,7 +93984,7 @@
         "placement": "Supported: Logical Association for AWS SESv2 (Simple Email V2). Manages an AWS SESv2 (Simple Email V2) Tenant Resource Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Manages an AWS SESv2 (Simple Email V2) Tenant Resource Association. No direct subnet placement follows from tenant_name.",
-        "references": "Missing: Resolve known tenant_name, resource_arn only against unique compatible managed endpoints (#1649).",
+        "references": "Supported: Verified references for tenant_name, resource_arn (#1649).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit tenant_name, resource_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/sesv2_tenant_resource_association.html.markdown",
@@ -93997,7 +94004,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newTenantResourceAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}

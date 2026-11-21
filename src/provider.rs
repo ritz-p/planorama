@@ -45,6 +45,10 @@ pub(crate) fn has_indexed_service_references(
                 resource,
                 "aws_ses_event_destination" | "aws_ses_receipt_rule"
             )
+            || matches!(
+                resource,
+                "aws_sesv2_configuration_set" | "aws_sesv2_configuration_set_event_destination"
+            )
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
