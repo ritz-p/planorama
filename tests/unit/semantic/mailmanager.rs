@@ -58,3 +58,24 @@ fn pinpoint_event_stream_accepts_only_the_documented_stream_types() {
     );
     assert!(super::rule("aws_pinpoint_email_template", "application_id").is_none());
 }
+
+#[test]
+fn sms_pool_and_keyword_use_distinct_origination_types() {
+    let pool = super::rule("aws_pinpointsmsvoicev2_pool", "origination_identities").unwrap();
+    let keyword =
+        super::rule("aws_pinpointsmsvoicev2_keyword", "origination_identity_arn").unwrap();
+    assert_eq!(
+        pool.outputs,
+        &[
+            ("aws_pinpointsmsvoicev2_phone_number", &["arn"][..]),
+            ("aws_pinpointsmsvoicev2_sender_id", &["arn"][..]),
+        ]
+    );
+    assert_eq!(
+        keyword.outputs,
+        &[
+            ("aws_pinpointsmsvoicev2_phone_number", &["arn"][..]),
+            ("aws_pinpointsmsvoicev2_pool", &["arn"][..]),
+        ]
+    );
+}

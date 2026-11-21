@@ -144,6 +144,93 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_pinpointsmsvoicev2_event_destination", "configuration_set_name") => Rule::new(
+            "SMS configuration set",
+            &[("aws_pinpointsmsvoicev2_configuration_set", &["name"])],
+            false,
+            &[],
+        ),
+        (
+            "aws_pinpointsmsvoicev2_event_destination",
+            "cloudwatch_logs_destination.log_group_arn",
+        ) => Rule::new(
+            "CloudWatch log group",
+            &[("aws_cloudwatch_log_group", &["arn"])],
+            false,
+            &["cloudwatch_logs_destination"],
+        ),
+        (
+            "aws_pinpointsmsvoicev2_event_destination",
+            "kinesis_firehose_destination.delivery_stream_arn",
+        ) => Rule::new(
+            "Firehose delivery stream",
+            &[("aws_kinesis_firehose_delivery_stream", &["arn"])],
+            false,
+            &["kinesis_firehose_destination"],
+        ),
+        ("aws_pinpointsmsvoicev2_event_destination", "sns_destination.topic_arn") => Rule::new(
+            "SNS topic",
+            &[("aws_sns_topic", &["arn"])],
+            false,
+            &["sns_destination"],
+        ),
+        ("aws_pinpointsmsvoicev2_keyword", "origination_identity_arn") => Rule::new(
+            "Keyword origination identity",
+            &[
+                ("aws_pinpointsmsvoicev2_phone_number", &["arn"]),
+                ("aws_pinpointsmsvoicev2_pool", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_pinpointsmsvoicev2_phone_number", "opt_out_list_name") => Rule::new(
+            "Opt-out list",
+            &[("aws_pinpointsmsvoicev2_opt_out_list", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_pinpointsmsvoicev2_phone_number", "two_way_channel_arn") => Rule::new(
+            "Inbound SNS topic",
+            &[("aws_sns_topic", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_pinpointsmsvoicev2_phone_number", "two_way_channel_role") => Rule::new(
+            "Inbound messaging role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_pinpointsmsvoicev2_pool", "origination_identities") => Rule::scalar_set(
+            "Pool origination identities",
+            &[
+                ("aws_pinpointsmsvoicev2_phone_number", &["arn"]),
+                ("aws_pinpointsmsvoicev2_sender_id", &["arn"]),
+            ],
+        ),
+        ("aws_pinpointsmsvoicev2_pool", "opt_out_list_name") => Rule::new(
+            "Opt-out list",
+            &[("aws_pinpointsmsvoicev2_opt_out_list", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_pinpointsmsvoicev2_pool", "two_way_channel_arn") => Rule::new(
+            "Inbound SNS topic",
+            &[("aws_sns_topic", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_pinpointsmsvoicev2_resource_policy", "resource_arn") => Rule::new(
+            "SMS policy resource",
+            &[
+                ("aws_pinpointsmsvoicev2_phone_number", &["arn"]),
+                ("aws_pinpointsmsvoicev2_pool", &["arn"]),
+                ("aws_pinpointsmsvoicev2_sender_id", &["arn"]),
+                ("aws_pinpointsmsvoicev2_opt_out_list", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
