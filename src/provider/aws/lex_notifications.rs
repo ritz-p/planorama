@@ -6,8 +6,12 @@ const LOCALE: &str = "aws_lexv2models_bot_locale";
 const VERSION: &str = "aws_lexv2models_bot_version";
 
 pub(super) fn indexed_kind(kind: &str) -> bool {
-    matches!(kind, BOT)
+    matches!(kind, BOT | INTENT | SLOT_TYPE)
 }
+
+const INTENT: &str = "aws_lexv2models_intent";
+const SLOT: &str = "aws_lexv2models_slot";
+const SLOT_TYPE: &str = "aws_lexv2models_slot_type";
 
 pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
     if kind == VERSION && locale_map_key(path).is_some() {
@@ -35,6 +39,56 @@ pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        (INTENT | SLOT | SLOT_TYPE, "bot_id") => {
+            Rule::new("Lex bot", &[(BOT, &["id"])], false, &[])
+        }
+        (INTENT | SLOT | SLOT_TYPE, "locale_id") => {
+            Rule::new("Lex bot locale", &[(LOCALE, &["locale_id"])], false, &[])
+        }
+        (INTENT | SLOT | SLOT_TYPE, "bot_version") => Rule::new(
+            "Lex bot version",
+            &[(VERSION, &["bot_version"])],
+            false,
+            &[],
+        ),
+        (INTENT, "slot_priority.slot_id") => Rule::new(
+            "Lex priority slot",
+            &[(SLOT, &["slot_id"])],
+            false,
+            &["slot_priority"],
+        ),
+        (INTENT, "kendra_configuration.kendra_index") => Rule::new(
+            "Lex Kendra index",
+            &[("aws_kendra_index", &["arn"])],
+            false,
+            &[],
+        ),
+        (SLOT, "intent_id") => {
+            Rule::new("Lex slot intent", &[(INTENT, &["intent_id"])], false, &[])
+        }
+        (SLOT, "slot_type_id") => Rule::new(
+            "Lex custom slot type",
+            &[(SLOT_TYPE, &["slot_type_id"])],
+            false,
+            &[],
+        ),
+        (SLOT_TYPE, "composite_slot_type_setting.sub_slots.slot_type_id") => Rule::new(
+            "Lex composite subtype",
+            &[(SLOT_TYPE, &["slot_type_id"])],
+            false,
+            &["composite_slot_type_setting.sub_slots"],
+        ),
+        (SLOT_TYPE, "external_source_setting.grammar_slot_type_setting.source.s3_bucket_name") => {
+            Rule::new(
+                "Lex grammar bucket",
+                &[("aws_s3_bucket", &["bucket", "id"])],
+                false,
+                &[],
+            )
+        }
+        (SLOT_TYPE, "external_source_setting.grammar_slot_type_setting.source.kms_key_arn") => {
+            Rule::new("Lex grammar key", &[("aws_kms_key", &["arn"])], false, &[])
+        }
         _ => return None,
     })
 }
@@ -43,6 +97,9 @@ pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static 
     match kind {
         LOCALE => Some(("bot_id", "Lex bot", "Locales")),
         VERSION => Some(("bot_id", "Lex bot", "Versions")),
+        INTENT => Some(("locale_id", "Lex bot locale", "Intents")),
+        SLOT => Some(("intent_id", "Lex slot intent", "Slots")),
+        SLOT_TYPE => Some(("locale_id", "Lex bot locale", "Slot types")),
         _ => None,
     }
 }
@@ -81,6 +138,27 @@ pub(super) fn qualifies(
         (BOT, "members.id") => member(e, target, source, path),
         (_, "bot_version") => {
             same_bot(e, target, source) && e.text(target, path).is_some_and(|v| v != "DRAFT")
+        }
+        (INTENT | SLOT | SLOT_TYPE, "locale_id") => {
+            same_bot(e, target, source)
+                && e.text(target, "bot_version")
+                    .is_some_and(|v| e.text(source, "bot_version") == Some(v))
+        }
+        (INTENT, "slot_priority.slot_id") => {
+            same_locale(e, target, source)
+                && super::communications::endpoint(e, source, "intent_id", INTENT, "intent_id")
+                    == Some(target)
+        }
+        (SLOT, "intent_id" | "slot_type_id")
+        | (SLOT_TYPE, "composite_slot_type_setting.sub_slots.slot_type_id") => {
+            same_locale(e, target, source)
+        }
+        (INTENT, "kendra_configuration.kendra_index") => {
+            e.text(target, "parent_intent_signature") == Some("AMAZON.KendraSearchIntent")
+                && super::communications::input_arn(e, target, source, path, "kendra", "index/")
+        }
+        (SLOT_TYPE, "external_source_setting.grammar_slot_type_setting.source.kms_key_arn") => {
+            super::communications::input_arn(e, target, source, path, "kms", "key/")
         }
         _ => true,
     }
@@ -132,6 +210,14 @@ pub(super) fn annotate_map(
             r.service_reference_verified = valid;
         }
     }
+}
+
+fn same_locale(e: &Evidence<'_>, a: usize, b: usize) -> bool {
+    same_bot(e, a, b)
+        && ["locale_id", "bot_version"].iter().all(|field| {
+            e.text(a, field)
+                .is_some_and(|v| e.text(b, field) == Some(v))
+        })
 }
 
 fn member(e: &Evidence<'_>, target: usize, source: usize, path: &str) -> bool {
