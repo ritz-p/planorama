@@ -299,3 +299,88 @@ fn communications_chime_cdr_and_profile_key_require_explicit_settings() {
         label(super::PROFILE_DOMAIN, super::PROFILE_KEY)
     ));
 }
+
+#[test]
+fn communications_sip_application_uses_its_selected_region() {
+    let arn = "arn:aws:lambda:us-east-1:123456789012:function:sip:active";
+    let host = "connector.voiceconnector.chime.aws";
+    let mut fixture = plan(&[
+        ("aws_lambda_alias.sip", json!({"arn":arn}), json!({})),
+        (
+            "aws_chime_voice_connector.sip",
+            json!({"id":"voice","aws_region":"us-west-2","outbound_host_name":host}),
+            json!({}),
+        ),
+        (
+            "aws_chimesdkvoice_sip_media_application.main",
+            json!({"aws_region":"us-east-1","id":"sma","endpoints":[{"lambda_arn":arn}]}),
+            json!({
+                "endpoints":[{"lambda_arn":{"references":["aws_lambda_alias.sip.arn"]}}]
+            }),
+        ),
+        (
+            "aws_chimesdkvoice_sip_rule.main",
+            json!({"trigger_type":"RequestUriHostname","trigger_value":host,
+            "target_applications":[{"aws_region":"us-east-1","sip_media_application_id":"sma","priority":1}]}),
+            json!({
+                "trigger_value":{"references":["aws_chime_voice_connector.sip.outbound_host_name"]},
+                "target_applications":[{"sip_media_application_id":{"references":["aws_chimesdkvoice_sip_media_application.main.id"]}}]
+            }),
+        ),
+    ]);
+    let app = "aws_chimesdkvoice_sip_media_application.main";
+    let rule = "aws_chimesdkvoice_sip_rule.main";
+    let targets = "target_applications.sip_media_application_id";
+    assert!(verified(
+        &graph(&fixture),
+        app,
+        "endpoints.lambda_arn",
+        label(super::SIP_APP, "endpoints.lambda_arn")
+    ));
+    assert!(verified(
+        &graph(&fixture),
+        rule,
+        "trigger_value",
+        label(super::SIP_RULE, "trigger_value")
+    ));
+    assert!(verified(
+        &graph(&fixture),
+        rule,
+        targets,
+        label(super::SIP_RULE, targets)
+    ));
+    let mut extra_endpoint = fixture.clone();
+    extra_endpoint["resource_changes"][2]["change"]["after"]["endpoints"] =
+        json!([{"lambda_arn":arn},{"lambda_arn":arn}]);
+    let endpoints =
+        extra_endpoint["configuration"]["root_module"]["resources"][2]["expressions"]["endpoints"]
+            .as_array_mut()
+            .unwrap();
+    endpoints.push(endpoints[0].clone());
+    assert!(!verified(
+        &graph(&extra_endpoint),
+        app,
+        "endpoints.lambda_arn",
+        label(super::SIP_APP, "endpoints.lambda_arn")
+    ));
+    fixture["resource_changes"][2]["change"]["after"]["aws_region"] = json!("us-west-2");
+    fixture["resource_changes"][3]["change"]["after"]["trigger_type"] = json!("ToPhoneNumber");
+    assert!(!verified(
+        &graph(&fixture),
+        app,
+        "endpoints.lambda_arn",
+        label(super::SIP_APP, "endpoints.lambda_arn")
+    ));
+    assert!(!verified(
+        &graph(&fixture),
+        rule,
+        "trigger_value",
+        label(super::SIP_RULE, "trigger_value")
+    ));
+    assert!(!verified(
+        &graph(&fixture),
+        rule,
+        targets,
+        label(super::SIP_RULE, targets)
+    ));
+}
