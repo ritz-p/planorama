@@ -89283,7 +89283,7 @@
       }
     },
     "aws_connect_queue": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1601,
       "gap": "#1601 — Verify the instance, referenced schedule and quick connects, and explicitly configured outbound number and flow. Outbound caller name and status do not establish live routing. Verify ownership by the instance. Shared schedules and quick connects remain independent.",
@@ -89304,7 +89304,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Queue",
         "ownership": "Missing: Verify ownership by the instance. Shared schedules and quick connects remain independent.",
         "network": "Not applicable: Queue membership and outbound configuration are service relationships without VPC placement.",
-        "references": "Missing: Verify the instance, referenced schedule and quick connects, and explicitly configured outbound number and flow. Outbound caller name and status do not establish live routing.",
+        "references": "Supported: Verify the instance, referenced schedule and quick connects, and explicitly configured outbound number and flow. Outbound caller name and status do not establish live routing. Verify ownership by the instance. Shared schedules and quick connects remain independent.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The instance qualifies schedule, queue, quick-connect and flow identifiers. Qualify number scope independently.",
         "summaries": "Intentionally unsupported: omit caller names, phone numbers and queue status. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_queue.html.markdown",
@@ -89355,7 +89355,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceQueue. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -89390,7 +89392,7 @@
       }
     },
     "aws_connect_quick_connect": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1601,
       "gap": "#1601 — Verify the owner instance and type-gated queue or user and contact flow. The PHONE form contains a literal number and does not identify a managed Connect claim. Qualify the independently reusable quick connect by its instance.",
@@ -89410,7 +89412,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Quick Connect",
         "ownership": "Missing: Qualify the independently reusable quick connect by its instance.",
         "network": "Not applicable: Quick-connect routes do not configure a VPC or subnet.",
-        "references": "Missing: Verify the owner instance and type-gated queue or user and contact flow. The PHONE form contains a literal number and does not identify a managed Connect claim.",
+        "references": "Supported: Verify the owner instance and type-gated queue or user and contact flow. The PHONE form contains a literal number and does not identify a managed Connect claim. Qualify the independently reusable quick connect by its instance.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. For typed queue and user targets, require the same verified instance and scope.",
         "summaries": "Intentionally unsupported: omit literal phone numbers and runtime transfer state. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_quick_connect.html.markdown",
@@ -89461,7 +89463,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceQuickConnect. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -89496,7 +89500,7 @@
       }
     },
     "aws_connect_routing_profile": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1601,
       "gap": "#1601 — Verify instance and default outbound queue plus each configured queue ID under unordered queue configs. Returned queue ARN or name and media concurrency do not create extra targets. Verify the profile's instance and leave its queues independently reusable.",
@@ -89516,7 +89520,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Routing Profile.",
         "ownership": "Missing: Verify the profile's instance and leave its queues independently reusable.",
         "network": "Not applicable: Routing priority describes service queue assignment, not networking.",
-        "references": "Missing: Verify instance and default outbound queue plus each configured queue ID under unordered queue configs. Returned queue ARN or name and media concurrency do not create extra targets.",
+        "references": "Supported: Verify instance and default outbound queue plus each configured queue ID under unordered queue configs. Returned queue ARN or name and media concurrency do not create extra targets. Verify the profile's instance and leave its queues independently reusable.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Queue identifiers and scope must match the routing profile's instance.",
         "summaries": "Intentionally unsupported: omit queue names, concurrency values as runtime load and service status. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_routing_profile.html.markdown",
@@ -89562,7 +89566,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceRoutingProfile. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
