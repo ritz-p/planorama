@@ -41,13 +41,12 @@ impl Sweep {
 }
 
 pub(super) fn measure(width: usize, height: usize, frames: &[Bounds], edges: &[Route]) -> Value {
-    // Eighth-pixel units represent both sides of a quarter-pixel stroke exactly.
-    let units = |n: usize| (n as u64).saturating_mul(8);
+    let eighth_pixels = |n: usize| (n as u64).saturating_mul(8);
     let mut events = Vec::new();
     let mut y = Vec::new();
     let mut rectangle = |x0: u64, y0: u64, x1: u64, y1: u64| {
-        let x1 = x1.min(units(width));
-        let y1 = y1.min(units(height));
+        let x1 = x1.min(eighth_pixels(width));
+        let y1 = y1.min(eighth_pixels(height));
         if x0 < x1 && y0 < y1 {
             events.push((x0, y0, y1, true));
             events.push((x1, y0, y1, false));
@@ -56,10 +55,10 @@ pub(super) fn measure(width: usize, height: usize, frames: &[Bounds], edges: &[R
     };
     for frame in frames {
         rectangle(
-            units(frame.origin.x),
-            units(frame.origin.y),
-            units(frame.origin.x.saturating_add(frame.width)),
-            units(frame.origin.y.saturating_add(frame.height)),
+            eighth_pixels(frame.origin.x),
+            eighth_pixels(frame.origin.y),
+            eighth_pixels(frame.origin.x.saturating_add(frame.width)),
+            eighth_pixels(frame.origin.y.saturating_add(frame.height)),
         );
     }
     for edge in edges {
@@ -68,17 +67,17 @@ pub(super) fn measure(width: usize, height: usize, frames: &[Bounds], edges: &[R
             let (a, b) = (points[0], points[1]);
             if a.y == b.y {
                 rectangle(
-                    units(a.x.min(b.x)),
-                    units(a.y).saturating_sub(radius),
-                    units(a.x.max(b.x)),
-                    units(a.y).saturating_add(radius),
+                    eighth_pixels(a.x.min(b.x)),
+                    eighth_pixels(a.y).saturating_sub(radius),
+                    eighth_pixels(a.x.max(b.x)),
+                    eighth_pixels(a.y).saturating_add(radius),
                 );
             } else if a.x == b.x {
                 rectangle(
-                    units(a.x).saturating_sub(radius),
-                    units(a.y.min(b.y)),
-                    units(a.x).saturating_add(radius),
-                    units(a.y.max(b.y)),
+                    eighth_pixels(a.x).saturating_sub(radius),
+                    eighth_pixels(a.y.min(b.y)),
+                    eighth_pixels(a.x).saturating_add(radius),
+                    eighth_pixels(a.y.max(b.y)),
                 );
             }
         }
