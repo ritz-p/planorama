@@ -70,7 +70,7 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
         ),
         ("aws_mailmanager_rule_set", "rule.action.write_to_s3.s3_bucket") => Rule::new(
             "S3 bucket",
-            &[("aws_s3_bucket", &["bucket"])],
+            &[("aws_s3_bucket", &["bucket", "id"])],
             false,
             &["rule", "rule.action", "rule.action.write_to_s3"],
         ),
