@@ -75,6 +75,7 @@ pub(crate) fn has_indexed_service_references(
                 resource,
                 "aws_iot_ca_certificate" | "aws_iot_domain_configuration"
             )
+            || matches!(resource, "aws_workspacesweb_session_logger")
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)

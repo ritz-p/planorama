@@ -256,6 +256,164 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_workspacesweb_identity_provider", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_network_settings", "vpc_id") => {
+            Rule::new("Secure Browser VPC", &[("aws_vpc", &["id"])], false, &[])
+        }
+        ("aws_workspacesweb_network_settings", "subnet_ids") => Rule::new(
+            "Secure Browser subnets",
+            &[("aws_subnet", &["id"])],
+            true,
+            &[],
+        ),
+        ("aws_workspacesweb_network_settings", "security_group_ids") => Rule::new(
+            "Secure Browser security groups",
+            &[("aws_security_group", &["id"])],
+            true,
+            &[],
+        ),
+        ("aws_workspacesweb_portal", "customer_managed_key") => Rule::new(
+            "Secure Browser encryption key",
+            &[("aws_kms_key", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_session_logger", "log_configuration.s3.bucket") => Rule::new(
+            "Session logging bucket",
+            &[("aws_s3_bucket", &["bucket", "id"])],
+            false,
+            &["log_configuration", "log_configuration.s3"],
+        ),
+        ("aws_workspacesweb_user_access_logging_settings", "kinesis_stream_arn") => Rule::new(
+            "User access logging stream",
+            &[("aws_kinesis_stream", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_browser_settings_association", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_browser_settings_association", "browser_settings_arn") => Rule::new(
+            "Secure Browser browser settings",
+            &[(
+                "aws_workspacesweb_browser_settings",
+                &["browser_settings_arn"],
+            )],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_data_protection_settings_association", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        (
+            "aws_workspacesweb_data_protection_settings_association",
+            "data_protection_settings_arn",
+        ) => Rule::new(
+            "Secure Browser data protection settings",
+            &[(
+                "aws_workspacesweb_data_protection_settings",
+                &["data_protection_settings_arn"],
+            )],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_ip_access_settings_association", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_ip_access_settings_association", "ip_access_settings_arn") => {
+            Rule::new(
+                "Secure Browser ip access settings",
+                &[(
+                    "aws_workspacesweb_ip_access_settings",
+                    &["ip_access_settings_arn"],
+                )],
+                false,
+                &[],
+            )
+        }
+        ("aws_workspacesweb_network_settings_association", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_network_settings_association", "network_settings_arn") => Rule::new(
+            "Secure Browser network settings",
+            &[(
+                "aws_workspacesweb_network_settings",
+                &["network_settings_arn"],
+            )],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_session_logger_association", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_session_logger_association", "session_logger_arn") => Rule::new(
+            "Secure Browser session logger",
+            &[("aws_workspacesweb_session_logger", &["session_logger_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_trust_store_association", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_trust_store_association", "trust_store_arn") => Rule::new(
+            "Secure Browser trust store",
+            &[("aws_workspacesweb_trust_store", &["trust_store_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_user_access_logging_settings_association", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        (
+            "aws_workspacesweb_user_access_logging_settings_association",
+            "user_access_logging_settings_arn",
+        ) => Rule::new(
+            "Secure Browser user access logging settings",
+            &[(
+                "aws_workspacesweb_user_access_logging_settings",
+                &["user_access_logging_settings_arn"],
+            )],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_user_settings_association", "portal_arn") => Rule::new(
+            "Secure Browser portal",
+            &[("aws_workspacesweb_portal", &["portal_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workspacesweb_user_settings_association", "user_settings_arn") => Rule::new(
+            "Secure Browser user settings",
+            &[("aws_workspacesweb_user_settings", &["user_settings_arn"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
@@ -287,6 +445,17 @@ fn qualifies(
         "vpc_config.subnet_ids" => (Some("vpc_config.security_group_ids"), None),
         "vpc_config.security_group_ids" => (Some("vpc_config.subnet_ids"), None),
         "vpc_configuration.subnet_ids" => (None, Some("vpc_configuration.0.vpc_id")),
+        "subnet_ids" | "security_group_ids"
+            if evidence.nodes[reference.target].resource_type
+                == "aws_workspacesweb_network_settings" =>
+        {
+            let companion = if reference.attribute == "subnet_ids" {
+                "security_group_ids"
+            } else {
+                "subnet_ids"
+            };
+            (Some(companion), Some("vpc_id"))
+        }
         "subnet_ids" => (None, None),
         _ => return true,
     };

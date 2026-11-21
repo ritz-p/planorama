@@ -97351,10 +97351,10 @@
       }
     },
     "aws_workspacesweb_browser_settings_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn, browser_settings_arn for aws_workspacesweb_browser_settings_association.",
+      "gap": "#1662 — Verify portal_arn, browser_settings_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97366,7 +97366,7 @@
         "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Browser Settings Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Browser Settings Association. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn, browser_settings_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn, browser_settings_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, browser_settings_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_browser_settings_association.html.markdown",
@@ -97386,7 +97386,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newBrowserSettingsAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -97429,10 +97430,10 @@
       }
     },
     "aws_workspacesweb_data_protection_settings_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn, data_protection_settings_arn for aws_workspacesweb_data_protection_settings_association.",
+      "gap": "#1662 — Verify portal_arn, data_protection_settings_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97444,7 +97445,7 @@
         "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Data Protection Settings Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Data Protection Settings Association. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn, data_protection_settings_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn, data_protection_settings_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, data_protection_settings_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_data_protection_settings_association.html.markdown",
@@ -97464,17 +97465,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newDataProtectionSettingsAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspacesweb_identity_provider": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn for aws_workspacesweb_identity_provider.",
+      "gap": "#1662 — Verify portal_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97485,7 +97487,7 @@
         "placement": "Supported: Logical Identity for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Identity Provider.",
         "ownership": "Not applicable: Keep AWS WorkSpaces Web identity independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Identity Provider. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_identity_provider.html.markdown",
@@ -97501,7 +97503,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newIdentityProviderResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -97544,10 +97547,10 @@
       }
     },
     "aws_workspacesweb_ip_access_settings_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn, ip_access_settings_arn for aws_workspacesweb_ip_access_settings_association.",
+      "gap": "#1662 — Verify portal_arn, ip_access_settings_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97559,7 +97562,7 @@
         "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web IP Access Settings Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web IP Access Settings Association. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn, ip_access_settings_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn, ip_access_settings_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, ip_access_settings_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_ip_access_settings_association.html.markdown",
@@ -97579,17 +97582,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newIPAccessSettingsAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspacesweb_network_settings": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify vpc_id, subnet_ids, security_group_ids for aws_workspacesweb_network_settings.",
+      "gap": "#1662 — Verify vpc_id, subnet_ids, security_group_ids.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97601,8 +97605,8 @@
         ],
         "placement": "Supported: Logical Controller for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Network Settings.",
         "ownership": "Not applicable: Keep AWS WorkSpaces Web controller independently addressable. Its managed identity alone establishes no diagram parent.",
-        "network": "Missing: Check vpc_id, subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1662).",
-        "references": "Missing: Resolve known vpc_id, subnet_ids, security_group_ids only against unique compatible managed endpoints (#1662).",
+        "network": "Supported: Typed network references with common VPC evidence across multiple resolved endpoints (#1662). Service placement remains independent.",
+        "references": "Supported: Verified references for vpc_id, subnet_ids, security_group_ids (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit vpc_id, subnet_ids, security_group_ids values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_network_settings.html.markdown",
@@ -97632,17 +97636,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newNetworkSettingsResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspacesweb_network_settings_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn, network_settings_arn for aws_workspacesweb_network_settings_association.",
+      "gap": "#1662 — Verify portal_arn, network_settings_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97654,7 +97659,7 @@
         "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Network Settings Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Network Settings Association. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn, network_settings_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn, network_settings_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, network_settings_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_network_settings_association.html.markdown",
@@ -97674,17 +97679,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newNetworkSettingsAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspacesweb_portal": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify customer_managed_key for aws_workspacesweb_portal.",
+      "gap": "#1662 — Verify customer_managed_key.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97695,7 +97701,7 @@
         "placement": "Supported: Logical Node for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Portal.",
         "ownership": "Not applicable: Keep AWS WorkSpaces Web node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Portal. No direct subnet placement follows from customer_managed_key.",
-        "references": "Missing: Resolve known customer_managed_key only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for customer_managed_key (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit customer_managed_key values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_portal.html.markdown",
@@ -97711,17 +97717,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newPortalResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspacesweb_session_logger": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify log_configuration.s3.bucket for aws_workspacesweb_session_logger.",
+      "gap": "#1662 — Verify log_configuration.s3.bucket.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97732,7 +97739,7 @@
         "placement": "Supported: Logical Node for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Session Logger.",
         "ownership": "Not applicable: Keep AWS WorkSpaces Web node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Session Logger. No direct subnet placement follows from log_configuration.s3.bucket.",
-        "references": "Missing: Resolve known log_configuration.s3.bucket only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for log_configuration.s3.bucket (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit log_configuration.s3.bucket values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_session_logger.html.markdown",
@@ -97750,17 +97757,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newSessionLoggerResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspacesweb_session_logger_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn, session_logger_arn for aws_workspacesweb_session_logger_association.",
+      "gap": "#1662 — Verify portal_arn, session_logger_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97772,7 +97780,7 @@
         "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Session Logger Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Session Logger Association. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn, session_logger_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn, session_logger_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, session_logger_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_session_logger_association.html.markdown",
@@ -97792,7 +97800,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newSessionLoggerAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -97835,10 +97844,10 @@
       }
     },
     "aws_workspacesweb_trust_store_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn, trust_store_arn for aws_workspacesweb_trust_store_association.",
+      "gap": "#1662 — Verify portal_arn, trust_store_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97850,7 +97859,7 @@
         "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web Trust Store Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web Trust Store Association. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn, trust_store_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn, trust_store_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, trust_store_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_trust_store_association.html.markdown",
@@ -97870,17 +97879,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newTrustStoreAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspacesweb_user_access_logging_settings": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify kinesis_stream_arn for aws_workspacesweb_user_access_logging_settings.",
+      "gap": "#1662 — Verify kinesis_stream_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97891,7 +97901,7 @@
         "placement": "Supported: Logical Controller for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web User Access Logging Settings.",
         "ownership": "Not applicable: Keep AWS WorkSpaces Web controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web User Access Logging Settings. No direct subnet placement follows from kinesis_stream_arn.",
-        "references": "Missing: Resolve known kinesis_stream_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for kinesis_stream_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit kinesis_stream_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_user_access_logging_settings.html.markdown",
@@ -97907,17 +97917,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newUserAccessLoggingSettingsResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspacesweb_user_access_logging_settings_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn, user_access_logging_settings_arn for aws_workspacesweb_user_access_logging_settings_association.",
+      "gap": "#1662 — Verify portal_arn, user_access_logging_settings_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97929,7 +97940,7 @@
         "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web User Access Logging Settings Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web User Access Logging Settings Association. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn, user_access_logging_settings_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn, user_access_logging_settings_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, user_access_logging_settings_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_user_access_logging_settings_association.html.markdown",
@@ -97949,7 +97960,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newUserAccessLoggingSettingsAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -97992,10 +98004,10 @@
       }
     },
     "aws_workspacesweb_user_settings_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1662,
-      "gap": "#1662 — Verify portal_arn, user_settings_arn for aws_workspacesweb_user_settings_association.",
+      "gap": "#1662 — Verify portal_arn, user_settings_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -98007,7 +98019,7 @@
         "placement": "Supported: Logical Association for AWS WorkSpaces Web. Terraform resource for managing an AWS WorkSpaces Web User Settings Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS WorkSpaces Web User Settings Association. No direct subnet placement follows from portal_arn.",
-        "references": "Missing: Resolve known portal_arn, user_settings_arn only against unique compatible managed endpoints (#1662).",
+        "references": "Supported: Verified references for portal_arn, user_settings_arn (#1662).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit portal_arn, user_settings_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspacesweb_user_settings_association.html.markdown",
@@ -98027,7 +98039,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newUserSettingsAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}

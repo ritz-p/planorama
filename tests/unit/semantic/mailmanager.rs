@@ -721,3 +721,29 @@ fn workspaces_pool_validates_managed_reference() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"directory_id":true});
     assert!(!verified(&input, kind, "Registered WorkSpaces directory"));
 }
+
+#[test]
+fn workspacesweb_browser_settings_association_validates_managed_reference() {
+    let kind = "aws_workspacesweb_browser_settings_association";
+    let value = "arn:aws:workspaces-web:us-east-1:123456789012:portal/example";
+    let mut input = reference_plan(
+        "aws_workspacesweb_portal",
+        json!({"portal_arn":value}),
+        kind,
+        json!({"portal_arn":value}),
+        json!({"portal_arn":{"references":["aws_workspacesweb_portal.source.portal_arn"]}}),
+    );
+
+    assert!(verified(&input, kind, "Secure Browser portal"));
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Secure Browser portal"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"portal_arn":true});
+    assert!(!verified(&input, kind, "Secure Browser portal"));
+}
