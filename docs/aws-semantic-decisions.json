@@ -96220,10 +96220,10 @@
       }
     },
     "aws_iot_ca_certificate": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1660,
-      "gap": "#1660 — Verify registration_config.role_arn, registration_config.template_name for aws_iot_ca_certificate.",
+      "gap": "#1660 — Verify registration_config.role_arn, registration_config.template_name.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96237,7 +96237,7 @@
         "placement": "Supported: Logical Identity for AWS IoT Core. Creates and manages an AWS IoT CA Certificate.",
         "ownership": "Not applicable: Keep AWS IoT Core identity independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Creates and manages an AWS IoT CA Certificate. No direct subnet placement follows from registration_config.role_arn.",
-        "references": "Missing: Resolve known registration_config.role_arn, registration_config.template_name only against unique compatible managed endpoints (#1660).",
+        "references": "Supported: Verified references for registration_config.role_arn, registration_config.template_name (#1660).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit registration_config.role_arn, registration_config.template_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_ca_certificate.html.markdown",
@@ -96267,7 +96267,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceCACertificate. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -96320,10 +96321,10 @@
       }
     },
     "aws_iot_domain_configuration": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1660,
-      "gap": "#1660 — Verify server_certificate_arns, validation_certificate_arn, authorizer_config.default_authorizer_name for aws_iot_domain_configuration.",
+      "gap": "#1660 — Verify server_certificate_arns, validation_certificate_arn, authorizer_config.default_authorizer_name.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96338,7 +96339,7 @@
         "placement": "Supported: Logical Controller for AWS IoT Core. Creates and manages an AWS IoT domain configuration.",
         "ownership": "Not applicable: Keep AWS IoT Core controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Creates and manages an AWS IoT domain configuration. No direct subnet placement follows from server_certificate_arns.",
-        "references": "Missing: Resolve known server_certificate_arns, validation_certificate_arn, authorizer_config.default_authorizer_name only against unique compatible managed endpoints (#1660).",
+        "references": "Supported: Verified references for server_certificate_arns, validation_certificate_arn, authorizer_config.default_authorizer_name (#1660).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit server_certificate_arns, validation_certificate_arn, authorizer_config.default_authorizer_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_domain_configuration.html.markdown",
@@ -96374,7 +96375,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceDomainConfiguration. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -96541,10 +96543,10 @@
       }
     },
     "aws_iot_policy_attachment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1660,
-      "gap": "#1660 — Verify policy, target for aws_iot_policy_attachment.",
+      "gap": "#1660 — Verify policy, target.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96556,7 +96558,7 @@
         "placement": "Supported: Logical Association for AWS IoT Core. Provides an IoT policy attachment.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Provides an IoT policy attachment. No direct subnet placement follows from policy.",
-        "references": "Missing: Resolve known policy, target only against unique compatible managed endpoints (#1660).",
+        "references": "Supported: Verified references for policy, target (#1660).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit policy from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_policy_attachment.html.markdown",
@@ -96576,7 +96578,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourcePolicyAttachment. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -96675,10 +96678,10 @@
       }
     },
     "aws_iot_thing": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1660,
-      "gap": "#1660 — Verify thing_type_name for aws_iot_thing.",
+      "gap": "#1660 — Verify thing_type_name.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96690,7 +96693,7 @@
         "placement": "Supported: Logical Node for AWS IoT Core. Creates and manages an AWS IoT Thing.",
         "ownership": "Not applicable: Keep AWS IoT Core node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Creates and manages an AWS IoT Thing. No direct subnet placement follows from thing_type_name.",
-        "references": "Missing: Resolve known thing_type_name only against unique compatible managed endpoints (#1660). SageMaker already references a managed IoT thing by name.",
+        "references": "Supported: Verified references for thing_type_name (#1660).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit thing_type_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_thing.html.markdown",
@@ -96711,17 +96714,18 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/sagemaker_catalog.rs"
+          "src/provider/aws/sagemaker_catalog.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceThing. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_iot_thing_group": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1660,
-      "gap": "#1660 — Verify parent_group_name for aws_iot_thing_group.",
+      "gap": "#1660 — Verify parent_group_name.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96734,7 +96738,7 @@
         "placement": "Supported: Logical Node for AWS IoT Core. Manages an AWS IoT Thing Group.",
         "ownership": "Not applicable: Keep AWS IoT Core node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS IoT Thing Group. No direct subnet placement follows from parent_group_name.",
-        "references": "Missing: Resolve known parent_group_name only against unique compatible managed endpoints (#1660).",
+        "references": "Supported: Verified references for parent_group_name (#1660).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit parent_group_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_thing_group.html.markdown",
@@ -96758,17 +96762,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceThingGroup. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_iot_thing_group_membership": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1660,
-      "gap": "#1660 — Verify thing_group_name, thing_name for aws_iot_thing_group_membership.",
+      "gap": "#1660 — Verify thing_group_name, thing_name.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96781,7 +96786,7 @@
         "placement": "Supported: Logical Association for AWS IoT Core. Adds an IoT Thing to an IoT Thing Group.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Adds an IoT Thing to an IoT Thing Group. No direct subnet placement follows from thing_group_name.",
-        "references": "Missing: Resolve known thing_group_name, thing_name only against unique compatible managed endpoints (#1660).",
+        "references": "Supported: Verified references for thing_group_name, thing_name (#1660).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit thing_group_name, thing_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_thing_group_membership.html.markdown",
@@ -96805,17 +96810,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceThingGroupMembership. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_iot_thing_principal_attachment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1660,
-      "gap": "#1660 — Verify thing, principal for aws_iot_thing_principal_attachment.",
+      "gap": "#1660 — Verify thing, principal.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96827,7 +96833,7 @@
         "placement": "Supported: Logical Association for AWS IoT Core. Provides AWS IoT Thing Principal attachment.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Provides AWS IoT Thing Principal attachment. No direct subnet placement follows from thing.",
-        "references": "Missing: Resolve known thing, principal only against unique compatible managed endpoints (#1660).",
+        "references": "Supported: Verified references for thing, principal (#1660).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit thing, principal values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_thing_principal_attachment.html.markdown",
@@ -96847,7 +96853,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceThingPrincipalAttachment. No same-name data registration in the pinned schema.",
         "dataContracts": {}

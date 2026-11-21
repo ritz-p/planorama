@@ -157,6 +157,78 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &["vpc_configuration"],
         ),
+        ("aws_iot_ca_certificate", "registration_config.role_arn") => Rule::new(
+            "IoT CA registration role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &["registration_config"],
+        ),
+        ("aws_iot_ca_certificate", "registration_config.template_name") => Rule::new(
+            "IoT registration template",
+            &[("aws_iot_provisioning_template", &["name"])],
+            false,
+            &["registration_config"],
+        ),
+        ("aws_iot_domain_configuration", "server_certificate_arns") => Rule::new(
+            "IoT server certificates",
+            &[("aws_acm_certificate", &["arn"])],
+            true,
+            &[],
+        ),
+        ("aws_iot_domain_configuration", "validation_certificate_arn") => Rule::new(
+            "IoT validation certificate",
+            &[("aws_acm_certificate", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_iot_domain_configuration", "authorizer_config.default_authorizer_name") => Rule::new(
+            "IoT default authorizer",
+            &[("aws_iot_authorizer", &["name"])],
+            false,
+            &["authorizer_config"],
+        ),
+        ("aws_iot_policy_attachment", "policy") => {
+            Rule::new("IoT policy", &[("aws_iot_policy", &["name"])], false, &[])
+        }
+        ("aws_iot_policy_attachment", "target") => Rule::new(
+            "IoT policy principal",
+            &[
+                ("aws_iot_certificate", &["arn"]),
+                ("aws_iot_thing_group", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_iot_thing", "thing_type_name") => Rule::new(
+            "IoT thing type",
+            &[("aws_iot_thing_type", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_iot_thing_group", "parent_group_name") => Rule::new(
+            "Parent IoT thing group",
+            &[("aws_iot_thing_group", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_iot_thing_group_membership", "thing_group_name") => Rule::new(
+            "IoT thing group",
+            &[("aws_iot_thing_group", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_iot_thing_group_membership", "thing_name") => {
+            Rule::new("IoT thing", &[("aws_iot_thing", &["name"])], false, &[])
+        }
+        ("aws_iot_thing_principal_attachment", "thing") => {
+            Rule::new("IoT thing", &[("aws_iot_thing", &["name"])], false, &[])
+        }
+        ("aws_iot_thing_principal_attachment", "principal") => Rule::new(
+            "IoT certificate principal",
+            &[("aws_iot_certificate", &["arn"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
