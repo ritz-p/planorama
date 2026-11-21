@@ -94645,10 +94645,10 @@
       }
     },
     "aws_ivs_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1654,
-      "gap": "#1654 — Verify recording_configuration_arn for aws_ivs_channel.",
+      "gap": "#1654 — Verify recording_configuration_arn.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94660,7 +94660,7 @@
         "placement": "Supported: Logical Node for AWS IVS (Interactive Video). Terraform resource for managing an AWS IVS (Interactive Video) Channel.",
         "ownership": "Not applicable: Keep AWS IVS (Interactive Video) node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Channel. No direct subnet placement follows from recording_configuration_arn.",
-        "references": "Missing: Resolve known recording_configuration_arn only against unique compatible managed endpoints (#1654).",
+        "references": "Supported: Verified references for recording_configuration_arn (#1654).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit recording_configuration_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ivs_channel.html.markdown",
@@ -94680,7 +94680,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourceChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -94728,10 +94729,10 @@
       }
     },
     "aws_ivs_recording_configuration": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1654,
-      "gap": "#1654 — Verify destination_configuration.s3.bucket_name for aws_ivs_recording_configuration.",
+      "gap": "#1654 — Verify destination_configuration.s3.bucket_name.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94743,7 +94744,7 @@
         "placement": "Supported: Logical Controller for AWS IVS (Interactive Video). Terraform resource for managing an AWS IVS (Interactive Video) Recording Configuration.",
         "ownership": "Not applicable: Keep AWS IVS (Interactive Video) controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Recording Configuration. No direct subnet placement follows from destination_configuration.s3.bucket_name.",
-        "references": "Missing: Resolve known destination_configuration.s3.bucket_name only against unique compatible managed endpoints (#1654).",
+        "references": "Supported: Verified references for destination_configuration.s3.bucket_name (#1654).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destination_configuration.s3.bucket_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ivs_recording_configuration.html.markdown",
@@ -94765,17 +94766,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourceRecordingConfiguration. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ivschat_logging_configuration": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1654,
-      "gap": "#1654 — Verify destination_configuration.cloudwatch_logs.log_group_name, destination_configuration.firehose.delivery_stream_name, destination_configuration.s3.bucket_name for aws_ivschat_logging_configuration.",
+      "gap": "#1654 — Verify destination_configuration.cloudwatch_logs.log_group_name, destination_configuration.firehose.delivery_stream_name, destination_configuration.s3.bucket_name.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94790,7 +94792,7 @@
         "placement": "Supported: Logical Controller for AWS IVS (Interactive Video) Chat. Terraform resource for managing an AWS IVS (Interactive Video) Chat Logging Configuration.",
         "ownership": "Not applicable: Keep AWS IVS (Interactive Video) Chat controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Chat Logging Configuration. No direct subnet placement follows from destination_configuration.cloudwatch_logs.log_group_name.",
-        "references": "Missing: Resolve known destination_configuration.cloudwatch_logs.log_group_name, destination_configuration.firehose.delivery_stream_name, destination_configuration.s3.bucket_name only against unique compatible managed endpoints (#1654).",
+        "references": "Supported: Verified references for destination_configuration.cloudwatch_logs.log_group_name, destination_configuration.firehose.delivery_stream_name, destination_configuration.s3.bucket_name (#1654).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destination_configuration.cloudwatch_logs.log_group_name, destination_configuration.firehose.delivery_stream_name, destination_configuration.s3.bucket_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ivschat_logging_configuration.html.markdown",
@@ -94828,17 +94830,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourceLoggingConfiguration. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ivschat_room": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1654,
-      "gap": "#1654 — Verify logging_configuration_identifiers for aws_ivschat_room.",
+      "gap": "#1654 — Verify logging_configuration_identifiers.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94851,7 +94854,7 @@
         "placement": "Supported: Logical Node for AWS IVS (Interactive Video) Chat. Terraform resource for managing an AWS IVS (Interactive Video) Chat Room.",
         "ownership": "Not applicable: Keep AWS IVS (Interactive Video) Chat node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS IVS (Interactive Video) Chat Room. No direct subnet placement follows from logging_configuration_identifiers.",
-        "references": "Missing: Resolve known logging_configuration_identifiers only against unique compatible managed endpoints (#1654).",
+        "references": "Supported: Verified references for logging_configuration_identifiers (#1654).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit logging_configuration_identifiers values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ivschat_room.html.markdown",
@@ -94878,7 +94881,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourceRoom. No same-name data registration in the pinned schema.",
         "dataContracts": {}

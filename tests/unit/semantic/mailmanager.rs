@@ -344,3 +344,30 @@ fn gamelift_subnet_group_requires_common_vpc_evidence() {
     input["resource_changes"][2]["change"]["after"]["vpc_id"] = json!("vpc-b");
     assert!(!verified(&input, kind, "FleetIQ subnets"));
 }
+
+#[test]
+fn ivschat_room_validates_reference_scope() {
+    let kind = "aws_ivschat_room";
+    let value = "arn:aws:ivschat:us-east-1:123456789012:logging-configuration/example";
+    let mut input = reference_plan(
+        "aws_ivschat_logging_configuration",
+        json!({"arn":value}),
+        kind,
+        json!({"logging_configuration_identifiers":[value]}),
+        json!({"logging_configuration_identifiers":{"references":["aws_ivschat_logging_configuration.source.arn"]}}),
+    );
+    assert!(verified(&input, kind, "Chat logging configurations"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Chat logging configurations"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] =
+        json!({"logging_configuration_identifiers":[true]});
+    assert!(!verified(&input, kind, "Chat logging configurations"));
+}
