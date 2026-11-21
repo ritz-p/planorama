@@ -2,6 +2,44 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 #[test]
+fn mailmanager_rule_verifies_nested_relay_action() {
+    let provider = "registry.terraform.io/hashicorp/aws";
+    let mut input: Value =
+        serde_json::from_str(include_str!("../../fixtures/sagemaker-catalog-plan.json")).unwrap();
+    input["resource_changes"] = json!([
+        {
+            "address":"aws_mailmanager_relay.relay","mode":"managed","type":"aws_mailmanager_relay",
+            "name":"relay","provider_name":provider,
+            "change":{"actions":["create"],"after":{"id":"relay-example"}}
+        },
+        {
+            "address":"aws_mailmanager_rule_set.rules","mode":"managed","type":"aws_mailmanager_rule_set",
+            "name":"rules","provider_name":provider,
+            "change":{"actions":["create"],"after":{"rule":[{"action":[{"relay":[{"relay":"relay-example"}]}]}]}}
+        }
+    ]);
+    input["configuration"]["root_module"]["resources"] = json!([
+        {"address":"aws_mailmanager_relay.relay","provider_config_key":"aws","expressions":{}},
+        {"address":"aws_mailmanager_rule_set.rules","provider_config_key":"aws",
+         "expressions":{"rule":[{"action":[{"relay":[{"relay":{
+            "references":["aws_mailmanager_relay.relay.id"]
+         }}]}]}]}}
+    ]);
+    let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let node = graph
+        .nodes
+        .iter()
+        .find(|node| node.resource_type == "aws_mailmanager_rule_set")
+        .unwrap();
+    assert!(node.references.iter().any(|reference| {
+        reference.label == "Mail relay"
+            && reference.complete
+            && !reference.dependency
+            && !reference.targets.is_empty()
+    }));
+}
+
+#[test]
 fn ingress_rule_set_requires_a_known_managed_endpoint() {
     let mut input: Value =
         serde_json::from_str(include_str!("../../fixtures/sagemaker-catalog-plan.json")).unwrap();
