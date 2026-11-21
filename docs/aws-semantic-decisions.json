@@ -91456,7 +91456,7 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/mailmanager.rs"
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newArchiveResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -91522,7 +91522,7 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/mailmanager.rs"
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newIngressPointResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -91571,7 +91571,7 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/mailmanager.rs"
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newRelayResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -91654,7 +91654,7 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/mailmanager.rs"
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newRuleSetResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -91712,7 +91712,7 @@
       }
     },
     "aws_pinpoint_adm_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id for aws_pinpoint_adm_channel.",
@@ -91726,7 +91726,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging ADM Channel resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging ADM Channel resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit client_secret from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_adm_channel.html.markdown",
@@ -91742,14 +91742,15 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceADMChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_apns_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id for aws_pinpoint_apns_channel.",
@@ -91763,7 +91764,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging APNs Channel resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging APNs Channel resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit private_key from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_apns_channel.html.markdown",
@@ -91779,14 +91780,15 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceAPNSChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_apns_sandbox_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id for aws_pinpoint_apns_sandbox_channel.",
@@ -91800,7 +91802,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging APNs Sandbox Channel resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging APNs Sandbox Channel resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit private_key from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_apns_sandbox_channel.html.markdown",
@@ -91816,14 +91818,15 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceAPNSSandboxChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_apns_voip_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id for aws_pinpoint_apns_voip_channel.",
@@ -91837,7 +91840,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging APNs VoIP Channel resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging APNs VoIP Channel resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit private_key from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_apns_voip_channel.html.markdown",
@@ -91853,14 +91856,15 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceAPNSVoIPChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_apns_voip_sandbox_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id for aws_pinpoint_apns_voip_sandbox_channel.",
@@ -91874,7 +91878,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging APNs VoIP Sandbox Channel resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging APNs VoIP Sandbox Channel resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit private_key from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_apns_voip_sandbox_channel.html.markdown",
@@ -91890,14 +91894,15 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceAPNSVoIPSandboxChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_app": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify campaign_hook.lambda_function_name for aws_pinpoint_app.",
@@ -91912,7 +91917,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging App resource.",
         "ownership": "Not applicable: Keep AWS End User Messaging node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides an End User Messaging App resource. No direct subnet placement follows from campaign_hook.lambda_function_name.",
-        "references": "Missing: Resolve known campaign_hook.lambda_function_name only against unique compatible managed endpoints (#1646). Cognito client analytics already accepts the application identity.",
+        "references": "Supported: campaign_hook.lambda_function_name are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit campaign_hook.lambda_function_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_app.html.markdown",
@@ -91934,14 +91939,15 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/cognito.rs"
+          "src/provider/aws/cognito.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceApp. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_baidu_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id for aws_pinpoint_baidu_channel.",
@@ -91955,7 +91961,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging Baidu Channel resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging Baidu Channel resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit secret_key from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_baidu_channel.html.markdown",
@@ -91971,14 +91977,15 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceBaiduChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_email_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id, configuration_set, identity, role_arn, orchestration_sending_role_arn for aws_pinpoint_email_channel.",
@@ -91996,7 +92003,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging Email Channel resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging Email Channel resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id, configuration_set, identity, role_arn, orchestration_sending_role_arn only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id, configuration_set, identity, role_arn, orchestration_sending_role_arn are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit application_id, configuration_set, identity, role_arn, orchestration_sending_role_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_email_channel.html.markdown",
@@ -92028,7 +92035,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceEmailChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -92082,7 +92090,7 @@
       }
     },
     "aws_pinpoint_event_stream": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id, destination_stream_arn, role_arn for aws_pinpoint_event_stream.",
@@ -92098,7 +92106,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging Event Stream resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging Event Stream resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id, destination_stream_arn, role_arn only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id, destination_stream_arn, role_arn are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit application_id, destination_stream_arn, role_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_event_stream.html.markdown",
@@ -92122,14 +92130,15 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceEventStream. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_gcm_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id for aws_pinpoint_gcm_channel.",
@@ -92143,7 +92152,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Provides an End User Messaging GCM Channel resource.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Provides an End User Messaging GCM Channel resource. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit application_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_gcm_channel.html.markdown",
@@ -92159,14 +92168,15 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceGCMChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpoint_sms_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1646,
       "gap": "#1646 — Verify application_id for aws_pinpoint_sms_channel.",
@@ -92180,7 +92190,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging. Use the `aws_pinpoint_sms_channel` resource to manage End User Messaging SMS Channels.",
         "ownership": "Missing: Verify the service parent selected by application_id before presenting this helper under that parent (#1646).",
         "network": "Not applicable: Use the `aws_pinpoint_sms_channel` resource to manage End User Messaging SMS Channels. No direct subnet placement follows from application_id.",
-        "references": "Missing: Resolve known application_id only against unique compatible managed endpoints (#1646).",
+        "references": "Supported: application_id are verified against typed managed endpoints (#1646).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit application_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpoint_sms_channel.html.markdown",
@@ -92196,7 +92206,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceSMSChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}

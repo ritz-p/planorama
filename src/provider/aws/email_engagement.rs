@@ -74,6 +74,76 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &["rule", "rule.action", "rule.action.write_to_s3"],
         ),
+        ("aws_pinpoint_app", "campaign_hook.lambda_function_name") => Rule::new(
+            "Campaign hook function",
+            &[("aws_lambda_function", &["function_name", "arn"])],
+            false,
+            &["campaign_hook"],
+        ),
+        ("aws_pinpoint_email_channel", "configuration_set") => Rule::new(
+            "SES configuration set",
+            &[
+                ("aws_ses_configuration_set", &["arn"]),
+                ("aws_sesv2_configuration_set", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_pinpoint_email_channel", "identity") => Rule::new(
+            "SES identity",
+            &[
+                ("aws_ses_domain_identity", &["arn"]),
+                ("aws_ses_email_identity", &["arn"]),
+                ("aws_sesv2_email_identity", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_pinpoint_email_channel", "role_arn") => Rule::new(
+            "Email sending role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_pinpoint_email_channel", "orchestration_sending_role_arn") => Rule::new(
+            "Orchestration sending role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_pinpoint_event_stream", "destination_stream_arn") => Rule::new(
+            "Event stream destination",
+            &[
+                ("aws_kinesis_stream", &["arn"]),
+                ("aws_kinesis_firehose_delivery_stream", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_pinpoint_event_stream", "role_arn") => Rule::new(
+            "Event stream role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        (
+            "aws_pinpoint_adm_channel"
+            | "aws_pinpoint_apns_channel"
+            | "aws_pinpoint_apns_sandbox_channel"
+            | "aws_pinpoint_apns_voip_channel"
+            | "aws_pinpoint_apns_voip_sandbox_channel"
+            | "aws_pinpoint_baidu_channel"
+            | "aws_pinpoint_email_channel"
+            | "aws_pinpoint_event_stream"
+            | "aws_pinpoint_gcm_channel"
+            | "aws_pinpoint_sms_channel",
+            "application_id",
+        ) => Rule::new(
+            "Pinpoint application",
+            &[("aws_pinpoint_app", &["application_id", "id"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }

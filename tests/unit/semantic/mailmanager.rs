@@ -45,3 +45,16 @@ fn ingress_rule_set_requires_a_known_managed_endpoint() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"rule_set_id":true});
     assert!(!verified(&input));
 }
+
+#[test]
+fn pinpoint_event_stream_accepts_only_the_documented_stream_types() {
+    let rule = super::rule("aws_pinpoint_event_stream", "destination_stream_arn").unwrap();
+    assert_eq!(
+        rule.outputs,
+        &[
+            ("aws_kinesis_stream", &["arn"][..]),
+            ("aws_kinesis_firehose_delivery_stream", &["arn"][..]),
+        ]
+    );
+    assert!(super::rule("aws_pinpoint_email_template", "application_id").is_none());
+}
