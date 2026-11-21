@@ -97075,10 +97075,10 @@
       }
     },
     "aws_workspaces_directory": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1661,
-      "gap": "#1661 — Verify directory_id, ip_group_ids, subnet_ids for aws_workspaces_directory.",
+      "gap": "#1661 — Verify directory_id, ip_group_ids, subnet_ids.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97091,8 +97091,8 @@
         ],
         "placement": "Supported: Logical Node for AWS WorkSpaces. Provides a WorkSpaces directory in AWS WorkSpaces Service.",
         "ownership": "Not applicable: Keep AWS WorkSpaces node independently addressable. Its managed identity alone establishes no diagram parent.",
-        "network": "Missing: Check subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1661).",
-        "references": "Missing: Resolve known directory_id, ip_group_ids, subnet_ids only against unique compatible managed endpoints (#1661). CloudWatch already recognizes the directory as a monitored target.",
+        "network": "Supported: Typed network references with common VPC evidence across multiple resolved endpoints (#1661). Service placement remains independent.",
+        "references": "Supported: Verified references for directory_id, ip_group_ids, subnet_ids (#1661).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit active_directory_config.service_account_secret_arn from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspaces_directory.html.markdown",
@@ -97127,7 +97127,8 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/observability_monitors.rs"
+          "src/provider/aws/observability_monitors.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceDirectory. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -97195,10 +97196,10 @@
       }
     },
     "aws_workspaces_pool": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1661,
-      "gap": "#1661 — Verify bundle_id, directory_id for aws_workspaces_pool.",
+      "gap": "#1661 — Verify directory_id. Bundle IDs remain external because this Provider version has no managed WorkSpaces bundle.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97210,7 +97211,7 @@
         "placement": "Supported: Logical Node for AWS WorkSpaces. Manages an AWS WorkSpaces Pool.",
         "ownership": "Not applicable: Keep AWS WorkSpaces node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS WorkSpaces Pool. No direct subnet placement follows from bundle_id.",
-        "references": "Missing: Resolve known bundle_id, directory_id only against unique compatible managed endpoints (#1661).",
+        "references": "Supported: Verified references for directory_id (#1661). Bundle IDs remain external because this Provider version has no managed WorkSpaces bundle.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit bundle_id, directory_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspaces_pool.html.markdown",
@@ -97230,17 +97231,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed newResourcePool. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workspaces_workspace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1661,
-      "gap": "#1661 — Verify bundle_id, directory_id for aws_workspaces_workspace.",
+      "gap": "#1661 — Verify directory_id. Bundle IDs remain external because this Provider version has no managed WorkSpaces bundle.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -97253,7 +97255,7 @@
         "placement": "Supported: Spatial Node for AWS WorkSpaces. Provides a workspaces in AWS Workspaces Service.",
         "ownership": "Not applicable: Keep AWS WorkSpaces node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a workspaces in AWS Workspaces Service. No direct subnet placement follows from bundle_id.",
-        "references": "Missing: Resolve known bundle_id, directory_id only against unique compatible managed endpoints (#1661).",
+        "references": "Supported: Verified references for directory_id (#1661). Bundle IDs remain external because this Provider version has no managed WorkSpaces bundle.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit bundle_id, directory_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workspaces_workspace.html.markdown",
@@ -97277,7 +97279,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceWorkspace. Same-name data selectors are recorded separately.",
         "dataContracts": {

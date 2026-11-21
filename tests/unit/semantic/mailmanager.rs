@@ -695,3 +695,29 @@ fn iot_thing_group_membership_validates_managed_reference() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"thing_name":true});
     assert!(!verified(&input, kind, "IoT thing"));
 }
+
+#[test]
+fn workspaces_pool_validates_managed_reference() {
+    let kind = "aws_workspaces_pool";
+    let value = "d-1234567890";
+    let mut input = reference_plan(
+        "aws_workspaces_directory",
+        json!({"directory_id":value}),
+        kind,
+        json!({"directory_id":value}),
+        json!({"directory_id":{"references":["aws_workspaces_directory.source.directory_id"]}}),
+    );
+
+    assert!(verified(&input, kind, "Registered WorkSpaces directory"));
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Registered WorkSpaces directory"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"directory_id":true});
+    assert!(!verified(&input, kind, "Registered WorkSpaces directory"));
+}
