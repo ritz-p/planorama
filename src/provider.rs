@@ -53,6 +53,10 @@ pub(crate) fn has_indexed_service_references(
                 resource,
                 "aws_gamelift_alias" | "aws_gamelift_build" | "aws_gamelift_script"
             )
+            || matches!(
+                resource,
+                "aws_ivs_recording_configuration" | "aws_ivschat_logging_configuration"
+            )
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
