@@ -853,3 +853,83 @@ test('#732 separates delegated targets, document payloads and cross-region input
   assert.ok(review('ssmincidents_replication_set').fields.includes('regions.kms_key_arn'));
   assert.equal(review('ssmquicksetup_configuration_manager').contracts['configuration_definition.local_deployment_administration_role_arn'], 'optional');
 });
+
+test('#733 distinguishes typed application configuration from service outputs and payloads', () => {
+  const decisions = auditedServiceTypes(733, [
+    'amplify', 'appconfig', 'appfabric', 'appflow', 'appintegrations', 'm2',
+  ], 25);
+  const review = type => decisions['aws_' + type].review;
+  assert.match(review('amplify_app').references, /#1493/);
+  assert.deepEqual(review('amplify_domain_association').shapes['sub_domain.branch_name'], ['set', 'string']);
+  assert.equal(review('amplify_webhook').contracts.url, 'computed');
+  assert.deepEqual(review('appconfig_environment').shapes['monitor.alarm_arn'], ['set', 'string']);
+  assert.equal(review('appconfig_deployment').contracts.kms_key_arn, 'computed');
+  assert.equal(review('appconfig_hosted_configuration_version').contracts.version_number, 'computed');
+  assert.match(review('appconfig_deployment_strategy').references, /enum/);
+  assert.equal(review('appflow_connector_profile').contracts.credentials_arn, 'computed');
+  assert.equal(review('appfabric_app_authorization_connection').contracts.app_authorization_arn, 'required');
+  assert.equal(review('appintegrations_data_integration').contracts.source_uri, 'required');
+  assert.equal(review('m2_environment').contracts.load_balancer_arn, 'computed');
+  assert.match(review('m2_environment').network, /common VPC/);
+});
+
+test('#734 distinguishes communications endpoints, service scopes, and historical Lex contracts', () => {
+  const decisions = auditedServiceTypes(734, [
+    'connect', 'customerprofiles', 'chime', 'chimesdkvoice', 'chimesdkmediapipelines',
+    'chatbot', 'notifications', 'notificationscontacts', 'lexmodels', 'lexv2models',
+  ], 52);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('chatbot_slack_channel_configuration').contracts.chat_configuration_arn, 'computed');
+  assert.equal(review('chatbot_teams_channel_configuration').contracts.chat_configuration_arn, 'computed');
+  assert.equal(decisions.aws_codestarnotifications_notification_rule.issue,
+    decisions.aws_chatbot_slack_channel_configuration.issue);
+  assert.match(review('codestarnotifications_notification_rule').references, /Supported:.*chat_configuration_arn/);
+  assert.match(review('chime_voice_connector').scope, /Supported:.*aws_region/);
+  assert.deepEqual(review('chime_voice_connector_group').shapes['connector.voice_connector_id'], ['set', 'string']);
+  assert.equal(review('connect_instance').contracts.service_role, 'computed');
+  assert.equal(review('connect_instance_storage_config').contracts.association_id, 'computed');
+  assert.deepEqual(review('lexv2models_bot_version').shapes.locale_specification,
+    [['map', ['object', {source_bot_version: 'string'}]]]);
+  assert.equal(decisions.aws_lex_bot.status, 'Deferred');
+  assert.match(review('connect_bot_association').references, /legacy Lex V1/);
+  assert.match(review('notifications_managed_notification_account_contact_association').references,
+    /Intentionally unsupported: .*contact categories/);
+  assert.match(review('notifications_notification_configuration').references, /#1548/);
+  assert.match(review('notifications_event_rule').scope, /filter captured events/);
+});
+
+test('#735 verifies messaging destinations and identity outputs', () => {
+  const decisions = auditedServiceTypes(735, [
+    'ses', 'sesv2', 'mailmanager', 'pinpoint', 'pinpointsmsvoicev2', 'workmail',
+  ], 58);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('ses_domain_identity').contracts.verification_token, 'computed');
+  assert.deepEqual(review('pinpoint_event_stream').shapes.destination_stream_arn, ['string']);
+});
+
+test('#736 verifies streaming destinations and GameLift networking', () => {
+  const decisions = auditedServiceTypes(736, [
+    'mediaconvert', 'medialive', 'mediapackage', 'mediapackagev2', 'mediastore', 'elastictranscoder', 'ivs', 'ivschat', 'gamelift', 'location',
+  ], 29);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('gamelift_game_server_group').contracts.vpc_subnets, 'optional');
+  assert.deepEqual(review('ivs_channel').shapes.recording_configuration_arn, ['string']);
+});
+
+test('#737 verifies workspace associations and IoT certificate outputs', () => {
+  const decisions = auditedServiceTypes(737, [
+    'workspaces', 'workspacesweb', 'appstream', 'iot',
+  ], 49);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('iot_certificate').contracts.ca_certificate_id, 'computed');
+  assert.equal(review('workspacesweb_network_settings_association').contracts.network_settings_arn, 'required');
+});
+
+test('#738 verifies billing targets and account preferences', () => {
+  const decisions = auditedServiceTypes(738, [
+    'bcmdataexports', 'billing', 'budgets', 'ce', 'costoptimizationhub', 'cur', 'invoicing', 'pricingplanmanager', 'savingsplans', 'uxc',
+  ], 15);
+  const review = type => decisions['aws_' + type].review;
+  assert.deepEqual(review('pricingplanmanager_subscription').shapes.resource_arns, [['set', 'string']]);
+  assert.equal(review('uxc_account_customizations').contracts.visible_regions, 'optional/computed');
+});

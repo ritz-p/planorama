@@ -42,7 +42,10 @@ fn hidden_relationship_explanations_preserve_graph_and_html_options() {
                     ]);
                     command
                 };
-                let plain = command().output().unwrap();
+                let plain = command()
+                    .arg("--no-omit-relationship-legend")
+                    .output()
+                    .unwrap();
                 assert!(plain.status.success());
                 let plain = String::from_utf8(plain.stdout).unwrap();
                 let report = root.path().join("coverage.md");
@@ -66,6 +69,9 @@ fn hidden_relationship_explanations_preserve_graph_and_html_options() {
                 );
                 let hidden = String::from_utf8(hidden.stdout).unwrap();
                 if omit {
+                    let default = command().output().unwrap();
+                    assert!(default.status.success());
+                    assert_eq!(hidden, String::from_utf8(default.stdout).unwrap());
                     for marker in [
                         "relationship-legend",
                         "relationship-actions",
@@ -82,6 +88,18 @@ fn hidden_relationship_explanations_preserve_graph_and_html_options() {
                 }
                 let original = roxmltree::Document::parse(svg(&plain)).unwrap();
                 let compact = roxmltree::Document::parse(svg(&hidden)).unwrap();
+                assert_eq!(
+                    original.root_element().attribute("data-legend-mode"),
+                    Some("full")
+                );
+                assert_eq!(
+                    compact.root_element().attribute("data-legend-mode"),
+                    Some(if omit {
+                        "omitted"
+                    } else {
+                        "action-colors-only"
+                    })
+                );
                 assert!(!svg(&hidden).contains("Relationship lines"));
                 assert!(!svg(&hidden).contains("data-legend-entry"));
                 assert!(!svg(&hidden).contains("Dashed blue: cross-state dependency"));

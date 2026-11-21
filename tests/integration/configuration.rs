@@ -28,7 +28,7 @@ fn entire_legend_omission_overlays_and_can_be_disabled() {
                 "--no-omit-relationship-legend",
                 "--no-hide-relationship-legend",
             ],
-            vec![],
+            vec!["--no-omit-relationship-legend"],
         ),
         (
             vec!["--preset", "actions", "--omit-relationship-legend"],
@@ -167,6 +167,8 @@ hide-relationship-legend = false
             "--address-format",
             "terraform",
         ];
+        let mut full = common.to_vec();
+        full.push("--no-hide-relationship-legend");
         let mut expected = common.to_vec();
         expected.extend([
             "--hide-relationship-legend",
@@ -188,7 +190,7 @@ hide-relationship-legend = false
 
         same(
             configured(source, &["--preset", "all", "--format", format]),
-            support::run_with_args(INPUT, &common),
+            support::run_with_args(INPUT, &full),
         );
 
         let mut expected = common.to_vec();
@@ -209,7 +211,12 @@ hide-relationship-legend = false
         );
 
         let mut expected = common.to_vec();
-        expected.extend(["--modules", "module.app", "module.db"]);
+        expected.extend([
+            "--no-hide-relationship-legend",
+            "--modules",
+            "module.app",
+            "module.db",
+        ]);
         same(
             configured(
                 source,
@@ -239,7 +246,7 @@ hide-relationship-legend = false
                     "--no-modules",
                 ],
             ),
-            support::run_with_args(INPUT, &common),
+            support::run_with_args(INPUT, &full),
         );
     }
 }

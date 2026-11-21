@@ -190,7 +190,7 @@ shared-account-only or arbitrary string fallback creates Zone-to-Worker edges.
 These links carry typed `ConfiguredValue` provenance, serialized as
 `kind: "configured-value"` / `confidence: "typed-configured-value"`, and SVG
 `data-evidence="configured-value"`. Purple dotted lines, their tooltips and the
-legend distinguish them from verified Terraform provenance. HTML retains the
+optional legend distinguish them from verified Terraform provenance. HTML retains the
 same metadata and meaning during navigation and neighborhood export. Hiding or
 omitting the legend does not remove edge metadata/tooltips. No observed traffic,
 deployment success or runtime reachability is implied. Raw matched IDs/names are
@@ -232,7 +232,7 @@ unique current identities and a known matching account:
   known version percentages must total 100. Only after the entire Version
   collection and ownership proof verifies, each Version reference displays its
   configured percentage, including 0%, and exports `configured_percentage` in
-  reference metadata. SVG/HTML use the same values and a legend distinguishes
+  reference metadata. SVG/HTML use the same values and the optional legend distinguishes
   plan settings from observed live traffic. Unknown/sensitive percentages,
   invalid totals or unresolved Version ownership suppress all shares. Replacement
   deployments use current after-values, never prior/deposed traffic estimates.

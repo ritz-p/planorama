@@ -12,6 +12,7 @@ mod rank;
 pub(crate) mod relationship_markers;
 mod routing;
 mod routing_shared;
+pub(crate) use routing_shared::spacing::PREFERRED as ROUTE_LANE_SPACING;
 mod scopes;
 mod spatial;
 #[cfg(test)]
@@ -110,6 +111,7 @@ impl<'a> Layout<'a> {
             &[("nodes", graph.nodes.len()), ("edges", graph.edges.len())],
         );
         let mut layout = Self::unspaced_step(graph).await;
+        let _timing = crate::timing::span("routing_spacing", &[]);
         routing_shared::spacing::refine_step(graph, &mut layout).await;
         routing_shared::refinement::extend_step(graph, &mut layout).await;
         layout
@@ -131,8 +133,11 @@ impl<'a> Layout<'a> {
         }) {
             return Box::pin(spatial::layout_step(graph)).await;
         }
-        let containment = ContainmentTree::new(graph);
-        let mut placed = pipeline::place_step(graph, containment).await;
+        let mut placed = {
+            let _timing = crate::timing::span("placement", &[]);
+            pipeline::place_step(graph, ContainmentTree::new(graph)).await
+        };
+        let _timing = crate::timing::span("routing", &[]);
         pipeline::route_step(graph, &mut placed).await;
         placed.layout
     }

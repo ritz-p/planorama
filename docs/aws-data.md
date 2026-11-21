@@ -1248,3 +1248,19 @@ Complete subnet and security-group collections must agree with the explicitly
 referenced VPC. That context describes a PrivateLink endpoint without placing
 service compute inside the customer network. Computed capacity and cluster
 lists, CIDRs, DNS values and code or object paths remain opaque.
+
+## Oracle Database@AWS (#768)
+
+Exadata infrastructure, VM clusters, Autonomous Database and ODB networks have
+independent spatial cards. VM clusters verify one configured pair of
+infrastructure and ODB network identifiers, using either IDs or ARNs.
+Autonomous Database uses the configured ODB network ID. ODB peering verifies
+the initiator and a distinct managed EC2 VPC or ODB network ID as the peer.
+The pinned Terraform Provider reads back the peer as a bare ID.
+KmsTde associations link a managed VM cluster and IAM role.
+
+The links require explicit Terraform references, known matching endpoint
+outputs and compatible provider scope. ODB CIDRs and OCI identifiers do not
+create EC2 containment. The Secrets Manager integration remains an account and
+region service setting. See the maintained [SVG](../examples/odb.svg) and
+[offline HTML](../examples/odb.html).

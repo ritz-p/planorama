@@ -576,3 +576,10 @@ test('reordered resource/configuration inputs retain identical final diagnostics
       assert.equal(compare(states[0], states[1], multi.budgets).status, 'passed');
     } finally { fs.rmSync(dir, {recursive: true, force: true}); }
   });
+
+test('viewport observations are visible with a pre-coverage baseline', () => {
+  const current = {viewport_area: 1000, aspect_ratio: 2, occupancy_ratio: 0.75, whitespace_ratio: 0.25};
+  const text = markdown([{fixture: 'small', status: 'passed', viewport_coverage: {baseline: null, current}}]);
+  assert.match(text, /current viewport: 1000 px².*occupied 0.750, whitespace 0.250/);
+  assert.doesNotMatch(text, /baseline viewport/);
+});

@@ -98,17 +98,11 @@ fn multi_account_example_reproduces_inputs_svg_and_html_with_state_scoped_identi
             assert!(ids.insert(id), "duplicate {id}");
         }
     }
-    assert_eq!(
-        document
-            .descendants()
-            .filter(|n| n.attribute("id") == Some("relationship-legend"))
-            .count(),
-        1
-    );
     assert!(
-        document
+        !document
             .descendants()
-            .any(|n| n.attribute("data-legend-action") == Some("delete"))
+            .any(|n| n.attribute("id") == Some("relationship-legend")
+                || n.attribute("data-legend-action").is_some())
     );
     let cross = document
         .descendants()

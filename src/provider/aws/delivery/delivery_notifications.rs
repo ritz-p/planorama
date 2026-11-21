@@ -38,8 +38,14 @@ pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
             "Notification target",
             &[
                 ("aws_sns_topic", &["arn"]),
-                ("aws_chatbot_slack_channel_configuration", &["arn"]),
-                ("aws_chatbot_teams_channel_configuration", &["arn"]),
+                (
+                    "aws_chatbot_slack_channel_configuration",
+                    &["chat_configuration_arn"],
+                ),
+                (
+                    "aws_chatbot_teams_channel_configuration",
+                    &["chat_configuration_arn"],
+                ),
             ],
         )
         .in_control_plane_account(),

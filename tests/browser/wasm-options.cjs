@@ -13,7 +13,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `, id, value);
   const reset = () => find('#reset-settings').click();
   const options = () => driver.execute_script('return snapshotOptions()');
-  const defaults = {format: 'svg', changed_only: false, cloudflare_accounts: [], cloudflare_zones: [], cloudflare_groups: false, address_format: 'qualified', icon_mode: 'service-name', hide_relationship_legend: false, omit_relationship_legend: false, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
+  const defaults = {format: 'svg', changed_only: false, cloudflare_accounts: [], cloudflare_zones: [], cloudflare_groups: false, address_format: 'qualified', icon_mode: 'service-name', hide_relationship_legend: false, omit_relationship_legend: true, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
   assert.deepEqual(options(), defaults);
   assert.equal(find('#focus-depth').is_enabled(), false);
   assert.equal(find('#settings-error').get_attribute('role'), 'alert');
@@ -178,6 +178,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     set('format', format);
     set('address-format', 'terraform');
     set('icon-mode', 'service-name');
+    set('omit-legend', false);
     set('hide-legend', true);
     set('changed', true);
     set('focus', 'aws_ecs_service.app');
@@ -186,7 +187,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
       set('focus-depth', depth);
       generate(small, {
         ...defaults, format, address_format: 'terraform', icon_mode: 'service-name',
-        hide_relationship_legend: true, changed_only: true, focus: 'aws_ecs_service.app',
+        hide_relationship_legend: true, omit_relationship_legend: false, changed_only: true, focus: 'aws_ecs_service.app',
         ...(depth === '' ? {} : {focus_depth: Number(depth)}),
       }, ['--format', format, '--address-format', 'terraform', '--icon-mode', 'service-name',
         '--hide-relationship-legend', '--changed-only', '--focus', 'aws_ecs_service.app',

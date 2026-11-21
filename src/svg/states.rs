@@ -188,6 +188,9 @@ pub(crate) async fn render_step(
             .unwrap();
         }
     }
+    if let Some(scene) = &mut scene {
+        scene.include_frame(legend.bounds, 0);
+    }
     sections.push_str(&legend.render());
     let mut top = 60 + legend.height;
     for (id, graph, layout, index, cards) in states {
@@ -206,11 +209,20 @@ pub(crate) async fn render_step(
         let heading_height = heading_lines.len() * HEADING_LINE_HEIGHT + 2 * HEADING_PADDING;
         let header_height = heading_height + HEADING_GAP;
         let measured_sections =
-            super::Sections::from_cards(graph, &layout, &index, cards, width, None);
+            super::Sections::from_cards(graph, &layout, &index, cards, Some(width), None);
         let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
         let architecture_offset = measured_sections.height();
         if let Some(scene) = &mut scene {
+            scene.include_frame(
+                Bounds {
+                    origin: Point { x: 40, y: top },
+                    width: heading_width,
+                    height: heading_height,
+                },
+                0,
+            );
+            measured_sections.include_frames(scene, top + header_height);
             scene.add_state(
                 graph,
                 &layout,
@@ -277,7 +289,17 @@ pub(crate) async fn render_step(
             );
         }
         let document = namespace(
-            &super::render_with_index(graph, &layout, format, &index, &measured_sections, content),
+            &super::render_with_index(
+                graph,
+                &layout,
+                super::Options {
+                    omit_relationship_legend: true,
+                    ..options
+                },
+                &index,
+                &measured_sections,
+                content,
+            ),
             &prefix,
         );
         writeln!(
@@ -318,7 +340,7 @@ pub(crate) async fn render_step(
         else {
             continue;
         };
-        let lane = width + 30 + link_count * 12;
+        let lane = width + 30 + link_count * crate::layout::ROUTE_LANE_SPACING;
         let mut points = crate::layout::route_to_margin(
             Point { x: *sx, y: *sy },
             Point { x: lane, y: *sy },
@@ -370,7 +392,7 @@ pub(crate) async fn render_step(
         links.push_str(&super::endpoints::circle(points[0], "source", "#2563eb"));
     }
     if !links.is_empty() {
-        width += 80 + (link_count - 1) * 12;
+        width += 80 + (link_count - 1) * crate::layout::ROUTE_LANE_SPACING;
         sections.push_str("<defs><marker id=\"cross-state-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#2563eb\"/></marker></defs>\n");
         sections.push_str(&links);
         if !options.hide_relationship_legend && !options.omit_relationship_legend {
@@ -397,8 +419,9 @@ pub(crate) async fn render_step(
     if let (Some(scene), Some(report)) = (scene, report) {
         *report = scene.finish(width, top);
     }
+    let legend_mode = options.relationship_legend();
     format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
+        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description" data-legend-mode="{legend_mode}">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">{description}</desc>
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="{TITLE_FONT_SIZE}" fill="#0f172a">Terraform plans</text>
 {sections}</svg>

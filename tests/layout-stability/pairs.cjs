@@ -17,7 +17,7 @@ module.exports = {schema_version:1,pairs:[
   pair('relationship-remove','Remove one explicit dependency',config(relationship),config(),[identity('aws_instance.app'),identity('aws_instance.other')]),
   pair('long-label','Lengthen a move-provenance label while retaining current identity',config(),config(longLabel),[identity('aws_instance.app')]),
   pair('address-format','Change qualified labels to Terraform labels',config(),config([],['--address-format','terraform']),[],true),
-  pair('legend-offset','Omit the legend: intentional whole-diagram translation',config(relationship),config(relationship,['--omit-relationship-legend']),[],true),
+  pair('legend-offset','Omit the legend: intentional whole-diagram translation',config(relationship,['--no-omit-relationship-legend']),config(relationship),[],true),
   pair('selection','Focus on app; hidden resources are removals, not zero-sized retained frames',config(),config([],['--focus','aws_instance.app','--focus-depth','0']),[identity('aws_instance.app')],true),
   pair('logical-to-spatial','Change a resource presentation intentionally',config(),config([],['--spatial-type','aws_iam_role']),[identity('aws_iam_role.app')],true),
   pair('named-state-offset','Lengthen a label in the first state and measure the second relative to its own scope',

@@ -17,6 +17,8 @@ struct Row {
     parent: Option<usize>,
     elapsed: Duration,
     children: Duration,
+    thread_cpu: Option<Duration>,
+    process_peak_rss_kib: Option<u64>,
     counters: Vec<(&'static str, usize)>,
 }
 
@@ -57,6 +59,12 @@ impl Session {
                     row.elapsed.as_secs_f64() * 1000.0,
                     row.elapsed.saturating_sub(row.children).as_secs_f64() * 1000.0
                 )?;
+                if let Some(cpu) = row.thread_cpu {
+                    write!(stderr, " thread_cpu_ms={:.3}", cpu.as_secs_f64() * 1000.0)?;
+                }
+                if let Some(rss) = row.process_peak_rss_kib {
+                    write!(stderr, " process_peak_rss_kib_at_end={rss}")?;
+                }
                 for (key, value) in &row.counters {
                     write!(stderr, " {key}={value}")?;
                 }
@@ -76,7 +84,40 @@ impl Drop for Session {
     }
 }
 
-pub(crate) struct Span(Option<Instant>);
+fn thread_cpu() -> Option<Duration> {
+    #[cfg(target_os = "linux")]
+    {
+        let stat = std::fs::read_to_string("/proc/thread-self/schedstat").ok()?;
+        Some(Duration::from_nanos(
+            stat.split_whitespace().next()?.parse().ok()?,
+        ))
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        None
+    }
+}
+
+fn process_peak_rss_kib() -> Option<u64> {
+    #[cfg(target_os = "linux")]
+    {
+        let status = std::fs::read_to_string("/proc/self/status").ok()?;
+        status
+            .lines()
+            .find_map(|line| line.strip_prefix("VmHWM:"))?
+            .trim()
+            .strip_suffix(" kB")?
+            .trim()
+            .parse()
+            .ok()
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        None
+    }
+}
+
+pub(crate) struct Span(Option<(Instant, Option<Duration>)>);
 
 pub(crate) fn span(stage: &'static str, counters: &[(&'static str, usize)]) -> Span {
     REPORT.with(|report| {
@@ -89,22 +130,27 @@ pub(crate) fn span(stage: &'static str, counters: &[(&'static str, usize)]) -> S
             stage,
             parent: report.stack.last().copied(),
             elapsed: Duration::ZERO,
+            thread_cpu: None,
+            process_peak_rss_kib: None,
             children: Duration::ZERO,
             counters: counters.to_vec(),
         });
         report.stack.push(index);
-        Span(Some(Instant::now()))
+        Span(Some((Instant::now(), thread_cpu())))
     })
 }
 
 impl Drop for Span {
     fn drop(&mut self) {
-        let Some(started) = self.0 else { return };
+        let Some((started, cpu)) = self.0 else { return };
         let elapsed = started.elapsed();
         REPORT.with(|report| {
             if let Some(report) = report.borrow_mut().as_mut() {
                 if let Some(index) = report.stack.pop() {
                     report.rows[index].elapsed = elapsed;
+                    report.rows[index].thread_cpu =
+                        cpu.and_then(|start| thread_cpu()?.checked_sub(start));
+                    report.rows[index].process_peak_rss_kib = process_peak_rss_kib();
                     if let Some(parent) = report.stack.last().copied() {
                         report.rows[parent].children += elapsed;
                     }

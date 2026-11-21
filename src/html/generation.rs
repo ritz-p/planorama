@@ -39,8 +39,7 @@ pub(crate) fn attach(
             svg::AddressFormat::Terraform => "terraform",
         },
         "icon_mode": "service-name",
-        "relationship_legend": if rendering.omit_relationship_legend { "omitted" }
-            else if rendering.hide_relationship_legend { "action-colors-only" } else { "full" },
+        "relationship_legend": rendering.relationship_legend(),
         "html_diagnostics": diagnostics,
         "html_semantic_diagnostics": filter.html_semantic_diagnostics,
         "states": states,

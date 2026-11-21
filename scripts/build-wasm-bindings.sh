@@ -3,7 +3,11 @@ set -eu
 . scripts/wasm-build-timing.sh
 test "$#" -gt 0
 test "$(wasm-bindgen --version)" = 'wasm-bindgen 0.2.100'
-wasm_step compile cargo build --locked --release --lib --target wasm32-unknown-unknown --no-default-features
+features=
+if [ "${PLANORAMA_WASM_PROFILE:-0}" = 1 ]; then
+    features=wasm-profile
+fi
+wasm_step compile cargo build --locked --release --lib --target wasm32-unknown-unknown --no-default-features --features "$features"
 dependencies="${CARGO_TARGET_DIR:-target}/wasm32-unknown-unknown/release/planorama.d"
 test -s "$dependencies"
 if grep -E 'assets/icons/|/service-[^ ]+\.svg' "$dependencies"; then

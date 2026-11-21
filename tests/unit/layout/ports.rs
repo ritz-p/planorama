@@ -80,7 +80,14 @@ fn refined_flat_bundle_keeps_opposite_role_port() {
         &graph,
         &layout.paths
     ));
-    let rendered = crate::svg::render(&graph, &layout);
+    let rendered = crate::svg::render_with_format(
+        &graph,
+        &layout,
+        crate::svg::Options {
+            omit_relationship_legend: false,
+            ..Default::default()
+        },
+    );
     let document = roxmltree::Document::parse(&rendered).unwrap();
     let translated_y = |node: roxmltree::Node| {
         node.ancestors()

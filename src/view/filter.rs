@@ -76,6 +76,7 @@ fn placement_available(
             | "aws_vpn_gateway"
             | "aws_kinesisanalyticsv2_application"
             | "aws_mwaa_environment"
+            | "aws_m2_environment"
             | "aws_imagebuilder_infrastructure_configuration"
             | "aws_networkfirewall_vpc_endpoint_association"
             | "aws_networkmonitor_probe"
@@ -465,6 +466,12 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .0
                 .edges
                 .retain(|edge| edge.kind != EdgeKind::Containment || !unplaced.contains(&edge.to));
+            for &index in &unplaced {
+                let node = &mut graph.0.nodes[index];
+                if node.provider.is_aws() && node.resource_type == "aws_m2_environment" {
+                    node.placement = crate::model::Placement::Logical;
+                }
+            }
             let unplaced: BTreeSet<_> = unplaced
                 .into_iter()
                 .map(|index| graph.nodes[index].entity.id.clone())

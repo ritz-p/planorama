@@ -26,51 +26,10 @@ fn large_stress_fixture_renders_deterministically() {
     assert!(!svg.contains("data.aws_region.current"));
     assert!(!svg.contains("stroke-dasharray=\"5 4\""));
     let document = roxmltree::Document::parse(&svg).unwrap();
-    let legend = document
-        .descendants()
-        .find(|node| node.attribute("id") == Some("relationship-legend"))
-        .unwrap();
-    let legend_entries: Vec<_> = legend
-        .children()
-        .filter_map(|node| {
-            node.attribute("data-legend-entry").map(|_| {
-                node.attribute("transform")
-                    .unwrap()
-                    .strip_prefix("translate(")
-                    .unwrap()
-                    .trim_end_matches(')')
-                    .split_whitespace()
-                    .map(|value| value.parse::<usize>().unwrap())
-                    .collect::<Vec<_>>()
-            })
-        })
-        .collect();
-    assert_eq!(legend_entries.len(), 5);
-    for row in legend_entries.chunks(2) {
-        assert_eq!(row[0][0], 0);
-        if row.len() == 2 {
-            assert!(row[1][0] > row[0][0]);
-            assert_eq!(row[0][1], row[1][1]);
-        }
-    }
-    assert!(legend_entries[0][1] < legend_entries[2][1]);
-    assert!(legend_entries[2][1] < legend_entries[4][1]);
-    let legend_width: usize = legend
-        .children()
-        .find(|node| node.has_tag_name("rect"))
-        .unwrap()
-        .attribute("width")
-        .unwrap()
-        .parse()
-        .unwrap();
-    let canvas_width: usize = document
-        .root_element()
-        .attribute("width")
-        .unwrap()
-        .parse()
-        .unwrap();
-    assert_eq!(legend_width, 960);
-    assert!(legend_width + 80 < canvas_width);
+    assert!(!document.descendants().any(|node| matches!(
+        node.attribute("id"),
+        Some("relationship-legend" | "relationship-actions")
+    )));
     let entries: Vec<_> = document
         .descendants()
         .filter_map(|n| n.attribute("data-relationship-entry"))

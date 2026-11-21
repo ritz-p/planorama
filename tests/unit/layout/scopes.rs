@@ -286,3 +286,29 @@ fn inconsistent_subtrees_remain_outside_panels_without_reparenting() {
         4
     );
 }
+
+#[test]
+fn a_dependency_inside_a_subnet_keeps_detached_root_frames_fixed() {
+    let mut input: serde_json::Value =
+        serde_json::from_str(include_str!("../../layout-stability/base.json")).unwrap();
+    let frames = |input: &serde_json::Value| {
+        let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+        let layout = Layout::new(&graph);
+        graph
+            .nodes
+            .iter()
+            .enumerate()
+            .filter(|(_, node)| {
+                node.deposed_key.is_some() || node.address == "data.aws_subnet.lookup"
+            })
+            .map(|(i, node)| (node.entity.id.as_str().to_owned(), layout.bounds[i]))
+            .collect::<std::collections::BTreeMap<_, _>>()
+    };
+    let original = frames(&input);
+    assert_eq!(original.len(), 2);
+    input["configuration"]["root_module"]["resources"][3]["expressions"]["user_data"] =
+        serde_json::json!({"references":["aws_instance.app.id"]});
+    assert_eq!(original, frames(&input));
+    input["resource_changes"].as_array_mut().unwrap().reverse();
+    assert_eq!(original, frames(&input));
+}

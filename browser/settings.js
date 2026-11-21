@@ -8,7 +8,7 @@ const PlanoramaSettings = (() => {
   });
   const defaults = () => ({
     cloudflare_accounts: [], cloudflare_zones: [], cloudflare_groups: false, format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'service-name',
-    hide_relationship_legend: false, omit_relationship_legend: false,
+    hide_relationship_legend: false, omit_relationship_legend: true,
     html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: [],
   });
   const enums = {format: ['svg', 'html'], address_format: ['qualified', 'terraform'], icon_mode: ['service-name']};
@@ -21,6 +21,7 @@ const PlanoramaSettings = (() => {
       if (!Object.hasOwn(initial, key) && key !== 'focus' && key !== 'focus_depth') fail();
     }
     const result = {...initial, ...value};
+    if (Object.hasOwn(value, 'hide_relationship_legend') && !Object.hasOwn(value, 'omit_relationship_legend')) result.omit_relationship_legend = false;
     for (const key of Object.keys(controls)) {
       if (Object.hasOwn(enums, key) ? !enums[key].includes(result[key]) : typeof result[key] !== 'boolean') fail();
     }

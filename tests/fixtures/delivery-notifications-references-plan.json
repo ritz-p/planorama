@@ -107,7 +107,7 @@
           "create"
         ],
         "after": {
-          "arn": "arn:aws:chatbot::123456789012:chat-configuration/slack-channel/alerts"
+          "chat_configuration_arn": "arn:aws:chatbot::123456789012:chat-configuration/slack-channel/alerts"
         }
       }
     }
@@ -194,7 +194,7 @@
               {
                 "address": {
                   "references": [
-                    "aws_chatbot_slack_channel_configuration.delivery.arn"
+                    "aws_chatbot_slack_channel_configuration.delivery.chat_configuration_arn"
                   ]
                 }
               }

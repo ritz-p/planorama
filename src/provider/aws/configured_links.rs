@@ -16,6 +16,16 @@ pub(super) struct Rule {
 }
 
 impl Rule {
+    pub fn unordered(mut self, paths: &'static [&'static str]) -> Self {
+        self.blocks = nested_references::NestedBlocks::Unordered(paths);
+        self
+    }
+
+    pub fn unordered_lists(mut self, paths: &'static [&'static str]) -> Self {
+        self.blocks = nested_references::NestedBlocks::UnorderedLists(paths);
+        self
+    }
+
     pub fn statement_blocks(mut self) -> Self {
         self.blocks = nested_references::NestedBlocks::WafStatement;
         self

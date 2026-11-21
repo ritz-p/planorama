@@ -49,6 +49,7 @@ fn imported_relationships_are_opt_in_and_distinct_from_verified_provenance() {
             &Options {
                 format,
                 cloudflare_value_matches: true,
+                omit_relationship_legend: false,
                 ..Default::default()
             },
         )
@@ -62,6 +63,7 @@ fn imported_relationships_are_opt_in_and_distinct_from_verified_provenance() {
             Options {
                 format,
                 cloudflare_value_matches: true,
+                omit_relationship_legend: false,
                 ..Default::default()
             },
         )

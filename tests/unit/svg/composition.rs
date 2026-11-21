@@ -10,8 +10,12 @@ fn capped_legend_keeps_offsets_cards_and_routing_paths_on_wider_canvases() {
     for width in [1100, 2166] {
         layout.width = width;
         let index = relationship_index::Index::new(&graph, &layout);
-        let sections = Sections::new(&graph, &layout, &index, AddressFormat::Qualified);
-        let svg = render(&graph, &layout);
+        let full = Options {
+            omit_relationship_legend: false,
+            ..Default::default()
+        };
+        let sections = Sections::new(&graph, &layout, &index, full);
+        let svg = render_with_format(&graph, &layout, full);
         let document = roxmltree::Document::parse(&svg).unwrap();
         let root = document.root_element();
         assert_eq!(number(root, "width"), width);

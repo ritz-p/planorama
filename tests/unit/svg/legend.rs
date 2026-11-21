@@ -1,6 +1,6 @@
 use super::*;
 use crate::layout::Layout;
-use crate::svg::{color, label, render};
+use crate::svg::{color, label};
 
 #[test]
 fn hidden_explanations_keep_action_colors_and_remove_their_measured_height() {
@@ -36,6 +36,7 @@ fn hidden_explanations_keep_action_colors_and_remove_their_measured_height() {
         let layout = Layout::new(&graph);
         let options = crate::svg::Options {
             hide_relationship_legend: true,
+            omit_relationship_legend: false,
             ..Default::default()
         };
         let index = crate::svg::relationship_index::Index::new(&graph, &layout);
@@ -43,7 +44,10 @@ fn hidden_explanations_keep_action_colors_and_remove_their_measured_height() {
             &graph,
             &layout,
             &index,
-            crate::svg::AddressFormat::Qualified,
+            crate::svg::Options {
+                hide_relationship_legend: false,
+                ..options
+            },
         );
         let hidden = crate::svg::Sections::new(&graph, &layout, &index, options);
         assert_eq!(
@@ -249,7 +253,14 @@ fn relationship_legend_explains_colors_and_omits_line_free_graphs() {
         assert_eq!(legend.render(), MeasuredLegend::new(&graph, 1120).render());
     }
     graph.0.edges[0].change = None;
-    assert!(render(&graph, &Layout::new(&graph)).contains("no independent change"));
+    let full = crate::svg::Options {
+        omit_relationship_legend: false,
+        ..Default::default()
+    };
+    assert!(
+        crate::svg::render_with_format(&graph, &Layout::new(&graph), full)
+            .contains("no independent change")
+    );
     graph.0.edges[0].kind = EdgeKind::Containment;
     for empty in [false, true] {
         if empty {
@@ -259,7 +270,10 @@ fn relationship_legend_explains_colors_and_omits_line_free_graphs() {
         assert_eq!(legend.width, 400);
         assert_eq!(legend.height, 0);
         assert!(legend.render().is_empty());
-        assert!(!render(&graph, &Layout::new(&graph)).contains("id=\"relationship-legend\""));
+        assert!(
+            !crate::svg::render_with_format(&graph, &Layout::new(&graph), full)
+                .contains("id=\"relationship-legend\"")
+        );
     }
 }
 

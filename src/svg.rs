@@ -58,12 +58,35 @@ pub enum AddressFormat {
     Terraform,
 }
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy)]
 pub struct Options {
     pub address_format: AddressFormat,
     pub cloudflare_groups: bool,
     pub hide_relationship_legend: bool,
     pub omit_relationship_legend: bool,
+}
+
+impl Default for Options {
+    fn default() -> Self {
+        Self {
+            address_format: AddressFormat::default(),
+            cloudflare_groups: false,
+            hide_relationship_legend: false,
+            omit_relationship_legend: true,
+        }
+    }
+}
+
+impl Options {
+    pub(crate) fn relationship_legend(self) -> &'static str {
+        if self.omit_relationship_legend {
+            "omitted"
+        } else if self.hide_relationship_legend {
+            "action-colors-only"
+        } else {
+            "full"
+        }
+    }
 }
 
 impl From<AddressFormat> for Options {
@@ -97,6 +120,7 @@ fn escape(value: &str) -> String {
     escaped
 }
 
+#[cfg(test)]
 pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     render_with_format(graph, layout, AddressFormat::Qualified)
 }
@@ -122,17 +146,18 @@ impl Sections {
         options: impl Into<Options>,
     ) -> Self {
         let options = options.into();
+        let cards = annotation_cards(
+            graph,
+            index,
+            options.address_format,
+            options.cloudflare_groups,
+        );
         Self::from_cards(
             graph,
             layout,
             index,
-            annotation_cards(
-                graph,
-                index,
-                options.address_format,
-                options.cloudflare_groups,
-            ),
-            index.width,
+            cards,
+            None,
             (!options.omit_relationship_legend).then_some(options.hide_relationship_legend),
         )
     }
@@ -150,7 +175,7 @@ impl Sections {
             layout,
             index,
             annotation_cards(graph, index, address_format, false),
-            available_width,
+            Some(available_width),
             None,
         )
     }
@@ -160,22 +185,36 @@ impl Sections {
         layout: &Layout<'_>,
         index: &relationship_index::Index<'_>,
         cards: Vec<(&str, style::SectionPalette, Vec<annotations::Card>)>,
-        available_width: usize,
+        shared_width: Option<usize>,
         hide_relationship_legend: Option<bool>,
     ) -> Self {
-        let packing_width =
-            annotations::Area::required_width(&cards, available_width.max(index.width));
+        let packing_width = annotations::Area::required_width(
+            &cards,
+            shared_width.unwrap_or(index.width).max(index.width),
+        );
         let legend = if let Some(hide) = hide_relationship_legend {
             legend::MeasuredLegend::from_graphs([graph], packing_width, 148, hide)
         } else {
             legend::MeasuredLegend::empty(packing_width)
         };
-        let annotations = annotations::Area::sections(cards, packing_width.max(legend.width));
+        let check_height = if graph.checks.is_empty() { 0 } else { 24 };
+        let architecture_top_padding = architecture_top_padding(graph, layout, index);
+        let width = packing_width.max(legend.width);
+        let width = if shared_width.is_some() {
+            width
+        } else {
+            annotations::Area::single_plan_width(
+                &cards,
+                width,
+                layout.height + architecture_top_padding + check_height + legend.height,
+            )
+        };
+        let annotations = annotations::Area::sections(cards, width);
         Self {
             legend,
             annotations,
-            check_height: if graph.checks.is_empty() { 0 } else { 24 },
-            architecture_top_padding: architecture_top_padding(graph, layout, index),
+            check_height,
+            architecture_top_padding,
         }
     }
 
@@ -184,6 +223,13 @@ impl Sections {
             + self.legend.height
             + self.annotations.height
             + self.architecture_top_padding
+    }
+
+    fn include_frames(&self, scene: &mut crate::layout::diagnostics::Scene, offset: usize) {
+        scene.include_frame(self.legend.bounds, offset);
+        for bounds in self.annotations.section_bounds() {
+            scene.include_frame(bounds, offset + self.legend.height + self.check_height);
+        }
     }
 
     fn dimensions(&self, layout: &Layout<'_>) -> (usize, usize) {
@@ -290,6 +336,7 @@ pub(crate) fn render_report(
     let sections = Sections::new(graph, layout, &relationship_index, options);
     if let Some(report) = report {
         let mut scene = crate::layout::diagnostics::Scene::default();
+        sections.include_frames(&mut scene, 0);
         scene.add_state(
             graph,
             layout,
@@ -303,7 +350,7 @@ pub(crate) fn render_report(
     render_with_index(
         graph,
         layout,
-        options.address_format,
+        options,
         &relationship_index,
         &sections,
         content,
@@ -335,11 +382,13 @@ fn diagnostic_cards(graph: &Graph, layout: &Layout<'_>) -> serde_json::Value {
 fn render_with_index(
     graph: &Graph,
     layout: &Layout<'_>,
-    address_format: AddressFormat,
+    options: Options,
     relationship_index: &relationship_index::Index<'_>,
     sections: &Sections,
     content: Content,
 ) -> String {
+    let address_format = options.address_format;
+    let legend_mode = options.relationship_legend();
     let check_offset = sections.check_height;
     let (width, height) = sections.dimensions(layout);
     let membership = components::membership(graph);
@@ -353,7 +402,7 @@ fn render_with_index(
         .iter()
         .any(|edge| edge.kind != EdgeKind::Dependency);
     let mut svg = format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
+        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description" data-legend-mode="{legend_mode}">
 <title id="title">Terraform plan</title>
 <desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs>{markers}{icon_definitions}{occlusion_definitions}</defs>

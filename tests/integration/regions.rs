@@ -373,7 +373,7 @@ fn regional_state_examples_include_singletons_in_svg_and_html() {
                 svg,
                 include_str!("../../examples/regional-states.svg").replace("\r\n", "\n")
             );
-            assert_eq!(svg.matches("id=\"relationship-legend\"").count(), 1);
+            assert!(!svg.contains("id=\"relationship-legend\""));
         }
     }
     let input = include_bytes!("../fixtures/multi/single-region.json");

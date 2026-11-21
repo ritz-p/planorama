@@ -3,7 +3,7 @@ use crate::layout::{Bounds, Layout, Point};
 use crate::model::Graph;
 use std::collections::BTreeMap;
 
-pub(in crate::layout) const PREFERRED: usize = 16;
+pub(crate) const PREFERRED: usize = 16;
 const RUN: usize = 64;
 const CONVERGENCE: usize = 32;
 const ATTEMPTS: usize = 60;

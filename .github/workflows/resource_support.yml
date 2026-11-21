@@ -55,23 +55,41 @@ jobs:
           prefix-key: v1-rust-dependencies
           shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
           cache-workspace-crates: 'false'
-      - name: Check resource type discovery
-        run: cargo test --locked --lib provider::aws::resource_support::discovers_type_literals_in_rust_expressions_and_macros_only -- --exact
-      - name: Check managed inventory and extractor
+      - name: Build resource support tests
         run: |
-          cargo test --locked --lib provider::aws::basic
+          cargo test --locked --lib --no-run --message-format=json-render-diagnostics > "$RUNNER_TEMP/resource-support-cargo.jsonl"
+          node - "$RUNNER_TEMP/resource-support-cargo.jsonl" <<'JS'
+          const fs = require('node:fs');
+          const messages = fs.readFileSync(process.argv[2], 'utf8').trim().split('\n').map(line => JSON.parse(line));
+          const tests = messages.filter(message =>
+            message.reason === 'compiler-artifact' && message.profile.test &&
+            message.executable);
+          if (tests.length !== 1 || !fs.existsSync(tests[0].executable)) {
+            throw new Error('Expected one Cargo library test executable');
+          }
+          fs.appendFileSync(process.env.GITHUB_ENV, 'RESOURCE_SUPPORT_TEST_BINARY=' + tests[0].executable + '\n');
+          JS
+      - name: Check resource type discovery
+        run: '"$RESOURCE_SUPPORT_TEST_BINARY" provider::aws::resource_support::discovers_type_literals_in_rust_expressions_and_macros_only --exact'
+      - name: Check AWS basic inventory
+        run: '"$RESOURCE_SUPPORT_TEST_BINARY" provider::aws::basic'
+      - name: Check AWS inventory and semantic evidence
+        run: |
           node --test tests/support/aws-inventory.test.cjs
           node --test tests/support/aws-inventory-diff.test.cjs
           node scripts/aws-semantic-audit.cjs --check
           node scripts/dms-fixtures.cjs --check
           node --test tests/support/aws-semantic-audit.test.cjs
-      - name: Check Cloudflare inventory and generated contracts
+      - name: Check Cloudflare Rust contracts
+        run: '"$RESOURCE_SUPPORT_TEST_BINARY" provider::cloudflare'
+      - name: Check Cloudflare fixtures and captures
         run: |
-          cargo test --locked --lib provider::cloudflare
           node --test tests/support/cloudflare-*.test.cjs
           node scripts/cloudflare-fixtures.cjs --check
           node scripts/cloudflare-capture.cjs check
-          sh scripts/update-resource-support.sh cloudflare_
+      - name: Generate and compare Cloudflare catalog
+        run: |
+          RESOURCE_SUPPORT_FILTER=cloudflare_ "$RESOURCE_SUPPORT_TEST_BINARY" provider::aws::resource_support::export_resource_support --ignored --exact
           node scripts/update-cloudflare-types.cjs
           cargo fmt --all --check
           git diff --exit-code -- src/provider/cloudflare/types.rs

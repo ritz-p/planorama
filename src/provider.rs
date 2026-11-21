@@ -33,6 +33,51 @@ pub(crate) fn has_indexed_service_references(
             || aws::quicksight::resource(resource)
             || aws::sagemaker_studio::resource(resource)
             || aws::sagemaker_jobs::resource(resource)
+            || matches!(
+                resource,
+                "aws_mailmanager_ingress_point"
+                    | "aws_mailmanager_relay"
+                    | "aws_mailmanager_rule_set"
+            )
+            || matches!(resource, "aws_pinpoint_app")
+            || matches!(resource, "aws_pinpointsmsvoicev2_event_destination")
+            || matches!(
+                resource,
+                "aws_ses_event_destination" | "aws_ses_receipt_rule"
+            )
+            || matches!(
+                resource,
+                "aws_sesv2_configuration_set" | "aws_sesv2_configuration_set_event_destination"
+            )
+            || matches!(
+                resource,
+                "aws_gamelift_alias" | "aws_gamelift_build" | "aws_gamelift_script"
+            )
+            || matches!(
+                resource,
+                "aws_ivs_recording_configuration" | "aws_ivschat_logging_configuration"
+            )
+            || matches!(resource, "aws_medialive_channel" | "aws_medialive_input")
+            || matches!(
+                resource,
+                "aws_appstream_directory_config"
+                    | "aws_appstream_fleet"
+                    | "aws_appstream_image_builder"
+                    | "aws_appstream_stack"
+            )
+            || matches!(
+                resource,
+                "aws_iot_provisioning_template"
+                    | "aws_iot_topic_rule"
+                    | "aws_iot_topic_rule_destination"
+            )
+            || matches!(
+                resource,
+                "aws_iot_ca_certificate" | "aws_iot_domain_configuration"
+            )
+            || matches!(resource, "aws_workspacesweb_session_logger")
+            || matches!(resource, "aws_bcmdataexports_export")
+            || matches!(resource, "aws_budgets_budget" | "aws_budgets_budget_action")
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
@@ -49,6 +94,8 @@ pub(crate) fn has_indexed_service_references(
             || aws::arc_readiness::resource(resource)
             || aws::arc_routing_control::resource(resource)
             || aws::resilience_hub::resource(resource)
+            || aws::communications::has_indexed(resource)
+            || aws::application_services::has_indexed(resource)
             || aws::operations::has_indexed(resource)
             || aws::delivery::resource(resource)
             || aws::firewall_manager::resource(resource)
@@ -179,6 +226,10 @@ pub(crate) fn indexed_service_reference(
             || aws::quicksight::indexed(resource, attribute)
             || aws::sagemaker_studio::indexed(resource, attribute)
             || aws::sagemaker_jobs::indexed(resource, attribute)
+            || aws::email_engagement::indexed(resource, attribute)
+            || aws::media_services::indexed(resource, attribute)
+            || aws::workspace_iot::indexed(resource, attribute)
+            || aws::billing_services::indexed(resource, attribute)
             || aws::sagemaker_catalog::indexed(resource, attribute)
             || aws::sagemaker_workforce::indexed(resource, attribute)
             || aws::msk_connect::indexed(resource, attribute)
@@ -195,6 +246,8 @@ pub(crate) fn indexed_service_reference(
             || aws::arc_readiness::indexed(resource, attribute)
             || aws::arc_routing_control::indexed(resource, attribute)
             || aws::resilience_hub::indexed(resource, attribute)
+            || aws::communications::indexed(resource, attribute)
+            || aws::application_services::indexed(resource, attribute)
             || aws::operations::indexed(resource, attribute)
             || aws::delivery::indexed(resource, attribute)
             || aws::firewall_manager::indexed(resource, attribute)
