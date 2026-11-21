@@ -41,6 +41,10 @@ pub(crate) fn has_indexed_service_references(
             )
             || matches!(resource, "aws_pinpoint_app")
             || matches!(resource, "aws_pinpointsmsvoicev2_event_destination")
+            || matches!(
+                resource,
+                "aws_ses_event_destination" | "aws_ses_receipt_rule"
+            )
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
