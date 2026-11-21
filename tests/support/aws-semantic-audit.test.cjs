@@ -924,3 +924,12 @@ test('#737 verifies workspace associations and IoT certificate outputs', () => {
   assert.equal(review('iot_certificate').contracts.ca_certificate_id, 'computed');
   assert.equal(review('workspacesweb_network_settings_association').contracts.network_settings_arn, 'required');
 });
+
+test('#738 verifies billing targets and account preferences', () => {
+  const decisions = auditedServiceTypes(738, [
+    'bcmdataexports', 'billing', 'budgets', 'ce', 'costoptimizationhub', 'cur', 'invoicing', 'pricingplanmanager', 'savingsplans', 'uxc',
+  ], 15);
+  const review = type => decisions['aws_' + type].review;
+  assert.deepEqual(review('pricingplanmanager_subscription').shapes.resource_arns, [['set', 'string']]);
+  assert.equal(review('uxc_account_customizations').contracts.visible_regions, 'optional/computed');
+});
