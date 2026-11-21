@@ -90996,7 +90996,7 @@
       }
     },
     "aws_notifications_channel_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1607,
       "gap": "#1607 — Verify the customer-created notification configuration ARN and a compatible explicitly configured email contact or Slack or Teams channel configuration ARN. Distinguish service-owned managed notification identifiers.",
@@ -91011,7 +91011,7 @@
         "placement": "Supported: managed Logical Association with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Channel Association.",
         "ownership": "Not applicable: Keep both related notification endpoints independent.",
         "network": "Not applicable: Channel delivery does not establish VPC placement.",
-        "references": "Missing: Verify the customer-created notification configuration ARN and a compatible explicitly configured email contact or Slack or Teams channel configuration ARN. Distinguish service-owned managed notification identifiers.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the customer-created notification configuration ARN and a compatible explicitly configured email contact or Slack or Teams channel configuration ARN. Distinguish service-owned managed notification identifiers.",
         "scope": "Supported: The runtime treats this control-plane declaration as global. Use the global configuration namespace and separately verify the channel owner and scope.",
         "summaries": "Intentionally unsupported: omit email addresses, workspace contents and notification bodies. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/notifications_channel_association.html.markdown",
@@ -91033,14 +91033,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newChannelAssociationResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_notifications_event_rule": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1607,
       "gap": "#1607 — Verify the configured Notification configuration ARN. EventBridge source and event type identify filters, and selected event regions do not identify managed event buses or resources. Qualify rule ownership by its verified notification configuration.",
@@ -91058,7 +91060,7 @@
         "placement": "Supported: managed Logical Policy with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Event Rule.",
         "ownership": "Missing: Qualify rule ownership by its verified notification configuration.",
         "network": "Not applicable: Event subscription has no VPC or subnet placement input.",
-        "references": "Missing: Verify the configured Notification configuration ARN. EventBridge source and event type identify filters, and selected event regions do not identify managed event buses or resources.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the configured Notification configuration ARN. EventBridge source and event type identify filters, and selected event regions do not identify managed event buses or resources.",
         "scope": "Supported: The runtime treats this control-plane declaration as global. Event regions filter captured events and do not relocate the global rule.",
         "summaries": "Intentionally unsupported: omit event filter details, patterns and payloads. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/notifications_event_rule.html.markdown",
@@ -91095,7 +91097,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newEventRuleResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -91145,7 +91149,7 @@
       }
     },
     "aws_notifications_managed_notification_additional_channel_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1607,
       "gap": "#1607 — Verify compatible explicitly configured email contact or Chatbot channel identities. AWS-managed notification ARNs remain service-owned and do not match customer notification configurations.",
@@ -91160,7 +91164,7 @@
         "placement": "Supported: managed Logical Association with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Managed Notification Additional Channel Association.",
         "ownership": "Not applicable: Keep the customer channel independent of the service-owned configuration.",
         "network": "Not applicable: Delivery to a channel does not establish a network path.",
-        "references": "Missing: Verify compatible explicitly configured email contact or Chatbot channel identities. AWS-managed notification ARNs remain service-owned and do not match customer notification configurations.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify compatible explicitly configured email contact or Chatbot channel identities. AWS-managed notification ARNs remain service-owned and do not match customer notification configurations.",
         "scope": "Supported: The runtime treats this control-plane declaration as global. Validate owner account using ARN evidence independently from source notification category.",
         "summaries": "Intentionally unsupported: omit channel contact details and notification bodies. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/notifications_managed_notification_additional_channel_association.html.markdown",
@@ -91182,7 +91186,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newManagedNotificationAdditionalChannelAssociationResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -91277,7 +91283,7 @@
       }
     },
     "aws_notifications_organizational_unit_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1607,
       "gap": "#1607 — Verify the configured notification ARN and a typed Organization, OU or organization root ID with the corresponding verified identity format. A chosen organization target does not establish its member inventory.",
@@ -91292,7 +91298,7 @@
         "placement": "Supported: managed Logical Association with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Organizational Unit Association.",
         "ownership": "Not applicable: Organization targets and notification configurations remain independent.",
         "network": "Not applicable: Organization assignment has no network deployment consequence.",
-        "references": "Missing: Verify the configured notification ARN and a typed Organization, OU or organization root ID with the corresponding verified identity format. A chosen organization target does not establish its member inventory.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the configured notification ARN and a typed Organization, OU or organization root ID with the corresponding verified identity format. A chosen organization target does not establish its member inventory.",
         "scope": "Supported: The runtime treats this control-plane declaration as global. Preserve organization and account scope independently from rule event regions.",
         "summaries": "Intentionally unsupported: omit member account inventories and effective notification delivery. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/notifications_organizational_unit_association.html.markdown",
@@ -91314,7 +91320,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newOrganizationalUnitAssociationResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
