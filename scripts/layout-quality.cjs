@@ -275,6 +275,13 @@ function markdown(results) {
     const start = lines.length;
     lines.push(`## ${result.fixture}: ${result.status}`, '');
     if (result.error) lines.push(bounded(result.error), '');
+    if (result.viewport_coverage) {
+      for (const [revision, coverage] of Object.entries(result.viewport_coverage)) {
+        if (!coverage) continue;
+        const ratio = n => Number.isFinite(n) ? n.toFixed(3) : 'n/a';
+        lines.push(`- ${revision} viewport: ${coverage.viewport_area} px², width/height ${ratio(coverage.aspect_ratio)}, occupied ${ratio(coverage.occupancy_ratio)}, whitespace ${ratio(coverage.whitespace_ratio)}`);
+      }
+    }
     const changes = [...(result.changes || [])].sort((a, b) => Number(b.failed) - Number(a.failed));
     for (const c of changes.slice(0, 20)) {
       lines.push(`- ${c.failed ? 'FAIL' : c.mode}: ${c.metric}: ${c.before} → ${c.after} (delta ${c.delta}, allowance ${c.allowance})`);
@@ -367,7 +374,9 @@ function run({binary, output, update = false, manifestPath = 'tests/layout-quali
         const baseline = read(baselinePath);
         if (!isDeepStrictEqual(baseline.contract, contract))
           throw new Error('stale baseline: fixture bytes, CLI options, budgets or renderer contract changed');
-        results.push({fixture: fixture.id, ...compare(baseline.report, report, fixture.budgets)});
+        results.push({fixture: fixture.id, ...compare(baseline.report, report, fixture.budgets),
+          viewport_coverage: {baseline: baseline.report.summary.viewport_coverage ?? null,
+            current: report.summary.viewport_coverage ?? null}});
       }
     } catch (error) {
       results.push({fixture: fixture.id, status: 'non-comparable', error: error.message});

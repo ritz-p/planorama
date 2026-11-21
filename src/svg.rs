@@ -225,6 +225,13 @@ impl Sections {
             + self.architecture_top_padding
     }
 
+    fn include_frames(&self, scene: &mut crate::layout::diagnostics::Scene, offset: usize) {
+        scene.include_frame(self.legend.bounds, offset);
+        for bounds in self.annotations.section_bounds() {
+            scene.include_frame(bounds, offset + self.legend.height + self.check_height);
+        }
+    }
+
     fn dimensions(&self, layout: &Layout<'_>) -> (usize, usize) {
         (
             self.annotations.packing_width.max(self.legend.width),
@@ -329,6 +336,7 @@ pub(crate) fn render_report(
     let sections = Sections::new(graph, layout, &relationship_index, options);
     if let Some(report) = report {
         let mut scene = crate::layout::diagnostics::Scene::default();
+        sections.include_frames(&mut scene, 0);
         scene.add_state(
             graph,
             layout,

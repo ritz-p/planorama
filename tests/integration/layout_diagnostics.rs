@@ -229,3 +229,64 @@ fn cross_state_report_uses_final_gutter_coordinates() {
     assert!(!json.to_string().contains("TOP_SECRET"));
     std::fs::remove_file(report).unwrap();
 }
+
+#[test]
+fn viewport_coverage_uses_the_same_geometry_for_svg_and_html() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("coverage.json");
+    for args in [
+        vec!["examples/plan.json"],
+        vec!["tests/fixtures/spanning-dense-plan.json"],
+        vec!["examples/aws-emulator/containment/create.json"],
+        vec![
+            "--state",
+            "nested=examples/aws-emulator/containment/create.json",
+        ],
+    ] {
+        let mut omitted = None;
+        for legend in [
+            "--omit-relationship-legend",
+            "--no-omit-relationship-legend",
+        ] {
+            let mut svg = None;
+            for format in ["svg", "html"] {
+                let output = cli()
+                    .args(&args)
+                    .args([
+                        legend,
+                        "--format",
+                        format,
+                        "-o",
+                        "-",
+                        "--layout-diagnostics-json",
+                    ])
+                    .arg(&path)
+                    .output()
+                    .unwrap();
+                assert!(
+                    output.status.success(),
+                    "{}",
+                    String::from_utf8_lossy(&output.stderr)
+                );
+                let json: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+                let coverage = &json["summary"]["viewport_coverage"];
+                assert_eq!(
+                    coverage["viewport_area"],
+                    json["canvas"]["width"].as_f64().unwrap()
+                        * json["canvas"]["height"].as_f64().unwrap()
+                );
+                let area = coverage["occupied_area"].as_f64().unwrap();
+                assert!(area > 0.0 && area < coverage["viewport_area"].as_f64().unwrap());
+                if let Some(svg) = &svg {
+                    assert_eq!(svg, coverage);
+                } else {
+                    svg = Some(coverage.clone());
+                }
+                if let Some(previous) = omitted {
+                    assert!(area > previous);
+                }
+            }
+            omitted = svg.and_then(|c| c["occupied_area"].as_f64());
+        }
+    }
+}

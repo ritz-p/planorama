@@ -413,3 +413,32 @@ fn relationship_resources_distinguish_shared_endpoints_after_reordering() {
         }
     }
 }
+
+#[test]
+fn viewport_coverage_unions_clipped_nested_frames_and_route_strokes() {
+    let frame = |x, y, width, height| Bounds {
+        origin: Point { x, y },
+        width,
+        height,
+    };
+    let frames = [
+        frame(10, 10, 60, 40),
+        frame(20, 20, 10, 10),
+        frame(60, 20, 60, 10),
+    ];
+    let lines = [
+        route("a", &[(0, 55), (100, 55)]),
+        route("b", &[(100, 55), (0, 55)]),
+    ];
+    let measure = |width| coverage::measure(width, 60, &frames, &lines);
+    let report = measure(100);
+    assert_eq!(report["occupied_area"], 2850.0);
+    assert_eq!(report["whitespace_area"], 3150.0);
+    assert_eq!(report["occupancy_ratio"], 0.475);
+    assert_eq!(report["whitespace_ratio"], 0.525);
+    assert!(measure(200)["whitespace_ratio"].as_f64() > report["whitespace_ratio"].as_f64());
+    let clipped = coverage::measure(100, 60, &[], &[route("edge", &[(0, 0), (0, 100)])]);
+    assert_eq!(clipped["occupied_area"], 45.0);
+    assert!(coverage::measure(0, 0, &frames, &lines)["aspect_ratio"].is_null());
+    assert!(measure(0)["occupancy_ratio"].is_null());
+}
