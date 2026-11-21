@@ -35,6 +35,7 @@ unicode-width = "=0.2.0"
 [features]
 default = []
 icon-artwork = []
+wasm-profile = []
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "=0.2.100"
