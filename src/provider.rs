@@ -40,6 +40,7 @@ pub(crate) fn has_indexed_service_references(
                     | "aws_mailmanager_rule_set"
             )
             || matches!(resource, "aws_pinpoint_app")
+            || matches!(resource, "aws_pinpointsmsvoicev2_event_destination")
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)

@@ -92260,10 +92260,10 @@
       }
     },
     "aws_pinpointsmsvoicev2_event_destination": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1647,
-      "gap": "#1647 — Verify configuration_set_name, cloudwatch_logs_destination.log_group_arn, kinesis_firehose_destination.delivery_stream_arn, sns_destination.topic_arn for aws_pinpointsmsvoicev2_event_destination.",
+      "gap": "#1647 — Verify configuration_set_name, cloudwatch_logs_destination.log_group_arn, kinesis_firehose_destination.delivery_stream_arn, sns_destination.topic_arn against typed managed endpoints.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92277,7 +92277,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging SMS. Manages an AWS End User Messaging SMS Event Destination.",
         "ownership": "Missing: Verify the service parent selected by configuration_set_name before presenting this helper under that parent (#1647).",
         "network": "Not applicable: Manages an AWS End User Messaging SMS Event Destination. No direct subnet placement follows from configuration_set_name.",
-        "references": "Missing: Resolve known configuration_set_name, cloudwatch_logs_destination.log_group_arn, kinesis_firehose_destination.delivery_stream_arn, sns_destination.topic_arn only against unique compatible managed endpoints (#1647).",
+        "references": "Supported: Verify configuration_set_name, cloudwatch_logs_destination.log_group_arn, kinesis_firehose_destination.delivery_stream_arn, sns_destination.topic_arn (#1647). Regional Amazon Connect service selectors do not identify an individual Connect instance.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit configuration_set_name, cloudwatch_logs_destination.log_group_arn, kinesis_firehose_destination.delivery_stream_arn, sns_destination.topic_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpointsmsvoicev2_event_destination.html.markdown",
@@ -92308,17 +92308,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newEventDestinationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpointsmsvoicev2_keyword": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1647,
-      "gap": "#1647 — Verify origination_identity_arn for aws_pinpointsmsvoicev2_keyword.",
+      "gap": "#1647 — Verify origination_identity_arn against typed managed endpoints.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92329,7 +92330,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging SMS. Manages an AWS End User Messaging SMS Keyword.",
         "ownership": "Not applicable: Keep AWS End User Messaging SMS node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS End User Messaging SMS Keyword. No direct subnet placement follows from origination_identity_arn.",
-        "references": "Missing: Resolve known origination_identity_arn only against unique compatible managed endpoints (#1647).",
+        "references": "Supported: Verify origination_identity_arn (#1647). Regional Amazon Connect service selectors do not identify an individual Connect instance.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit origination_identity_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpointsmsvoicev2_keyword.html.markdown",
@@ -92345,7 +92346,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newKeywordResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -92393,10 +92395,10 @@
       }
     },
     "aws_pinpointsmsvoicev2_phone_number": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1647,
-      "gap": "#1647 — Verify opt_out_list_name, two_way_channel_arn, two_way_channel_role for aws_pinpointsmsvoicev2_phone_number.",
+      "gap": "#1647 — Verify opt_out_list_name, two_way_channel_arn, two_way_channel_role against typed managed endpoints.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92411,7 +92413,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging SMS. Manages an AWS End User Messaging SMS phone number.",
         "ownership": "Not applicable: Keep AWS End User Messaging SMS node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS End User Messaging SMS phone number. No direct subnet placement follows from opt_out_list_name.",
-        "references": "Missing: Resolve known opt_out_list_name, two_way_channel_arn, two_way_channel_role only against unique compatible managed endpoints (#1647).",
+        "references": "Supported: Verify opt_out_list_name, two_way_channel_arn, two_way_channel_role (#1647). Regional Amazon Connect service selectors do not identify an individual Connect instance.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit opt_out_list_name, two_way_channel_arn, two_way_channel_role values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpointsmsvoicev2_phone_number.html.markdown",
@@ -92443,17 +92445,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newPhoneNumberResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpointsmsvoicev2_pool": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1647,
-      "gap": "#1647 — Verify origination_identities, opt_out_list_name, two_way_channel_arn for aws_pinpointsmsvoicev2_pool.",
+      "gap": "#1647 — Verify origination_identities, opt_out_list_name, two_way_channel_arn against typed managed endpoints.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92468,7 +92471,7 @@
         "placement": "Supported: Logical Node for AWS End User Messaging SMS. Manages an AWS End User Messaging SMS Pool.",
         "ownership": "Not applicable: Keep AWS End User Messaging SMS node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS End User Messaging SMS Pool. No direct subnet placement follows from origination_identities.",
-        "references": "Missing: Resolve known origination_identities, opt_out_list_name, two_way_channel_arn only against unique compatible managed endpoints (#1647).",
+        "references": "Supported: Verify origination_identities, opt_out_list_name, two_way_channel_arn (#1647). Regional Amazon Connect service selectors do not identify an individual Connect instance.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit origination_identities, opt_out_list_name, two_way_channel_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpointsmsvoicev2_pool.html.markdown",
@@ -92503,17 +92506,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newPoolResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_pinpointsmsvoicev2_resource_policy": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1647,
-      "gap": "#1647 — Verify resource_arn for aws_pinpointsmsvoicev2_resource_policy.",
+      "gap": "#1647 — Verify resource_arn against typed managed endpoints.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92524,7 +92528,7 @@
         "placement": "Supported: Logical Policy for AWS End User Messaging SMS. Manages an AWS End User Messaging SMS Resource Policy.",
         "ownership": "Not applicable: Keep AWS End User Messaging SMS policy independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS End User Messaging SMS Resource Policy. No direct subnet placement follows from resource_arn.",
-        "references": "Missing: Resolve known resource_arn only against unique compatible managed endpoints (#1647).",
+        "references": "Supported: Verify resource_arn (#1647). Regional Amazon Connect service selectors do not identify an individual Connect instance.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit policy from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pinpointsmsvoicev2_resource_policy.html.markdown",
@@ -92540,7 +92544,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newResourcePolicyResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
