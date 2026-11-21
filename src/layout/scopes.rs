@@ -25,9 +25,10 @@ pub(super) fn pack(
     {
         let columns = placement::columns(graph, None, &tree.roots, &tree.parents);
         let relationships = placement::relationships(graph, &tree.roots, &tree.parents);
-        let (_, height) = placement::pack(&columns, &relationships, sizes, offsets, spacing);
+        let (width, height) = placement::pack(&columns, &relationships, sizes, offsets, spacing);
         let movable = movable_roots(&tree.roots, &protected, offsets);
         placement::refine(&movable, &relationships, sizes, offsets, height, spacing);
+        anchor_detached_roots(&tree.roots, tree, &relationships, sizes, offsets, width);
         return (height, Vec::new());
     }
     let mut top = 0;
@@ -77,6 +78,7 @@ pub(super) fn pack(
                 placement::pack(&columns, &relationships, sizes, offsets, spacing);
             let movable = movable_roots(roots, &protected, offsets);
             placement::refine(&movable, &relationships, sizes, offsets, height, spacing);
+            anchor_detached_roots(roots, tree, &relationships, sizes, offsets, width);
             let framed = scope
                 .as_ref()
                 .is_some_and(|s| s.global || s.region.is_some());
@@ -110,6 +112,44 @@ pub(super) fn pack(
         }
     }
     (top, panels)
+}
+
+fn anchor_detached_roots(
+    roots: &[usize],
+    tree: &ContainmentTree,
+    relationships: &[(usize, usize)],
+    sizes: &[(usize, usize)],
+    offsets: &mut [Point],
+    width: usize,
+) {
+    if !relationships.is_empty() {
+        return;
+    }
+    let mut populated = roots
+        .iter()
+        .copied()
+        .filter(|&root| !tree.children[root].is_empty());
+    let Some(container) = populated.next() else {
+        return;
+    };
+    if populated.next().is_some() || offsets[container].x != 0 {
+        return;
+    }
+    let left = roots
+        .iter()
+        .copied()
+        .filter(|&root| root != container)
+        .map(|root| offsets[root].x)
+        .min();
+    if let Some(left) = left.filter(|&x| x >= sizes[container].0) {
+        for &root in roots {
+            if root == container {
+                offsets[root].x = width - sizes[root].0;
+            } else {
+                offsets[root].x -= left;
+            }
+        }
+    }
 }
 
 fn movable_roots(roots: &[usize], protected: &BTreeSet<usize>, offsets: &[Point]) -> Vec<usize> {
