@@ -438,6 +438,51 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_workmail_default_domain", "organization_id") => Rule::new(
+            "WorkMail organization",
+            &[("aws_workmail_organization", &["organization_id"])],
+            false,
+            &[],
+        ),
+        ("aws_workmail_default_domain", "domain_name") => Rule::new(
+            "WorkMail mail domain",
+            &[
+                ("aws_workmail_domain", &["domain_name"]),
+                ("aws_workmail_organization", &["default_mail_domain"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_workmail_domain", "organization_id") => Rule::new(
+            "WorkMail organization",
+            &[("aws_workmail_organization", &["organization_id"])],
+            false,
+            &[],
+        ),
+        ("aws_workmail_group", "organization_id") => Rule::new(
+            "WorkMail organization",
+            &[("aws_workmail_organization", &["organization_id"])],
+            false,
+            &[],
+        ),
+        ("aws_workmail_organization", "directory_id") => Rule::new(
+            "WorkMail directory",
+            &[("aws_directory_service_directory", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_workmail_organization", "kms_key_arn") => Rule::new(
+            "WorkMail encryption key",
+            &[("aws_kms_key", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_workmail_user", "organization_id") => Rule::new(
+            "WorkMail organization",
+            &[("aws_workmail_organization", &["organization_id"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
@@ -455,7 +500,39 @@ pub(super) fn annotate(
     refs: &mut [AttributeReference],
     values: &[(&Value, &Value)],
 ) {
-    configured_links::annotate(nodes, refs, values, rule, |_, _, _, _| true)
+    configured_links::annotate(
+        nodes,
+        refs,
+        values,
+        rule,
+        |evidence, reference, endpoint, _| {
+            if evidence.nodes[reference.target].resource_type != "aws_workmail_default_domain"
+                || reference.attribute != "domain_name"
+            {
+                return true;
+            }
+            let organization = evidence.configured_endpoint(
+                reference.target,
+                "organization_id",
+                "aws_workmail_organization",
+                &["organization_id"],
+            );
+            match evidence.nodes[endpoint].resource_type.as_str() {
+                "aws_workmail_organization" => organization == Some(endpoint),
+                "aws_workmail_domain" => {
+                    organization.is_some()
+                        && organization
+                            == evidence.configured_endpoint(
+                                endpoint,
+                                "organization_id",
+                                "aws_workmail_organization",
+                                &["organization_id"],
+                            )
+                }
+                _ => false,
+            }
+        },
+    )
 }
 
 #[cfg(test)]

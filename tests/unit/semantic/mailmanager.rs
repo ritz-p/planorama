@@ -293,3 +293,65 @@ fn sesv2_tenant_resource_association_validates_reference_scope() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"resource_arn":true});
     assert!(!verified(&input, kind, "Tenant SES resource"));
 }
+
+#[test]
+fn workmail_user_validates_reference_scope() {
+    let kind = "aws_workmail_user";
+    let value = "m-0123456789abcdef0123456789abcdef";
+    let mut input = reference_plan(
+        "aws_workmail_organization",
+        json!({"organization_id":value}),
+        kind,
+        json!({"organization_id":value}),
+        json!({"organization_id":{"references":["aws_workmail_organization.source.organization_id"]}}),
+    );
+    assert!(verified(&input, kind, "WorkMail organization"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "WorkMail organization"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"organization_id":true});
+    assert!(!verified(&input, kind, "WorkMail organization"));
+}
+
+#[test]
+fn workmail_default_domain_must_belong_to_the_configured_organization() {
+    let kind = "aws_workmail_default_domain";
+    let org = "m-0123456789abcdef0123456789abcdef";
+    let mut input = reference_plan(
+        "aws_workmail_domain",
+        json!({"domain_name":"example.test","organization_id":org}),
+        kind,
+        json!({"domain_name":"example.test","organization_id":org}),
+        json!({
+            "domain_name":{"references":["aws_workmail_domain.source.domain_name"]},
+            "organization_id":{"references":["aws_workmail_organization.org.organization_id"]}
+        }),
+    );
+    input["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_workmail_organization.org","mode":"managed",
+            "type":"aws_workmail_organization","name":"org",
+            "provider_name":"registry.terraform.io/hashicorp/aws",
+            "change":{"actions":["create"],"after":{"organization_id":org}}
+        }));
+    let resources = input["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap();
+    resources[0]["expressions"]["organization_id"] =
+        json!({"references":["aws_workmail_organization.org.organization_id"]});
+    resources.push(json!({
+        "address":"aws_workmail_organization.org","provider_config_key":"aws","expressions":{}
+    }));
+    assert!(verified(&input, kind, "WorkMail mail domain"));
+    input["resource_changes"][0]["change"]["after"]["organization_id"] = json!("m-other");
+    assert!(!verified(&input, kind, "WorkMail mail domain"));
+}
