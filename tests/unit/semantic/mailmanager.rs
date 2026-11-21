@@ -371,3 +371,29 @@ fn ivschat_room_validates_reference_scope() {
         json!({"logging_configuration_identifiers":[true]});
     assert!(!verified(&input, kind, "Chat logging configurations"));
 }
+
+#[test]
+fn location_tracker_association_validates_reference_scope() {
+    let kind = "aws_location_tracker_association";
+    let value = "arn:aws:geo:us-east-1:123456789012:geofence-collection/example";
+    let mut input = reference_plan(
+        "aws_location_geofence_collection",
+        json!({"collection_arn":value}),
+        kind,
+        json!({"consumer_arn":value}),
+        json!({"consumer_arn":{"references":["aws_location_geofence_collection.source.collection_arn"]}}),
+    );
+    assert!(verified(&input, kind, "Geofence collection"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Geofence collection"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"consumer_arn":true});
+    assert!(!verified(&input, kind, "Geofence collection"));
+}

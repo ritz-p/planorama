@@ -147,6 +147,30 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             true,
             &[],
         ),
+        ("aws_location_geofence_collection", "kms_key_id") => Rule::new(
+            "Location encryption key",
+            &[("aws_kms_key", &["arn", "key_id"])],
+            false,
+            &[],
+        ),
+        ("aws_location_tracker", "kms_key_id") => Rule::new(
+            "Location encryption key",
+            &[("aws_kms_key", &["arn", "key_id"])],
+            false,
+            &[],
+        ),
+        ("aws_location_tracker_association", "consumer_arn") => Rule::new(
+            "Geofence collection",
+            &[("aws_location_geofence_collection", &["collection_arn"])],
+            false,
+            &[],
+        ),
+        ("aws_location_tracker_association", "tracker_name") => Rule::new(
+            "Location tracker",
+            &[("aws_location_tracker", &["tracker_name"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }

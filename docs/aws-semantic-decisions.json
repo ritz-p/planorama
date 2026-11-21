@@ -94889,10 +94889,10 @@
       }
     },
     "aws_location_geofence_collection": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1655,
-      "gap": "#1655 — Verify kms_key_id for aws_location_geofence_collection.",
+      "gap": "#1655 — Verify kms_key_id.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94903,7 +94903,7 @@
         "placement": "Supported: Logical Node for AWS Location. Terraform resource for managing an AWS Location Geofence Collection.",
         "ownership": "Not applicable: Keep AWS Location node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS Location Geofence Collection. No direct subnet placement follows from kms_key_id.",
-        "references": "Missing: Resolve known kms_key_id only against unique compatible managed endpoints (#1655).",
+        "references": "Supported: Verified references for kms_key_id (#1655).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit kms_key_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/location_geofence_collection.html.markdown",
@@ -94919,7 +94919,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourceGeofenceCollection. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -95118,10 +95119,10 @@
       }
     },
     "aws_location_tracker": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1655,
-      "gap": "#1655 — Verify kms_key_id for aws_location_tracker.",
+      "gap": "#1655 — Verify kms_key_id.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95132,7 +95133,7 @@
         "placement": "Supported: Logical Node for AWS Location. Provides a Location Service Tracker.",
         "ownership": "Not applicable: Keep AWS Location node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a Location Service Tracker. No direct subnet placement follows from kms_key_id.",
-        "references": "Missing: Resolve known kms_key_id only against unique compatible managed endpoints (#1655).",
+        "references": "Supported: Verified references for kms_key_id (#1655).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit kms_key_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/location_tracker.html.markdown",
@@ -95148,7 +95149,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourceTracker. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -95175,10 +95177,10 @@
       }
     },
     "aws_location_tracker_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1655,
-      "gap": "#1655 — Verify consumer_arn, tracker_name for aws_location_tracker_association.",
+      "gap": "#1655 — Verify consumer_arn, tracker_name.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95190,7 +95192,7 @@
         "placement": "Supported: Logical Association for AWS Location. Terraform resource for managing an AWS Location Tracker Association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Terraform resource for managing an AWS Location Tracker Association. No direct subnet placement follows from consumer_arn.",
-        "references": "Missing: Resolve known consumer_arn, tracker_name only against unique compatible managed endpoints (#1655).",
+        "references": "Supported: Verified references for consumer_arn, tracker_name (#1655).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit consumer_arn, tracker_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/location_tracker_association.html.markdown",
@@ -95210,7 +95212,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourceTrackerAssociation. Same-name data selectors are recorded separately.",
         "dataContracts": {
