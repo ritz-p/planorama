@@ -27,6 +27,18 @@ const BUCKET: Outputs = &[("aws_s3_bucket", &["bucket", "id"])];
 const SIP_APP: &str = "aws_chimesdkvoice_sip_media_application";
 const SIP_RULE: &str = "aws_chimesdkvoice_sip_rule";
 
+const CONNECT: &str = "aws_connect_instance";
+const BOT: &str = "aws_connect_bot_association";
+const FLOW: &str = "aws_connect_contact_flow";
+const MODULE: &str = "aws_connect_contact_flow_module";
+const HOURS: &str = "aws_connect_hours_of_operation";
+const VOCABULARY: &str = "aws_connect_vocabulary";
+const INSTANCE_ID: Outputs = &[(CONNECT, &["id"])];
+
+fn instance_child(kind: &str) -> bool {
+    matches!(kind, BOT | FLOW | MODULE | HOURS | VOCABULARY)
+}
+
 fn voice_configuration(kind: &str) -> bool {
     matches!(
         kind,
@@ -123,6 +135,11 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             Rule::scalar_set("Chime SIP target applications", &[(SIP_APP, &["id"])])
                 .in_control_plane_account()
         }
+        (kind, "instance_id") if instance_child(kind) => scalar("Connect instance", INSTANCE_ID),
+        (CONNECT, "directory_id") => scalar(
+            "Connect identity directory",
+            &[("aws_directory_service_directory", &["id"])],
+        ),
         _ => return None,
     })
 }
@@ -244,6 +261,12 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                     .is_some_and(|region| region.0 == wanted)
             });
     }
+    if r.attribute == "instance_id" && instance_child(&e.nodes[target].resource_type) {
+        return true;
+    }
+    if e.nodes[target].resource_type == CONNECT && r.attribute == "directory_id" {
+        return e.text(target, "identity_management_type") == Some("EXISTING_DIRECTORY");
+    }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),
         "guardrail_policy_arns" => ("iam", "policy/"),
@@ -302,6 +325,9 @@ pub(crate) fn inherit_voice_region(nodes: &mut [TerraformEntity], refs: &[Attrib
 }
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
+    if instance_child(kind) {
+        return Some(("instance_id", "Connect instance", "Instance configuration"));
+    }
     voice_configuration(kind).then_some((
         "voice_connector_id",
         "Chime voice connector",
