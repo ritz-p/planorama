@@ -883,7 +883,7 @@ test('#734 distinguishes communications endpoints, service scopes, and historica
   assert.equal(review('chatbot_teams_channel_configuration').contracts.chat_configuration_arn, 'computed');
   assert.equal(decisions.aws_codestarnotifications_notification_rule.issue,
     decisions.aws_chatbot_slack_channel_configuration.issue);
-  assert.match(review('codestarnotifications_notification_rule').references, /Partial:.*chat_configuration_arn/);
+  assert.match(review('codestarnotifications_notification_rule').references, /Supported:.*chat_configuration_arn/);
   assert.match(review('chime_voice_connector').scope, /Missing:.*aws_region/);
   assert.deepEqual(review('chime_voice_connector_group').shapes['connector.voice_connector_id'], ['set', 'string']);
   assert.equal(review('connect_instance').contracts.service_role, 'computed');

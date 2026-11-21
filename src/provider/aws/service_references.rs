@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::communications::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::application_services::label(resource, attribute) {
         return Some(label);
     }
@@ -997,6 +1000,7 @@ pub(crate) fn annotate_provider_accounts(
     evidence: &[(&Value, &Value)],
 ) {
     super::operations::annotate(nodes, references, evidence);
+    super::communications::annotate(nodes, references, evidence);
     super::application_services::annotate(nodes, references, evidence);
     super::delivery::annotate(nodes, references, evidence);
     super::macie_classification::annotate(nodes, references, evidence);
@@ -1369,6 +1373,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::arc_routing_control::bindings(raw, reference)
         && super::resilience_hub::bindings(raw, reference)
         && super::operations::bindings(raw, reference)
+        && super::communications::bindings(raw, reference)
         && super::application_services::bindings(raw, reference)
         && super::delivery::bindings(raw, reference)
         && super::firewall_manager::bindings(raw, reference)
