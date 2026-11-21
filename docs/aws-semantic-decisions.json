@@ -97951,6 +97951,799 @@
         "managedDataContract": "Managed newUserSettingsAssociationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
+    },
+    "aws_bcmdataexports_export": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1664,
+      "gap": "#1664 — Verify export.destination_configurations.s3_destination.s3_bucket for aws_bcmdataexports_export.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "export.destination_configurations.s3_destination.s3_bucket",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS BCM Data Exports. Terraform resource for managing an AWS BCM Data Exports Export.",
+        "ownership": "Not applicable: Keep AWS BCM Data Exports node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing an AWS BCM Data Exports Export. No direct subnet placement follows from export.destination_configurations.s3_destination.s3_bucket.",
+        "references": "Missing: Resolve known export.destination_configurations.s3_destination.s3_bucket only against unique compatible managed endpoints (#1664).",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit export.data_query.query_statement from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/bcmdataexports_export.html.markdown",
+        "shapes": {
+          "export.destination_configurations.s3_destination.s3_bucket": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "export.destination_configurations.s3_destination.s3_bucket": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newExportResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_billing_view": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1665,
+      "gap": "#1665 — Verify source_views for aws_billing_view.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_views",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS Billing. Manages an AWS Billing View.",
+        "ownership": "Not applicable: Keep AWS Billing node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages an AWS Billing View. No direct subnet placement follows from source_views.",
+        "references": "Missing: Resolve known source_views only against unique compatible managed endpoints (#1665).",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit data_filter_expression.dimensions.values, data_filter_expression.tags.values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/billing_view.html.markdown",
+        "shapes": {
+          "source_views": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "source_views": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourceView. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_budgets_budget": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1665,
+      "gap": "#1665 — Verify billing_view_arn, notification.subscriber_sns_topic_arns for aws_budgets_budget.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "billing_view_arn",
+          "notification.subscriber_sns_topic_arns",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS Web Services Budgets. Provides a budgets budget resource.",
+        "ownership": "Not applicable: Keep AWS Web Services Budgets node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a budgets budget resource. No direct subnet placement follows from billing_view_arn.",
+        "references": "Missing: Resolve known billing_view_arn, notification.subscriber_sns_topic_arns only against unique compatible managed endpoints (#1665). Service Catalog already references a budget by name (#1546).",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit cost_filter.values, filter_expression.and.and.cost_categories.values, filter_expression.and.and.dimensions.values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/budgets_budget.html.markdown",
+        "shapes": {
+          "billing_view_arn": [
+            "string"
+          ],
+          "notification.subscriber_sns_topic_arns": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "billing_view_arn": "optional",
+          "notification.subscriber_sns_topic_arns": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs"
+        ],
+        "managedDataContract": "Managed resourceBudget. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "account_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name_prefix": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_budgets_budget_action": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1665,
+      "gap": "#1665 — Verify budget_name, execution_role_arn, definition.iam_action_definition.policy_arn, definition.scp_action_definition.policy_id, definition.ssm_action_definition.instance_ids for aws_budgets_budget_action.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "budget_name",
+          "execution_role_arn",
+          "definition.iam_action_definition.policy_arn",
+          "definition.scp_action_definition.policy_id",
+          "definition.ssm_action_definition.instance_ids",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Controller for AWS Web Services Budgets. Provides a budget action resource.",
+        "ownership": "Not applicable: Keep AWS Web Services Budgets controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a budget action resource. No direct subnet placement follows from budget_name.",
+        "references": "Missing: Resolve known budget_name, execution_role_arn, definition.iam_action_definition.policy_arn, definition.scp_action_definition.policy_id, definition.ssm_action_definition.instance_ids only against unique compatible managed endpoints (#1665).",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit subscriber.address from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/budgets_budget_action.html.markdown",
+        "shapes": {
+          "budget_name": [
+            "string"
+          ],
+          "execution_role_arn": [
+            "string"
+          ],
+          "definition.iam_action_definition.policy_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "definition.scp_action_definition.policy_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "definition.ssm_action_definition.instance_ids": [
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "budget_name": "required",
+          "execution_role_arn": "required",
+          "definition.iam_action_definition.policy_arn": "required",
+          "definition.scp_action_definition.policy_id": "required",
+          "definition.ssm_action_definition.instance_ids": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceBudgetAction. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ce_anomaly_monitor": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides a CE Cost Anomaly Monitor Retain basic logical presentation; monitor_type, monitor_dimension supplies no dedicated relationship.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "monitor_type",
+          "monitor_dimension",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS CE (Cost Explorer). Provides a CE Cost Anomaly Monitor",
+        "ownership": "Not applicable: Keep AWS CE (Cost Explorer) node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a CE Cost Anomaly Monitor No direct subnet placement follows from monitor_type.",
+        "references": "Intentionally unsupported: monitor_type, monitor_dimension describes AWS CE (Cost Explorer) configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit monitor_specification from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ce_anomaly_monitor.html.markdown",
+        "shapes": {
+          "monitor_type": [
+            "string"
+          ],
+          "monitor_dimension": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "monitor_type": "required",
+          "monitor_dimension": "optional",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceAnomalyMonitor. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ce_anomaly_subscription": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1665,
+      "gap": "#1665 — Verify monitor_arn_list for aws_ce_anomaly_subscription.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "monitor_arn_list",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Controller for AWS CE (Cost Explorer). Provides a CE Cost Anomaly Subscription",
+        "ownership": "Not applicable: Keep AWS CE (Cost Explorer) controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a CE Cost Anomaly Subscription No direct subnet placement follows from monitor_arn_list.",
+        "references": "Missing: Resolve known monitor_arn_list only against unique compatible managed endpoints (#1665).",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit subscriber.address, threshold_expression.and.cost_category.values, threshold_expression.and.dimension.values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ce_anomaly_subscription.html.markdown",
+        "shapes": {
+          "monitor_arn_list": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "monitor_arn_list": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceAnomalySubscription. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ce_cost_allocation_tag": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides a CE Cost Allocation Tag Retain basic logical presentation; tag_key, status supplies no dedicated relationship.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "tag_key",
+          "status",
+          "id"
+        ],
+        "placement": "Supported: Logical Controller for AWS CE (Cost Explorer). Provides a CE Cost Allocation Tag",
+        "ownership": "Not applicable: Keep AWS CE (Cost Explorer) controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a CE Cost Allocation Tag No direct subnet placement follows from tag_key.",
+        "references": "Intentionally unsupported: tag_key, status describes AWS CE (Cost Explorer) configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit tag_key, status values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ce_cost_allocation_tag.html.markdown",
+        "shapes": {
+          "tag_key": [
+            "string"
+          ],
+          "status": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "tag_key": "required",
+          "status": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceCostAllocationTag. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ce_cost_category": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides a CE Cost Category Definition Retain basic logical presentation; rule_version, split_charge_rule.targets supplies no dedicated relationship.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "rule_version",
+          "split_charge_rule.targets",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: Logical Node for AWS CE (Cost Explorer). Provides a CE Cost Category Definition",
+        "ownership": "Not applicable: Keep AWS CE (Cost Explorer) node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a CE Cost Category Definition No direct subnet placement follows from rule_version.",
+        "references": "Intentionally unsupported: rule_version, split_charge_rule.targets describes AWS CE (Cost Explorer) configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit rule.rule.and.and.cost_category.values, rule.rule.and.and.dimension.values, rule.rule.and.and.tags.values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/ce_cost_category.html.markdown",
+        "shapes": {
+          "rule_version": [
+            "string"
+          ],
+          "split_charge_rule.targets": [
+            "set",
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "rule_version": "required",
+          "split_charge_rule.targets": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceCostCategory. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "cost_category_arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_costoptimizationhub_enrollment_status": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing AWS Cost Optimization Hub Enrollment Status. Retain basic logical presentation; include_member_accounts, status supplies no dedicated relationship.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "include_member_accounts",
+          "status"
+        ],
+        "placement": "Supported: Logical Controller for AWS Cost Optimization Hub. Terraform resource for managing AWS Cost Optimization Hub Enrollment Status.",
+        "ownership": "Not applicable: Keep AWS Cost Optimization Hub controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing AWS Cost Optimization Hub Enrollment Status. No direct subnet placement follows from include_member_accounts.",
+        "references": "Intentionally unsupported: include_member_accounts, status describes AWS Cost Optimization Hub configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit include_member_accounts, status values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/costoptimizationhub_enrollment_status.html.markdown",
+        "shapes": {
+          "include_member_accounts": [
+            "bool"
+          ],
+          "status": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "include_member_accounts": "optional/computed",
+          "status": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newEnrollmentStatusResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_costoptimizationhub_preferences": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Terraform resource for managing AWS Cost Optimization Hub Preferences. Retain basic logical presentation; savings_estimation_mode supplies no dedicated relationship.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "savings_estimation_mode",
+          "id"
+        ],
+        "placement": "Supported: Logical Controller for AWS Cost Optimization Hub. Terraform resource for managing AWS Cost Optimization Hub Preferences.",
+        "ownership": "Not applicable: Keep AWS Cost Optimization Hub controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Terraform resource for managing AWS Cost Optimization Hub Preferences. No direct subnet placement follows from savings_estimation_mode.",
+        "references": "Intentionally unsupported: savings_estimation_mode describes AWS Cost Optimization Hub configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit savings_estimation_mode values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/costoptimizationhub_preferences.html.markdown",
+        "shapes": {
+          "savings_estimation_mode": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "savings_estimation_mode": "optional/computed",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newPreferencesResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_cur_report_definition": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1664,
+      "gap": "#1664 — Verify s3_bucket for aws_cur_report_definition.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "s3_bucket",
+          "arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS Cost and Usage Report. Provides a Cost and Usage Report Definition.",
+        "ownership": "Not applicable: Keep AWS Cost and Usage Report controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides a Cost and Usage Report Definition. No direct subnet placement follows from s3_bucket.",
+        "references": "Missing: Resolve known s3_bucket only against unique compatible managed endpoints (#1664).",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit s3_bucket values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/cur_report_definition.html.markdown",
+        "shapes": {
+          "s3_bucket": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "s3_bucket": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceReportDefinition. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "report_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_invoicing_invoice_unit": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Manages an AWS Invoice Unit Retain basic logical presentation; invoice_receiver, rule.linked_accounts supplies no dedicated relationship.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "invoice_receiver",
+          "rule.linked_accounts",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for AWS Invoicing. Manages an AWS Invoice Unit",
+        "ownership": "Not applicable: Keep AWS Invoicing node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages an AWS Invoice Unit No direct subnet placement follows from invoice_receiver.",
+        "references": "Intentionally unsupported: invoice_receiver, rule.linked_accounts describes AWS Invoicing configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDeprecatedOverride; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit invoice_receiver, rule.linked_accounts values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/invoicing_invoice_unit.html.markdown",
+        "shapes": {
+          "invoice_receiver": [
+            "string"
+          ],
+          "rule.linked_accounts": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "invoice_receiver": "required",
+          "rule.linked_accounts": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newInvoiceUnitResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_pricingplanmanager_subscription": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1666,
+      "gap": "#1666 — Verify resource_arns for aws_pricingplanmanager_subscription.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arns",
+          "arn"
+        ],
+        "placement": "Supported: Logical Controller for AWS Pricing Plan Manager. Manages an AWS Pricing Plan Manager Subscription.",
+        "ownership": "Not applicable: Keep AWS Pricing Plan Manager controller independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages an AWS Pricing Plan Manager Subscription. No direct subnet placement follows from resource_arns.",
+        "references": "Missing: Resolve known resource_arns only against unique compatible managed endpoints (#1666).",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit resource_arns values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/pricingplanmanager_subscription.html.markdown",
+        "shapes": {
+          "resource_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_arns": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSubscriptionResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_savingsplans_savings_plan": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Provides an AWS Savings Plan resource. Retain basic logical presentation; offering_id, savings_plan_arn supplies no dedicated relationship.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "offering_id",
+          "savings_plan_arn"
+        ],
+        "placement": "Supported: Logical Node for AWS Savings Plans. Provides an AWS Savings Plan resource.",
+        "ownership": "Not applicable: Keep AWS Savings Plans node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Provides an AWS Savings Plan resource. No direct subnet placement follows from offering_id.",
+        "references": "Intentionally unsupported: offering_id, savings_plan_arn describes AWS Savings Plans configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit commitment from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/savingsplans_savings_plan.html.markdown",
+        "shapes": {
+          "offering_id": [
+            "string"
+          ],
+          "savings_plan_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "offering_id": "computed",
+          "savings_plan_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSavingsPlanResource. Same-name data selectors are recorded separately.",
+        "dataContracts": {
+          "savings_plan_id": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_uxc_account_customizations": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "Manages UXC Account Customizations for an AWS Account. Retain basic logical presentation; visible_regions, visible_services supplies no dedicated relationship.",
+      "review": {
+        "issue": 738,
+        "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "visible_regions",
+          "visible_services"
+        ],
+        "placement": "Supported: Logical Node for Amazon User Experience Customization. Manages UXC Account Customizations for an AWS Account.",
+        "ownership": "Not applicable: Keep Amazon User Experience Customization node independently addressable. Its managed identity alone establishes no diagram parent.",
+        "network": "Not applicable: Manages UXC Account Customizations for an AWS Account. No direct subnet placement follows from visible_regions.",
+        "references": "Intentionally unsupported: visible_regions, visible_services describes Amazon User Experience Customization configuration or identity. This resource supplies no dedicated outgoing edge for those values.",
+        "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
+        "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit visible_regions, visible_services values from dedicated summaries.",
+        "officialDocumentation": "website/docs/r/uxc_account_customizations.html.markdown",
+        "shapes": {
+          "visible_regions": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "visible_services": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "visible_regions": "optional/computed",
+          "visible_services": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newAccountCustomizationsResource. No same-name data registration in the pinned schema.",
+        "dataContracts": {}
+      }
     }
   }
 }
