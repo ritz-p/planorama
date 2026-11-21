@@ -12,6 +12,7 @@ mod rank;
 pub(crate) mod relationship_markers;
 mod routing;
 mod routing_shared;
+pub(crate) use routing_shared::spacing::PREFERRED as ROUTE_LANE_SPACING;
 mod scopes;
 mod spatial;
 #[cfg(test)]

@@ -775,7 +775,7 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
     let width = number(wide, "width");
     assert!(width > number(standalone_root, "width"));
     assert_eq!(number(narrow, "width"), width);
-    assert_eq!(number(document.root_element(), "width"), width + 80 + 12);
+    assert_eq!(number(document.root_element(), "width"), width + 80 + 16);
     assert_eq!(
         number(narrow, "y"),
         136 + legend_shape(document.root_element()).1 + 12
@@ -891,7 +891,7 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
             .collect();
         assert_eq!(
             points.iter().map(|point| point.x).max(),
-            Some(width + 30 + i * 12)
+            Some(width + 30 + i * 16)
         );
         for (attribute, point) in [
             ("data-source-port", points[0]),

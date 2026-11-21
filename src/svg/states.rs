@@ -328,7 +328,7 @@ pub(crate) async fn render_step(
         else {
             continue;
         };
-        let lane = width + 30 + link_count * 12;
+        let lane = width + 30 + link_count * crate::layout::ROUTE_LANE_SPACING;
         let mut points = crate::layout::route_to_margin(
             Point { x: *sx, y: *sy },
             Point { x: lane, y: *sy },
@@ -380,7 +380,7 @@ pub(crate) async fn render_step(
         links.push_str(&super::endpoints::circle(points[0], "source", "#2563eb"));
     }
     if !links.is_empty() {
-        width += 80 + (link_count - 1) * 12;
+        width += 80 + (link_count - 1) * crate::layout::ROUTE_LANE_SPACING;
         sections.push_str("<defs><marker id=\"cross-state-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#2563eb\"/></marker></defs>\n");
         sections.push_str(&links);
         if !options.hide_relationship_legend && !options.omit_relationship_legend {
