@@ -841,3 +841,50 @@ fn budgets_notification_recognizes_reordered_topic_sets() {
         json!([first, second]);
     assert!(!verified(&input, kind, "Budget notification topics"));
 }
+
+#[test]
+fn pricingplanmanager_subscription_validates_managed_reference() {
+    let kind = "aws_pricingplanmanager_subscription";
+    let value = "arn:aws:cloudfront::123456789012:distribution/E123";
+    let mut input = reference_plan(
+        "aws_cloudfront_distribution",
+        json!({"arn":value}),
+        kind,
+        json!({"resource_arns":[value]}),
+        json!({"resource_arns":{"references":["aws_cloudfront_distribution.source.arn"]}}),
+    );
+
+    let acl = "arn:aws:wafv2:us-east-1:123456789012:global/webacl/example/1234";
+    input["resource_changes"].as_array_mut().unwrap().push(json!({
+        "address":"aws_wafv2_web_acl.acl","mode":"managed","type":"aws_wafv2_web_acl","name":"acl",
+        "provider_name":"registry.terraform.io/hashicorp/aws",
+        "change":{"actions":["create"],"after":{"arn":acl,"scope":"CLOUDFRONT"}}
+    }));
+    input["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_wafv2_web_acl.acl","provider_config_key":"aws","expressions":{}
+        }));
+    input["resource_changes"][1]["change"]["after"] =
+        json!({"resource_arns":[value,acl],"plan_family":"CloudFront","plan_tier":"PRO"});
+    input["configuration"]["root_module"]["resources"][1]["expressions"]["resource_arns"]["references"] =
+        json!([
+            "aws_cloudfront_distribution.source.arn",
+            "aws_wafv2_web_acl.acl.arn"
+        ]);
+
+    assert!(verified(&input, kind, "Covered CloudFront plan resources"));
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["allowed_account_ids"]["constant_value"] =
+        json!(["210987654321"]);
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Covered CloudFront plan resources"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"resource_arns":true});
+    assert!(!verified(&input, kind, "Covered CloudFront plan resources"));
+}

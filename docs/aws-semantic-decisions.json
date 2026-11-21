@@ -98708,10 +98708,10 @@
       }
     },
     "aws_pricingplanmanager_subscription": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1666,
-      "gap": "#1666 — Verify resource_arns for aws_pricingplanmanager_subscription.",
+      "gap": "#1666 — Verify resource_arns.",
       "review": {
         "issue": 738,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -98723,7 +98723,7 @@
         "placement": "Supported: Logical Controller for AWS Pricing Plan Manager. Manages an AWS Pricing Plan Manager Subscription.",
         "ownership": "Not applicable: Keep AWS Pricing Plan Manager controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS Pricing Plan Manager Subscription. No direct subnet placement follows from resource_arns.",
-        "references": "Missing: Resolve known resource_arns only against unique compatible managed endpoints (#1666).",
+        "references": "Supported: Verified references for resource_arns (#1666).",
         "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit resource_arns values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/pricingplanmanager_subscription.html.markdown",
@@ -98746,7 +98746,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/billing_services.rs"
         ],
         "managedDataContract": "Managed newSubscriptionResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
