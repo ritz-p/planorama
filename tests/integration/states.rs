@@ -10,7 +10,14 @@ fn cli() -> Command {
 fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
     let path = fixture("aws-relationships-plan.json");
     let single = cli()
-        .args([path.as_str(), "--address-format", "terraform", "-o", "-"])
+        .args([
+            path.as_str(),
+            "--no-omit-relationship-legend",
+            "--address-format",
+            "terraform",
+            "-o",
+            "-",
+        ])
         .output()
         .unwrap();
     assert!(single.status.success());
@@ -23,6 +30,7 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
             &format!("first={path}"),
             "--state",
             &format!("second={path}"),
+            "--no-omit-relationship-legend",
             "--address-format",
             "terraform",
             "-o",

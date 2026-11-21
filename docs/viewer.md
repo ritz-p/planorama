@@ -14,11 +14,10 @@ planorama plan.json --format html -o - > diagram.html
 The default remains SVG and `diagram.svg`. HTML defaults to `diagram.html`;
 `-o` sets the destination, not the format. Existing address formatting, focus,
 changed-only and module selection, remote-state mappings and diagnostics work in both modes.
-`--hide-relationship-legend` applies during SVG generation in both formats;
-there is no viewer toggle. It keeps action colors and relationship navigation.
-`--omit-relationship-legend` instead removes the entire relationship legend,
-including its action color key and reserved space. Fit and SVG/HTML export use
-the resulting diagram bounds; relationship navigation remains available.
+Both formats omit the relationship legend and its reserved space by default.
+Use `--no-omit-relationship-legend` to show the full card or
+`--hide-relationship-legend` alone for action colors only. Fit and export use
+the resulting diagram bounds. Relationship navigation remains available.
 Logical Resources rows show the same per-resource deployment-scope labels in both
 formats; see [scope evidence and limitations](aws.md#deployment-scopes).
 

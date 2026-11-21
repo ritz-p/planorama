@@ -58,12 +58,35 @@ pub enum AddressFormat {
     Terraform,
 }
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy)]
 pub struct Options {
     pub address_format: AddressFormat,
     pub cloudflare_groups: bool,
     pub hide_relationship_legend: bool,
     pub omit_relationship_legend: bool,
+}
+
+impl Default for Options {
+    fn default() -> Self {
+        Self {
+            address_format: AddressFormat::default(),
+            cloudflare_groups: false,
+            hide_relationship_legend: false,
+            omit_relationship_legend: true,
+        }
+    }
+}
+
+impl Options {
+    pub(crate) fn relationship_legend(self) -> &'static str {
+        if self.omit_relationship_legend {
+            "omitted"
+        } else if self.hide_relationship_legend {
+            "action-colors-only"
+        } else {
+            "full"
+        }
+    }
 }
 
 impl From<AddressFormat> for Options {
@@ -97,6 +120,7 @@ fn escape(value: &str) -> String {
     escaped
 }
 
+#[cfg(test)]
 pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     render_with_format(graph, layout, AddressFormat::Qualified)
 }
@@ -303,7 +327,7 @@ pub(crate) fn render_report(
     render_with_index(
         graph,
         layout,
-        options.address_format,
+        options,
         &relationship_index,
         &sections,
         content,
@@ -335,11 +359,13 @@ fn diagnostic_cards(graph: &Graph, layout: &Layout<'_>) -> serde_json::Value {
 fn render_with_index(
     graph: &Graph,
     layout: &Layout<'_>,
-    address_format: AddressFormat,
+    options: Options,
     relationship_index: &relationship_index::Index<'_>,
     sections: &Sections,
     content: Content,
 ) -> String {
+    let address_format = options.address_format;
+    let legend_mode = options.relationship_legend();
     let check_offset = sections.check_height;
     let (width, height) = sections.dimensions(layout);
     let membership = components::membership(graph);
@@ -353,7 +379,7 @@ fn render_with_index(
         .iter()
         .any(|edge| edge.kind != EdgeKind::Dependency);
     let mut svg = format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
+        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description" data-legend-mode="{legend_mode}">
 <title id="title">Terraform plan</title>
 <desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs>{markers}{icon_definitions}{occlusion_definitions}</defs>

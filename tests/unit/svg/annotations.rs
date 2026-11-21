@@ -244,7 +244,14 @@ fn annotations_precede_architecture_without_mutating_routing() {
         let layout = crate::layout::Layout::new(&graph);
         let bounds = layout.bounds.clone();
         let paths = layout.paths.clone();
-        let svg = crate::svg::render(&graph, &layout);
+        let svg = crate::svg::render_with_format(
+            &graph,
+            &layout,
+            crate::svg::Options {
+                omit_relationship_legend: false,
+                ..Default::default()
+            },
+        );
         let doc = roxmltree::Document::parse(&svg).unwrap();
         let area = doc
             .descendants()

@@ -1,6 +1,36 @@
 use super::*;
 
 #[test]
+fn sparse_legend_settings_preserve_explicit_choices() {
+    for (json, hide, omit) in [
+        ("{}", false, true),
+        (r#"{"hide_relationship_legend":false}"#, false, false),
+        (r#"{"hide_relationship_legend":true}"#, true, false),
+        (r#"{"omit_relationship_legend":false}"#, false, false),
+        (
+            r#"{"omit_relationship_legend":true,"hide_relationship_legend":true}"#,
+            true,
+            true,
+        ),
+    ] {
+        let options: Options = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            (
+                options.hide_relationship_legend,
+                options.omit_relationship_legend
+            ),
+            (hide, omit)
+        );
+    }
+    for json in [
+        r#"{"hide_relationship_legend":null}"#,
+        r#"{"omit_relationship_legend":null}"#,
+    ] {
+        assert!(serde_json::from_str::<Options>(json).is_err());
+    }
+}
+
+#[test]
 fn low_level_html_rendering_does_not_claim_generation_provenance() {
     let raw = plan::parse(include_str!("../fixtures/viewer-plan.json")).unwrap();
     let graph = project(&raw, &view::Options::default()).unwrap();

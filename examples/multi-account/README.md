@@ -38,7 +38,7 @@ generation and committed topology.
 - `application-b` is a smaller application topology with update actions and a
   remote dependency on application A's endpoint.
 - `shared-services` exports an LB endpoint, AMI and IAM role. Deleted Routes
-  contribute to the shared action legend.
+  contribute to the shared action legend when it is enabled.
 
 Known regions and AWS Global still form panels within each state. IAM and other
 logical resources stay in the annotation area. `legacy_region` has neither known

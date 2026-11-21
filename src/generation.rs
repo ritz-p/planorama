@@ -11,15 +11,14 @@ pub enum OutputFormat {
     Html,
 }
 
-#[derive(Default, serde::Deserialize)]
-#[serde(default, deny_unknown_fields)]
+#[derive(serde::Deserialize)]
+#[serde(from = "InputOptions")]
 pub struct Options {
     pub anonymize: bool,
     pub cloudflare_groups: bool,
     pub cloudflare_value_matches: bool,
     pub cloudflare_accounts: Vec<String>,
     pub cloudflare_zones: Vec<String>,
-    #[serde(deserialize_with = "memory::deserialize")]
     pub memory_budget_mib: Option<u32>,
     pub spatial_types: Vec<String>,
     pub format: OutputFormat,
@@ -34,6 +33,71 @@ pub struct Options {
     pub focus_depth: Option<usize>,
     pub modules: Vec<String>,
     pub remote_state_mappings: Vec<crate::RemoteStateMapping>,
+}
+
+#[derive(Default, serde::Deserialize)]
+#[serde(default, deny_unknown_fields)]
+struct InputOptions {
+    anonymize: bool,
+    cloudflare_groups: bool,
+    cloudflare_value_matches: bool,
+    cloudflare_accounts: Vec<String>,
+    cloudflare_zones: Vec<String>,
+    #[serde(deserialize_with = "memory::deserialize")]
+    memory_budget_mib: Option<u32>,
+    spatial_types: Vec<String>,
+    format: OutputFormat,
+    address_format: svg::AddressFormat,
+    icon_mode: crate::icons::IconMode,
+    #[serde(deserialize_with = "explicit_bool")]
+    hide_relationship_legend: Option<bool>,
+    #[serde(deserialize_with = "explicit_bool")]
+    omit_relationship_legend: Option<bool>,
+    html_diagnostics: bool,
+    html_semantic_diagnostics: bool,
+    changed_only: bool,
+    focus: Option<String>,
+    focus_depth: Option<usize>,
+    modules: Vec<String>,
+    remote_state_mappings: Vec<crate::RemoteStateMapping>,
+}
+
+fn explicit_bool<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<bool>, D::Error> {
+    serde::Deserialize::deserialize(d).map(Some)
+}
+
+impl From<InputOptions> for Options {
+    fn from(input: InputOptions) -> Self {
+        Self {
+            anonymize: input.anonymize,
+            cloudflare_groups: input.cloudflare_groups,
+            cloudflare_value_matches: input.cloudflare_value_matches,
+            cloudflare_accounts: input.cloudflare_accounts,
+            cloudflare_zones: input.cloudflare_zones,
+            memory_budget_mib: input.memory_budget_mib,
+            spatial_types: input.spatial_types,
+            format: input.format,
+            address_format: input.address_format,
+            icon_mode: input.icon_mode,
+            hide_relationship_legend: input.hide_relationship_legend.unwrap_or(false),
+            omit_relationship_legend: input
+                .omit_relationship_legend
+                .unwrap_or(input.hide_relationship_legend.is_none()),
+            html_diagnostics: input.html_diagnostics,
+            html_semantic_diagnostics: input.html_semantic_diagnostics,
+            changed_only: input.changed_only,
+            focus: input.focus,
+            focus_depth: input.focus_depth,
+            modules: input.modules,
+            remote_state_mappings: input.remote_state_mappings,
+        }
+    }
+}
+
+impl Default for Options {
+    fn default() -> Self {
+        InputOptions::default().into()
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
@@ -365,14 +429,6 @@ pub(crate) fn render(
             svg::render_report(graph, layout, options, svg::Content::Standard, Some(report))
         }
         (OutputFormat::Html, None) => html::render(graph, layout, options),
-        (OutputFormat::Svg, None)
-            if matches!(options.address_format, svg::AddressFormat::Qualified)
-                && !options.hide_relationship_legend
-                && !options.omit_relationship_legend
-                && !options.cloudflare_groups =>
-        {
-            svg::render(graph, layout)
-        }
         (OutputFormat::Svg, None) => svg::render_with_format(graph, layout, options),
     }
 }

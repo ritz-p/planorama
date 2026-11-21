@@ -43,7 +43,7 @@ fn generation_information_is_effective_allowlisted_and_shared() {
     );
     assert!(metadata["setting_origins"].is_null());
     assert_eq!(metadata["selected_view"], false);
-    assert_eq!(metadata["settings"]["relationship_legend"], "full");
+    assert_eq!(metadata["settings"]["relationship_legend"], "omitted");
     assert!(metadata["settings"]["focus_depth"].is_null());
     let shared = planorama::generate(
         input,
@@ -60,14 +60,14 @@ fn generation_information_is_effective_allowlisted_and_shared() {
             "--changed-only",
             "--address-format",
             "terraform",
-            "--omit-relationship-legend",
+            "--no-omit-relationship-legend",
         ],
     );
     let metadata = generation_data(&filtered);
     assert_eq!(metadata["selected_view"], true);
     assert_eq!(metadata["settings"]["changed_only"], true);
     assert_eq!(metadata["settings"]["address_format"], "terraform");
-    assert_eq!(metadata["settings"]["relationship_legend"], "omitted");
+    assert_eq!(metadata["settings"]["relationship_legend"], "full");
     assert_eq!(
         metadata["settings"]
             .as_object()
@@ -493,7 +493,11 @@ fn representative_html_matches_the_renderer() {
         normalize(&output),
         normalize(include_str!("../../examples/viewer.html"))
     );
-    let svg = roxmltree::Document::parse(diagram(&output)).unwrap();
+    let full = html(
+        include_bytes!("../fixtures/viewer-plan.json"),
+        &["--no-omit-relationship-legend"],
+    );
+    let svg = roxmltree::Document::parse(diagram(&full)).unwrap();
     let entries: Vec<_> = svg
         .descendants()
         .filter(|node| node.attribute("data-legend-entry").is_some())

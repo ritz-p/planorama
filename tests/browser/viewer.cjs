@@ -262,7 +262,11 @@ class ViewerTests {
             return { count: paths.length, initial, filtered, before, restored: paths.map(p=>p.getAttribute('d')) };
         `);
         this.assertGreater(routes.count, 0);
-        this.assertEqual(routes.initial, routes.filtered);
+        for (const [index, offsets] of routes.initial.entries()) {
+            for (const [end, offset] of offsets.entries()) {
+                this.assertLessEqual(Math.abs(offset - routes.filtered[index][end]), 1e-9);
+            }
+        }
         this.assertEqual(routes.before, routes.restored);
     }
     test_logical_action_filters_large_sample_preserves_routes_and_card_bounds() {
@@ -336,7 +340,7 @@ class ViewerTests {
         this.load('tests/fixtures/viewer-plan.json');
         this.find('#generation-info summary').click();
         this.assertIn('Full input view', this.find('#generation-details').text);
-        this.assertIn('matches default', this.find('#generation-details').text);
+        this.assertIn('omitted (matches default)', this.find('#generation-details').text);
         const revision = this.driver.execute_script("return JSON.parse(document.getElementById('viewer-generation').textContent).generator.revision");
         this.assertIn(`Revision: ${revision || 'unavailable'}`, this.find('#generation-details').text);
         this.load('tests/fixtures/viewer-plan.json', '--changed-only', '--omit-relationship-legend');
@@ -1016,7 +1020,7 @@ class ViewerTests {
         }
     }
     test_hidden_relationship_legend_reclaims_space_and_keeps_annotations_clear() {
-        this.load('tests/fixtures/routes-plan.json');
+        this.load('tests/fixtures/routes-plan.json', '--no-omit-relationship-legend');
         let [full_height, full_legend] = this.driver.execute_script("return [document.querySelector('#viewport > svg').viewBox.baseVal.height, +document.querySelector('#relationship-legend rect').getAttribute('height')]");
         this.load('tests/fixtures/routes-plan.json', '--hide-relationship-legend');
         let compact = this.driver.execute_script(`

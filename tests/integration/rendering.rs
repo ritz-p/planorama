@@ -141,7 +141,9 @@ fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
             Some("0 3.5"),
         ),
     ] {
-        let svg = render(input);
+        let full = support::run_with_args(input, &["--no-omit-relationship-legend"]);
+        assert!(full.status.success());
+        let svg = String::from_utf8(full.stdout).unwrap();
         let document = roxmltree::Document::parse(&svg).unwrap();
         let paths: Vec<_> = document
             .descendants()
