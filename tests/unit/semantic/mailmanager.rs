@@ -2,6 +2,22 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 #[test]
+fn ses_event_destination_verifies_firehose_delivery_stream() {
+    let kind = "aws_ses_event_destination";
+    let arn = "arn:aws:firehose:us-east-1:123456789012:deliverystream/example";
+    let mut input = reference_plan(
+        "aws_kinesis_firehose_delivery_stream",
+        json!({"arn":arn}),
+        kind,
+        json!({"kinesis_destination":[{"stream_arn":arn}]}),
+        json!({"kinesis_destination":[{"stream_arn":{"references":["aws_kinesis_firehose_delivery_stream.source.arn"]}}]}),
+    );
+    assert!(verified(&input, kind, "Firehose delivery stream"));
+    input["resource_changes"][0]["change"]["after"]["arn"] = json!("different");
+    assert!(!verified(&input, kind, "Firehose delivery stream"));
+}
+
+#[test]
 fn mailmanager_rule_verifies_s3_bucket_id() {
     let provider = "registry.terraform.io/hashicorp/aws";
     let mut input: Value =

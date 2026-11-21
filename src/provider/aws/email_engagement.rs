@@ -264,8 +264,8 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[],
         ),
         ("aws_ses_event_destination", "kinesis_destination.stream_arn") => Rule::new(
-            "Kinesis stream",
-            &[("aws_kinesis_stream", &["arn"])],
+            "Firehose delivery stream",
+            &[("aws_kinesis_firehose_delivery_stream", &["arn"])],
             false,
             &["kinesis_destination"],
         ),
