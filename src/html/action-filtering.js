@@ -135,7 +135,7 @@ function actionFiltering(context, index, view, coordinator, renderResults) {
     svg.setAttribute('height', rootHeight + delta);
     view.resize(rootHeight + delta);
     for (const link of links) {
-      if (!byId(link.target)) {
+      if (document.getElementById(link.target)?.closest('[data-html-filtered]')) {
         link.el.removeAttribute('href'); link.el.setAttribute('aria-disabled', 'true');
         if (!link.title) {
           link.title = document.createElementNS(svg.namespaceURI, 'title');

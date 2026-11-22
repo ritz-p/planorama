@@ -3,7 +3,7 @@
 __PLANORAMA_VIEWER_MODULES__
   const byId = id => {
     const el = document.getElementById(id);
-    return el?.closest('[data-html-filtered]') ? null : el;
+    return el?.closest('[data-html-filtered], [data-vpc-hidden]') ? null : el;
   };
   generationInformation(byId);
   const viewport = byId('viewport');
@@ -40,7 +40,8 @@ __PLANORAMA_VIEWER_MODULES__
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
   adapters.register(relationshipPath(context, index, coordinator));
-  actionFiltering(context, index, view, coordinator, renderResults);
+  const redrawVpcs = vpcFolding(context, index, coordinator, renderResults);
+  actionFiltering(context, index, view, coordinator, () => { redrawVpcs?.(); renderResults(); });
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {

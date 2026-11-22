@@ -66,3 +66,4 @@ p { line-height: 1.5; }
 @media (max-width: 700px) { main { grid-template-columns: 1fr; grid-template-rows: 40% 60%; } aside { border-bottom: 1px solid #cbd5e1; } #results { max-height: 15vh; } }
 #viewport g[data-path-step] { outline: 3px dashed #5b21b6; outline-offset: 3px; }
 #viewport[data-selection] path[data-path-step] { opacity: 1; stroke-width: 5; filter: drop-shadow(0 0 2px #5b21b6); }
+[data-vpc-hidden] { display: none !important; }
