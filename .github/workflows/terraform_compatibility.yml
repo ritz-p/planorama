@@ -55,6 +55,14 @@ jobs:
         with:
           persist-credentials: false
       - run: docker compose up -d --build dev
+      - run: docker compose exec -T dev node scripts/cloudflare-matrix.cjs prepare
+      - name: Recapture the Cloudflare version matrix offline
+        run: >-
+          docker run --rm --network none
+          --mount type=bind,source="$PWD",target=/workspace
+          planorama-dev node scripts/cloudflare-matrix.cjs capture
+      - run: docker compose exec -T dev node scripts/cloudflare-matrix.cjs check
+      - run: git diff --exit-code -- tests/fixtures/cloudflare-matrix
       - run: docker compose exec -T dev node scripts/terraform-compatibility.cjs prepare
       - run: >-
           docker run --rm --network none
@@ -88,15 +96,3 @@ jobs:
             tests/fixtures/provider-plan/captured
             tests/fixtures/cloudflare-captured
           include-hidden-files: true
-  cloudflare-matrix:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-      - run: node scripts/cloudflare-matrix.cjs prepare
-      - run: node scripts/cloudflare-matrix.cjs capture
-      - run: node scripts/cloudflare-matrix.cjs check
-      - run: git diff --exit-code -- tests/fixtures/cloudflare-matrix
