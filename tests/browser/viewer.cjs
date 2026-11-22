@@ -83,6 +83,20 @@ class ViewerTests {
             this.assertEqual(this.driver.execute_script("return document.querySelector('#viewport > svg').innerHTML"), original);
         }
     }
+    test_folded_vpc_respects_filtered_connector_endpoints() {
+        this.load('tests/fixtures/apprunner-plan.json');
+        this.find('#logical-filters summary').click();
+        const filter = this.find('#logical-filter-controls fieldset[data-resource-type="aws_apprunner_vpc_connector"] input[data-action="create"]');
+        const toggle = this.find('#vpc-toggle');
+        const links = () => this.driver.execute_script("return [...document.querySelectorAll('[data-vpc-aggregate=dependency]')].filter(g=>g.querySelector('title').textContent.includes('aws_apprunner_service.')).map(g=>Number(g.dataset.count))");
+        filter.click();
+        toggle.click();
+        this.assertEqual(links(), []);
+        filter.click();
+        this.assertEqual(links().sort(), [1,1]);
+        filter.click();
+        this.assertEqual(links(), []);
+    }
     test_standalone_svg_names_and_keyboard_focus() {
         const output = join(this.temp, 'accessible.svg');
         execFileSync(BINARY, ['tests/fixtures/association-plan.json', '-o', output], {cwd: ROOT});

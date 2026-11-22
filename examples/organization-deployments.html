@@ -1712,9 +1712,11 @@ function vpcFolding(context, index, coordinator, renderResults) {
       const prefix = dot.closest('[data-state-id]')?.id.replace(/state$/, '') || '';
       if (JSON.parse(dot.dataset.junctionEdges).some(pair => pair.some(id => representative.has(prefix+id)))) hide(dot);
     }
+    const filtered = id => document.getElementById(id)?.closest('[data-html-filtered]');
     const groups = new Map();
     for (const {from,to,kind,direction} of relations) {
       if (!representative.has(from) && !representative.has(to)) continue;
+      if (filtered(from) || filtered(to)) continue;
       let a = representative.get(from) || from, b = representative.get(to) || to;
       if (a === b || !byId(a) || !byId(b)) continue;
       if (direction === 'undirected' && a > b) [a,b] = [b,a];
