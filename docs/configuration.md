@@ -184,3 +184,11 @@ the names of changed architecture fields. An import contributes only its
 metadata flags. Resource and relationship additions/removals describe the
 two snapshots independently of Terraform's proposed actions. Relationships
 compare their endpoints, kind and direction after resolving moves.
+
+To compare diagrams at the same scale, run
+`planorama diff before.json after.json --svg-dir comparison`.
+The command creates a new directory containing `before.svg` and `after.svg`.
+The two diagrams reserve space for the union of the snapshots. Matched resources
+with the same containment path share a position. A resource that changes parent
+appears under its respective parent in each diagram. Each side shows its own
+relationships. The same named-state arguments and `--anonymize` apply to both.
