@@ -1,4 +1,4 @@
-use crate::model::{EdgeKind, EntityMode, Graph, cross_state::CrossStateEdge};
+use crate::model::{EntityMode, Graph, cross_state::CrossStateEdge};
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -43,15 +43,7 @@ pub(super) fn export<'a>(
             );
         }
         for edge in &graph.relationships {
-            let kind = match edge.kind {
-                EdgeKind::Dependency => "dependency",
-                EdgeKind::Connection => "connection",
-                EdgeKind::Containment => "containment",
-                EdgeKind::Association => "association",
-                EdgeKind::EventSource => "event-source",
-                EdgeKind::EventTarget => "event-target",
-                EdgeKind::Subscription => "subscription",
-            };
+            let kind = super::relationship_kind(edge.kind);
             let evidence: BTreeSet<_> = edge
                 .provenance
                 .iter()
