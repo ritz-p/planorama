@@ -4,6 +4,7 @@
 
 - 管理・実行するプログラムは Rust・JavaScript・Shell script のみ。本体、テスト、CI、計測、fixture、開発ツール、インライン処理にも適用する。他言語のソースや明示的なインタープリター呼び出しを追加・使用しない。
 - 例外として、#1465 の経路短縮候補の選択規則の証明と、その証明に付随する共有テストケースの検証に限り、`tests/experiments/shortcuts/` で Lean 4 を使用できる。
+- #1701・#1702・#1703・#1704・#1705 の証明と付随する共有ケースの検証に限り、`tests/experiments/architecture/` で Lean 4 を使用できる。
 - 文書・表示・データ・構成形式（Markdown、HTML/CSS、SVG、JSON、YAML、TOML、HCL、Dockerfile 等）と第三者依存・外部ツール・OS パッケージの内部実装は対象外。
 
 ## 文書・言語

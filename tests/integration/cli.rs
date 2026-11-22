@@ -262,3 +262,39 @@ fn architecture_json_exports_selected_topology_deterministically() {
         }
     }
 }
+
+#[test]
+fn containment_matches_reference_proof_cases() {
+    use serde_json::json;
+    for line in include_str!("../experiments/architecture/reference-cases.txt").lines() {
+        let fields: Vec<_> = line.split_whitespace().collect();
+        let count: usize = fields[0].parse().unwrap();
+        let provider = if fields[1] == "0" {
+            "hashicorp/aws"
+        } else {
+            "custom/aws"
+        };
+        let mut changes = vec![
+            json!({"address":"aws_subnet.child","type":"aws_subnet","provider_name":"hashicorp/aws"}),
+        ];
+        let mut refs = Vec::new();
+        for index in 0..count {
+            let address = format!("aws_vpc.parent{index}");
+            changes.push(json!({"address":address,"type":"aws_vpc","provider_name":provider}));
+            refs.push(format!("{address}.id"));
+        }
+        let plan = json!({"format_version":"1.2","resource_changes":changes,"configuration":{"root_module":{"resources":[{"address":"aws_subnet.child","expressions":{"vpc_id":{"references":refs}}}]}}});
+        let result = support::run_with_args(plan.to_string().as_bytes(), &["--format", "json"]);
+        assert!(result.status.success());
+        let doc: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+        assert_eq!(
+            doc["relationships"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r["kind"] == "containment"),
+            fields[2] == "accept",
+            "{line}"
+        );
+    }
+}

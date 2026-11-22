@@ -1,0 +1,4 @@
+1 0 accept
+0 0 reject
+2 0 reject
+1 1 reject
