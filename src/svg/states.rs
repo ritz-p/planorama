@@ -388,7 +388,7 @@ pub(crate) async fn render_step(
             endpoint_address(&edge.to.state, remote),
             output
         ));
-        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true" data-source-points="{source_points}"{action_metadata} data-source="{source}" data-target="{target}" data-source-port="{source_port}" data-target-port="{target_port}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
+        writeln!(links, r##"<path role="img" tabindex="0" data-edge-kind="dependency" data-cross-state="true" data-source-points="{source_points}"{action_metadata} data-source="{source}" data-target="{target}" data-source-port="{source_port}" data-target-port="{target_port}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
         links.push_str(&super::endpoints::circle(points[0], "source", "#2563eb"));
     }
     if !links.is_empty() {
@@ -421,7 +421,7 @@ pub(crate) async fn render_step(
     }
     let legend_mode = options.relationship_legend();
     format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description" data-legend-mode="{legend_mode}">
+        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="group" aria-labelledby="multi-title" aria-describedby="multi-description" data-legend-mode="{legend_mode}">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">{description}</desc>
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="{TITLE_FONT_SIZE}" fill="#0f172a">Terraform plans</text>
 {sections}</svg>
@@ -467,8 +467,8 @@ fn namespace(svg: &str, prefix: &str) -> String {
             &format!("data-target=\"{prefix}resource-"),
         )
         .replace(
-            "aria-labelledby=\"title description\"",
-            &format!("aria-labelledby=\"{prefix}title {prefix}description\""),
+            "aria-labelledby=\"title\" aria-describedby=\"description\"",
+            &format!("aria-labelledby=\"{prefix}title\" aria-describedby=\"{prefix}description\""),
         );
     for tail in svg.split("data-relationship-ids=\"").skip(1) {
         let ids = tail.split('"').next().unwrap();

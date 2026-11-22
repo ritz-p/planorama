@@ -106,7 +106,7 @@ fn mapped_generation_matches_shared_cli_pipeline_and_resumes_with_filters() {
             assert_eq!(
                 generated
                     .content
-                    .contains("<path data-edge-kind=\"dependency\" data-cross-state=\"true\""),
+                    .contains("data-edge-kind=\"dependency\" data-cross-state=\"true\""),
                 selection != 4
             );
             for units in [1, 4096] {

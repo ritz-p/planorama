@@ -49,6 +49,20 @@ class ViewerTests {
             return ['x','y','width','height'].every(k => Math.abs(Number(r.getAttribute(k)) - b[k]) < .001);
         `), 'overview frame follows viewBox');
     }
+    test_standalone_svg_names_and_keyboard_focus() {
+        const output = join(this.temp, 'accessible.svg');
+        execFileSync(BINARY, ['tests/fixtures/association-plan.json', '-o', output], {cwd: ROOT});
+        this.driver.get(pathToFileURL(output).href);
+        this.assertEqual(this.find('svg').accessible_name, 'Terraform plan');
+        const card = this.find('g[data-terraform-address][tabindex]');
+        this.assertIn(card.get_attribute('data-terraform-address').split('.').pop(), card.accessible_name);
+        const path = this.find('path[data-edge-kind][tabindex]');
+        this.assertTrue(path.accessible_name);
+        this.driver.execute_script('arguments[0].focus()', path);
+        this.assertTrue(this.driver.execute_script('return document.activeElement === arguments[0]', path));
+        path.send_keys('\uE004');
+        this.assertFalse(this.driver.execute_script('return document.activeElement === arguments[0]', path));
+    }
     test_verified_path_between_selections() {
         const names = ['a', 'b', 'c'].map(name => 'terraform_data.' + name);
         this.load('-', {input_plan: {format_version: '1.2',

@@ -486,3 +486,48 @@ fn multi_plan_sample_matches_renderer() {
         include_str!("../../examples/multi-plan.svg").replace("\r\n", "\n")
     );
 }
+
+#[test]
+fn named_svg_keeps_accessible_descriptions_local_to_each_state() {
+    let output = cli()
+        .args([
+            "--state",
+            &format!("producer={}", fixture("multi/producer.json")),
+            "--state",
+            &format!("consumer={}", fixture("multi/consumer.json")),
+            "--remote-state",
+            "consumer:data.terraform_remote_state.network=producer",
+            "--anonymize",
+            "-o",
+            "-",
+        ])
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let svg = std::str::from_utf8(&output.stdout).unwrap();
+    let doc = roxmltree::Document::parse(svg).unwrap();
+    for group in doc.descendants().filter(|n| n.has_tag_name("svg")) {
+        for (attribute, tag) in [("aria-labelledby", "title"), ("aria-describedby", "desc")] {
+            let id = group.attribute(attribute).unwrap();
+            assert!(
+                group
+                    .children()
+                    .any(|n| n.has_tag_name(tag) && n.attribute("id") == Some(id))
+            );
+        }
+    }
+    let links: Vec<_> = doc
+        .descendants()
+        .filter(|n| n.attribute("data-cross-state") == Some("true") && n.has_tag_name("path"))
+        .collect();
+    assert!(!links.is_empty());
+    for path in links {
+        assert_eq!(path.attribute("tabindex"), Some("0"));
+        assert!(path.children().any(|n| {
+            n.has_tag_name("title")
+                && n.text()
+                    .is_some_and(|text| text.contains("cross-state dependency"))
+        }));
+    }
+    assert!(!svg.contains("terraform_remote_state.network"));
+}

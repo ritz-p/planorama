@@ -90,7 +90,7 @@ fn resource_row(
 ) -> (String, usize) {
     let operation = super::operations::label(node.action, &node.metadata);
     let mut svg = format!(
-        r#"<g id="{}" data-architecture-id="{}" data-entity-kind="terraform" data-placement="logical" data-terraform-address="{}" data-qualified-address="{}" data-mode="{}" transform="translate(0 {origin_y})"{}><title>{} — {}{}{}{}</title>"#,
+        r#"<g id="{}" data-architecture-id="{}" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="{}" data-qualified-address="{}" data-mode="{}" transform="translate(0 {origin_y})"{}><title>{} — {}{}{}{}</title>"#,
         super::identity::resource(node),
         super::escape(node.entity.id.as_str()),
         super::escape(&node.address),

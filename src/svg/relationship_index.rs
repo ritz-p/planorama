@@ -260,17 +260,25 @@ impl<'a> Index<'a> {
     }
 
     pub fn edge_attributes(&self, edge: usize) -> String {
-        let ids = self
+        let entries = self
             .entries
             .iter()
             .filter(|entry| entry.edges.contains(&edge))
-            .map(|entry| entry.id.as_str())
-            .collect::<Vec<_>>()
-            .join(" ");
-        if ids.is_empty() {
+            .collect::<Vec<_>>();
+        if entries.is_empty() {
             String::new()
         } else {
-            format!(" data-relationship-ids=\"{ids}\"")
+            let ids = entries
+                .iter()
+                .map(|e| e.id.as_str())
+                .collect::<Vec<_>>()
+                .join(" ");
+            let numbers = entries
+                .iter()
+                .map(|e| e.number.to_string())
+                .collect::<Vec<_>>()
+                .join(", ");
+            format!(" data-relationship-ids=\"{ids}\" aria-description=\"Relationship {numbers}\"")
         }
     }
 
