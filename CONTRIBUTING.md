@@ -96,7 +96,15 @@ cargo test --locked --lib refined_flat_bundle_keeps_opposite_role_port
 lean -DwarningAsError=true tests/experiments/architecture/Containment.lean
 cargo test --locked --lib hierarchy_obstacles_and_direct_container_endpoints
 cargo test --locked --lib deferred_regression_large_fixture_limits_each_edges_bends_and_valid_route_stretch -- --ignored
+lean -DwarningAsError=true --run tests/experiments/architecture/LayoutSelection.lean tests/experiments/architecture/packing-cases.txt
+cargo test --locked --lib containers::placement::selection_tests
 ```
+
+配置候補のモデルは `pack_with_affinity` が列挙した候補順、各候補の形状スコア、
+関係コストと affinity 偏差の和を入力にします。整数演算が Rust の型の範囲に
+収まることを前提に、最もコンパクトな候補を基準として
+形状の許容範囲を判定し、範囲内でコストと形状が同点なら先頭の候補を選びます。
+候補生成、コストの計測精度、描画後の品質は証明の対象外です。
 
 入力・表示設定変更による配置の変動を測定する任意の開発コマンドは
 [Layout stability](docs/layout-stability.md) を参照してください。
