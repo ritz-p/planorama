@@ -396,3 +396,85 @@ fn named_diff_keeps_provider_conflicts_unknown_and_states_distinct() {
     assert_eq!(doc["resources"]["added"][0]["state"], "b");
     assert_eq!(doc["resources"]["removed"], json!([]));
 }
+
+#[test]
+fn semantic_diff_preserves_a_renamed_organizations_root() {
+    use serde_json::{Value, json};
+    let dir = tempfile::tempdir().unwrap();
+    let before = dir.path().join("before.json");
+    let after = dir.path().join("after.json");
+    let old = "aws_organizations_organization.before";
+    let new = "aws_organizations_organization.after";
+    let mut org = json!({"address":old,"mode":"managed","type":"aws_organizations_organization",
+        "provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"],
+        "after":{"roots":[{"id":"r-example"}]}}});
+    let snapshot =
+        |org: &Value| json!({"format_version":"1.2","resource_changes":[org]}).to_string();
+    std::fs::write(&before, snapshot(&org)).unwrap();
+    org["address"] = json!(new);
+    org["previous_address"] = json!(old);
+    std::fs::write(&after, snapshot(&org)).unwrap();
+    let export = cli()
+        .arg(&after)
+        .args(["--format", "json", "-o", "-"])
+        .output()
+        .unwrap();
+    let graph: Value = serde_json::from_slice(&export.stdout).unwrap();
+    assert!(
+        graph["resources"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|r| r["kind"] == "component")
+    );
+    let output = cli().arg("diff").arg(before).arg(after).output().unwrap();
+    let diff: Value = serde_json::from_slice(&output.stdout).unwrap();
+    for field in ["added", "removed", "unknown"] {
+        assert_eq!(diff["resources"][field], json!([]));
+    }
+    assert_eq!(diff["resources"]["changed"].as_array().unwrap().len(), 1);
+    assert_eq!(diff["resources"]["changed"][0]["after"]["address"], new);
+    assert_eq!(diff["relationships"], json!({"added":[], "removed":[]}));
+}
+
+#[test]
+fn named_diff_rejects_incomplete_remote_state_evidence() {
+    use serde_json::{Value, json};
+    let producer = "tests/fixtures/multi/producer.json";
+    let consumer = "consumer=tests/fixtures/multi/consumer.json".to_owned();
+    let mut input: Value =
+        serde_json::from_str(&std::fs::read_to_string(producer).unwrap()).unwrap();
+    input["configuration"]["root_module"]["outputs"]["subnet"]["expression"] =
+        json!({"constant_value":"PRIVATE_SENTINEL"});
+    let dir = tempfile::tempdir().unwrap();
+    let missing = dir.path().join("incomplete.json");
+    std::fs::write(&missing, input.to_string()).unwrap();
+    let after = format!("producer={}", missing.display());
+    for before in [format!("producer={producer}"), after.clone()] {
+        let output = cli()
+            .arg("diff")
+            .args([
+                "--before-state",
+                &before,
+                "--before-state",
+                &consumer,
+                "--after-state",
+                &after,
+                "--after-state",
+                &consumer,
+                "--anonymize",
+                "--remote-state",
+                "consumer:data.terraform_remote_state.network=producer",
+            ])
+            .output()
+            .unwrap();
+        assert!(!output.status.success());
+        assert!(output.stdout.is_empty());
+        let error = String::from_utf8(output.stderr).unwrap();
+        assert!(
+            error.contains("producer output provenance is unresolved"),
+            "{error}"
+        );
+        assert!(!error.contains("PRIVATE_SENTINEL"));
+    }
+}
