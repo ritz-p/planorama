@@ -93,6 +93,9 @@ cargo test --locked --lib routing_shared::shortcuts::tests
 lean -DwarningAsError=true tests/experiments/architecture/Ports.lean
 cargo test --locked --lib unrelated_wide_labels_do_not_expand_a_small_terminal_or_slot
 cargo test --locked --lib refined_flat_bundle_keeps_opposite_role_port
+lean -DwarningAsError=true tests/experiments/architecture/Containment.lean
+cargo test --locked --lib hierarchy_obstacles_and_direct_container_endpoints
+cargo test --locked --lib deferred_regression_large_fixture_limits_each_edges_bends_and_valid_route_stretch -- --ignored
 ```
 
 入力・表示設定変更による配置の変動を測定する任意の開発コマンドは
