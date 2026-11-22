@@ -1,3 +1,5 @@
+mod diagrams;
+
 use crate::model::{
     EntityMode, PlanInput, StateId,
     cross_state::{Architecture, Mapping},
@@ -19,6 +21,7 @@ struct Key {
 struct Snapshot {
     nodes: BTreeMap<Key, Record>,
     edges: BTreeSet<Link>,
+    parents: BTreeMap<Key, Key>,
 }
 
 struct Record {
@@ -84,7 +87,11 @@ impl Link {
     }
 }
 
-fn snapshot(files: &[(StateId, String)], mappings: &[Mapping]) -> Result<Snapshot, String> {
+fn snapshot(
+    files: &[(StateId, String)],
+    mappings: &[Mapping],
+    diagrams: bool,
+) -> Result<Snapshot, String> {
     let inputs = files
         .iter()
         .map(|(state, path)| {
@@ -144,6 +151,17 @@ fn snapshot(files: &[(StateId, String)], mappings: &[Mapping]) -> Result<Snapsho
                     fields,
                 },
             );
+        }
+        if diagrams {
+            let tree = crate::layout::ContainmentTree::new(graph);
+            for (child, parent) in tree.parents.iter().enumerate() {
+                if let Some(parent) = parent {
+                    snapshot.parents.insert(
+                        ids[&graph.nodes[child].entity.id].clone(),
+                        ids[&graph.nodes[*parent].entity.id].clone(),
+                    );
+                }
+            }
         }
         for component in &graph.components {
             let member_key = |address: &str, deposed: Option<String>| Key {
@@ -224,7 +242,12 @@ fn snapshot(files: &[(StateId, String)], mappings: &[Mapping]) -> Result<Snapsho
     Ok(snapshot)
 }
 
-fn compare(before: Snapshot, after: Snapshot, anonymous: bool) -> serde_json::Value {
+struct Comparison {
+    report: serde_json::Value,
+    mapping: BTreeMap<Key, Key>,
+}
+
+fn compare(before: &Snapshot, after: &Snapshot, anonymous: bool) -> Comparison {
     use serde_json::json;
     let keys: BTreeSet<_> = before.nodes.keys().chain(after.nodes.keys()).collect();
     let names: BTreeMap<_, _> = keys
@@ -322,15 +345,17 @@ fn compare(before: Snapshot, after: Snapshot, anonymous: bool) -> serde_json::Va
     let old = links(&before.edges, true);
     let new = links(&after.edges, false);
     let link = |e: &Link| json!({"from":show(&e.from),"to":show(&e.to),"kind":e.kind,"direction":e.direction});
-    json!({"schema_version":1,"resources":{"added":added.into_iter().map(show).collect::<Vec<_>>(),"removed":removed,"changed":changed,"unknown":uncertain.iter().map(show).collect::<Vec<_>>()},
-        "relationships":{"added":new.difference(&old).map(link).collect::<Vec<_>>(),"removed":old.difference(&new).map(link).collect::<Vec<_>>()}})
+    let report = json!({"schema_version":1,"resources":{"added":added.into_iter().map(show).collect::<Vec<_>>(),"removed":removed,"changed":changed,"unknown":uncertain.iter().map(show).collect::<Vec<_>>()},
+        "relationships":{"added":new.difference(&old).map(link).collect::<Vec<_>>(),"removed":old.difference(&new).map(link).collect::<Vec<_>>()}});
+    Comparison { report, mapping }
 }
 
 pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> {
     let mut files = Vec::new();
     let (mut before, mut after) = (Vec::new(), Vec::new());
     let mut mappings = Vec::new();
-    let mut output = PathBuf::from("-");
+    let mut output = None;
+    let mut svg_dir = None;
     let mut anonymous = false;
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -348,7 +373,12 @@ pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
                 &args.next().ok_or("missing remote-state mapping")?,
             )?),
             "--anonymize" => anonymous = true,
-            "-o" | "--output" => output = args.next().ok_or("missing output path")?.into(),
+            "--svg-dir" => {
+                svg_dir = Some(PathBuf::from(args.next().ok_or("missing SVG directory")?))
+            }
+            "-o" | "--output" => {
+                output = Some(PathBuf::from(args.next().ok_or("missing output path")?))
+            }
             flag if flag.starts_with('-') => {
                 return Err("invalid diff option; use --help for usage".into());
             }
@@ -362,15 +392,21 @@ pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
         before.push((StateId::new("default")?, files.remove(0)));
         after.push((StateId::new("default")?, files.remove(0)));
     }
+    if svg_dir.is_some() && output.is_some() {
+        return Err("--svg-dir and --output select different diff outputs".into());
+    }
+    let output = output.unwrap_or_else(|| PathBuf::from("-"));
     for (_, path) in before.iter().chain(&after) {
         super::states::protect_input(path, &output)?;
     }
-    let diff = compare(
-        snapshot(&before, &mappings)?,
-        snapshot(&after, &mappings)?,
-        anonymous,
-    );
-    let bytes = serde_json::to_vec_pretty(&diff).map_err(|e| e.to_string())?;
+    let before = snapshot(&before, &mappings, svg_dir.is_some())?;
+    let after = snapshot(&after, &mappings, svg_dir.is_some())?;
+    let diff = compare(&before, &after, anonymous);
+    if let Some(dir) = svg_dir {
+        return diagrams::write(&dir, &before, &after, &diff.mapping, anonymous)
+            .map_err(|e| e.to_string());
+    }
+    let bytes = serde_json::to_vec_pretty(&diff.report).map_err(|e| e.to_string())?;
     if output == Path::new("-") {
         std::io::stdout().lock().write_all(&bytes)
     } else {

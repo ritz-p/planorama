@@ -5,6 +5,7 @@ mod cloudflare_recovery;
 mod configuration;
 mod coverage_json;
 mod coverage_report;
+mod diff_diagrams;
 mod filtering;
 mod firehose;
 mod glue;
