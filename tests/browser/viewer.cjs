@@ -49,6 +49,40 @@ class ViewerTests {
             return ['x','y','width','height'].every(k => Math.abs(Number(r.getAttribute(k)) - b[k]) < .001);
         `), 'overview frame follows viewBox');
     }
+    test_vpc_folding_aggregates_and_restores_original_relationships() {
+        const plan = JSON.parse(readFileSync(join(ROOT,'tests/fixtures/association-plan.json')));
+        const resources = plan.configuration.root_module.resources;
+        const changes = plan.resource_changes;
+        for (const name of ['left','right']) {
+            const address = 'aws_vpc.'+name;
+            resources.push({address,provider_config_key:'aws'});
+            changes.push({address,type:'aws_vpc',change:{actions:['create'],after:{id:'vpc-'+name}}});
+        }
+        const refs = address => ({references:[address+'.id']});
+        const subnet = structuredClone(changes[0]), association = structuredClone(changes[2]);
+        subnet.address = 'aws_subnet.second'; subnet.change.after.id = 'subnet-second';
+        association.address = 'aws_route_table_association.second'; association.change.after.subnet_id = 'subnet-second';
+        changes.push(subnet,association);
+        const other = structuredClone(resources[2]);
+        other.address = association.address; other.expressions.subnet_id = refs(subnet.address);
+        resources.push({address:subnet.address,provider_config_key:'aws',expressions:{vpc_id:refs('aws_vpc.left')}},other);
+        resources[0].expressions = {vpc_id:refs('aws_vpc.left')};
+        resources[1].expressions = {vpc_id:refs('aws_vpc.right'), extra:refs(subnet.address)};
+        this.load('-', {input_plan:plan});
+        const original = this.driver.execute_script("return document.querySelector('#viewport > svg').innerHTML");
+        const toggle = () => this.find('#vpc-toggle').send_keys(Keys.ENTER);
+        const selectVpc = name => this.driver.execute_script("const s=document.querySelector('#vpc-destination');s.value=[...s.options].find(o=>o.text.endsWith(arguments[0])).value;s.dispatchEvent(new Event('change'))",name);
+        const groups = () => this.driver.execute_script("return [...document.querySelectorAll('[data-vpc-aggregate]')].map(g=>[g.dataset.vpcAggregate,g.dataset.directionality,Number(g.dataset.count)])");
+        for (let cycle=0;cycle<2;cycle++) {
+            selectVpc('left'); toggle();
+            this.assertTrue(groups().some(([k,d,n])=>k==='association' && d==='undirected' && n===2));
+            this.assertTrue(groups().some(([k,d])=>k==='dependency' && d==='directed'));
+            selectVpc('right'); toggle();
+            this.assertEqual(groups().filter(([k])=>k==='association'),[['association','undirected',2]]);
+            toggle(); selectVpc('left'); toggle();
+            this.assertEqual(this.driver.execute_script("return document.querySelector('#viewport > svg').innerHTML"), original);
+        }
+    }
     test_standalone_svg_names_and_keyboard_focus() {
         const output = join(this.temp, 'accessible.svg');
         execFileSync(BINARY, ['tests/fixtures/association-plan.json', '-o', output], {cwd: ROOT});

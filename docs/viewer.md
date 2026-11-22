@@ -25,6 +25,10 @@ Use `--coverage-report PATH` for a separate Markdown report of input/selected/
 excluded resources and unknown scope counts. SVG and HTML share the same
 [coverage accounting](coverage.md); the diagram reserves no summary space.
 
+Use the VPC selector and **Collapse VPC** to hide its descendants. Boundary links
+show their relationship kind and count. **Expand VPC** restores the original
+resources, relationship numbers and routes.
+
 The maintained [combined AWS viewer](../examples/multi-account/diagram.html)
 exercises 250 input instances, repeated addresses in three states, region
 backgrounds and remote logical/spatial references. Its [generation and review
