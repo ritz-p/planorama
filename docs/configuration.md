@@ -173,6 +173,7 @@ Run `planorama diff before.json after.json` on two local Terraform plan files.
 The version 1 JSON diff goes to stdout or the path given by `-o`. For named
 states, repeat `--before-state ID=PATH` and `--after-state ID=PATH`; optional
 `--remote-state CONSUMER:ADDRESS=PRODUCER` mappings apply to both snapshots.
+Invalid mappings or unresolved remote-state output provenance stop the comparison.
 Use `--anonymize` for report-local numeric identities.
 
 Resource identity includes state, address and deposed key. A unique explicit
