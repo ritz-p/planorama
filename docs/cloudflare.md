@@ -660,3 +660,22 @@ information records effective selectors and whether this is a selected view;
 anonymized exports withhold original selectors and pseudonymize displayed scope.
 Offline HTML search offers Account and Zone filters within the generated view;
 these narrow search results, without restoring resources omitted at generation.
+
+### Managed create compatibility matrix
+
+The seven managed resources in the create fixture have provider-generated
+plan/show evidence on Linux amd64 for the Cartesian product of Terraform Core
+**1.9.8 and 1.12.2** and Cloudflare Provider **5.27.0 and 5.28.1**. The CLI
+checks architecture JSON, SVG and the diagram embedded in HTML against the
+original create capture. Update, replacement and loopback data-source evidence
+above remains specific to Core 1.9.8 with Provider 5.28.1.
+
+The [matrix manifest](../tests/fixtures/cloudflare-matrix/matrix.json) pins the
+tool selection. Each additional pair stores its plan and capture hashes under
+`<core>-<provider>/`. The original pair uses `cloudflare-captured/create.json`.
+Run `node scripts/cloudflare-matrix.cjs prepare`, then `capture` and `check`.
+Preparation checks the official release archives. Capture uses a local package
+mirror, read-only locks, empty state, a dummy token and a loopback endpoint.
+The manual Terraform compatibility workflow recaptures the matrix. Use
+`sh scripts/audit-cloudflare-provider.sh 5.27.0` for the full structural schema
+comparison against the pinned 5.28.1 inventory.

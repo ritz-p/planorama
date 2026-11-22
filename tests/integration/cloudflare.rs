@@ -169,3 +169,28 @@ fn configured_version_percentages_have_a_legend_and_do_not_leak_masked_values() 
         }
     }
 }
+
+#[test]
+fn managed_create_matrix_preserves_topology_and_rendered_relationships() {
+    let baseline = include_bytes!("../fixtures/cloudflare-captured/create.json");
+    for format in ["json", "svg", "html"] {
+        let render = |input: &[u8]| {
+            let output = support::run_with_args(input, &["--format", format]);
+            assert!(output.status.success());
+            let text = String::from_utf8(output.stdout).unwrap();
+            if format == "html" {
+                svg(&text).to_owned()
+            } else {
+                text
+            }
+        };
+        let expected = render(baseline);
+        for input in [
+            include_bytes!("../fixtures/cloudflare-matrix/1.9.8-5.27.0/plan.json").as_slice(),
+            include_bytes!("../fixtures/cloudflare-matrix/1.12.2-5.27.0/plan.json").as_slice(),
+            include_bytes!("../fixtures/cloudflare-matrix/1.12.2-5.28.1/plan.json").as_slice(),
+        ] {
+            assert_eq!(render(input), expected);
+        }
+    }
+}

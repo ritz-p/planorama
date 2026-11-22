@@ -1,0 +1,8 @@
+{
+  "terraform": "1.12.2",
+  "provider": "5.27.0",
+  "planSha256": "7da8d84348eb6b603a00c49737bca5c50670a8bca5dcc0492465d86917b05b90",
+  "inputSha256": "13244e14a4faaaf33b865f86d4d8b2588b9244f7abdb6bb6424e14a9f7574bc7",
+  "lockSha256": "e525fc7f322026a648bc45e9c74c67c4757cb66ecde9576f9aa4413492e6f2d0",
+  "schemaSha256": "9fd7aa8d8be17b9db389cbcf965787ecdc3c646bea5057015aac1abb56429ea5"
+}
