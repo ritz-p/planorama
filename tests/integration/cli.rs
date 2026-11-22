@@ -234,3 +234,31 @@ fn plan_level_root_variables_resolve_through_child_inputs_without_values() {
         assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
     }
 }
+
+#[test]
+fn architecture_json_exports_selected_topology_deterministically() {
+    let input = include_bytes!("../../examples/plan.json");
+    let export = || support::run_with_args(input, &["--format", "json"]);
+    let first = export();
+    assert!(first.status.success());
+    assert_eq!(first.stdout, export().stdout);
+    let doc: serde_json::Value = serde_json::from_slice(&first.stdout).unwrap();
+    assert_eq!(doc["schema_version"], 1);
+    let resources = doc["resources"].as_array().unwrap();
+    assert!(
+        resources
+            .iter()
+            .any(|r| r["address"] == "aws_vpc.main" && r["mode"] == "managed")
+    );
+    let edges = doc["relationships"].as_array().unwrap();
+    assert!(
+        edges
+            .iter()
+            .any(|e| e["kind"] == "containment" && e["direction"] == "directed")
+    );
+    for edge in edges {
+        for end in ["from", "to"] {
+            assert!(resources.iter().any(|r| r["identity"] == edge[end]));
+        }
+    }
+}

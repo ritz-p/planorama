@@ -2,8 +2,8 @@
 
 ## CLI output and addresses
 
-`-o PATH` chooses the destination; `--format svg|html` chooses the format.
-The default is SVG with `diagram.svg`; HTML defaults to `diagram.html`.
+`-o PATH` chooses the destination; `--format svg|html|json` chooses the format.
+The default is SVG with `diagram.svg`; HTML defaults to `diagram.html` and JSON to `architecture.json`.
 `--address-format qualified` (default) displays Planorama-qualified labels;
 `--address-format terraform` uses native Terraform addresses. Both preserve full
 identities and wrap long addresses rather than truncating them.
@@ -55,7 +55,7 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 | `cloudflare-accounts`, `cloudflare-zones` | Arrays of Cloudflare IDs or `unknown` | `[]` |
 | `cloudflare-groups` | Boolean | `false` |
 | `anonymize` | boolean; [full identifier anonymization](anonymization.md), incompatible with reports/diagnostics | `false` |
-| `format` | `"svg"` or `"html"` | `"svg"` |
+| `format` | `"svg"`, `"html"` or `"json"` | `"svg"` |
 | `icon-mode` | `"service-name"` (`"icon"` is rejected) | `"service-name"` |
 | `address-format` | `"qualified"` or `"terraform"` | `"qualified"` |
 | `hide-relationship-legend` | boolean | `false` |
@@ -110,7 +110,7 @@ Inputs, named states, provider evidence, remote-state mappings, output paths,
 coverage report options and layout JSON report paths remain explicit CLI arguments.
 Configuration cannot invoke external commands. `--list-modules` rejects
 `--config`/`--preset`, as it lists the original input rather than generating a view.
-The resolved output format determines the usual default `diagram.svg` or
+The resolved output format determines the usual default `diagram.svg`, `architecture.json` or
 `diagram.html`; output and report destinations cannot overwrite the config file.
 
 Unknown keys (including in unused presets), invalid types or enum values, malformed
@@ -153,3 +153,16 @@ Service and ordinary configuration references retain their meaning and details,
 including unresolved and unavailable endpoints. This adds no Embedded owner,
 effective-permission, trust or monitoring-success claim and exposes no attribute
 values. See the [comparison](purpose-placement.md) for the five scenarios.
+
+## Architecture JSON
+
+`planorama plan.json --format json -o architecture.json` exports the selected
+architecture before layout. Named states, selection and anonymization use the
+same projection as the diagram. The default output path for JSON is
+`architecture.json`. Schema version 1 has these fields:
+
+- `schema_version` is an integer. Readers should ignore additional fields and reject unrecognized versions. Removing fields or changing their meaning requires a new version.
+- `resources` contains resources and synthetic components. Each identity is a pair of nullable state name and opaque architecture ID. Resource records include the Terraform address, deposed key, mode, type, provider source and resolved scope. Components identify their type and members.
+- `relationships` contains endpoint identities (`from`, `to`), kind (including parent-to-child `containment`), direction and sorted evidence categories. An empty evidence list indicates missing provenance. The opt-in `configured-value` category identifies a typed value match. Cross-state dependencies carry `remote-state` evidence.
+
+Anonymized IDs are local to one export. The document contains no layout coordinates or raw change values.
