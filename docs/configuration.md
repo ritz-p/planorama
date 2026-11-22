@@ -166,3 +166,21 @@ same projection as the diagram. The default output path for JSON is
 - `relationships` contains endpoint identities (`from`, `to`), kind (including parent-to-child `containment`), direction and sorted evidence categories. An empty evidence list indicates missing provenance. The opt-in `configured-value` category identifies a typed value match. Cross-state dependencies carry `remote-state` evidence.
 
 Anonymized IDs are local to one export. The document contains no layout coordinates or raw change values.
+
+## Comparing architecture snapshots
+
+Run `planorama diff before.json after.json` on two local Terraform plan files.
+The version 1 JSON diff goes to stdout or the path given by `-o`. For named
+states, repeat `--before-state ID=PATH` and `--after-state ID=PATH`; optional
+`--remote-state CONSUMER:ADDRESS=PRODUCER` mappings apply to both snapshots.
+Invalid mappings or unresolved remote-state output provenance stop the comparison.
+Use `--anonymize` for report-local numeric identities.
+
+Resource identity includes state, address and deposed key. A unique explicit
+move can match across addresses when provider and mode agree. Overlapping
+claims and incompatible or missing provider identities on potential matches
+appear in `resources.unknown`; incident links are omitted. Changed records list
+the names of changed architecture fields. An import contributes only its
+metadata flags. Resource and relationship additions/removals describe the
+two snapshots independently of Terraform's proposed actions. Relationships
+compare their endpoints, kind and direction after resolving moves.
