@@ -25,6 +25,7 @@ struct Record {
     provider: Option<String>,
     mode: Option<EntityMode>,
     previous: Option<String>,
+    owner: Option<Key>,
     fields: Fields,
 }
 
@@ -36,11 +37,11 @@ struct Fields {
     cloudflare_scope: Option<crate::model::architecture::CloudflareScope>,
     deployment: Option<crate::model::architecture::DeploymentScope>,
     import: Option<crate::model::ImportMetadata>,
-    members: BTreeSet<String>,
+    members: BTreeSet<Key>,
 }
 
 impl Fields {
-    fn changes(&self, next: &Self) -> Vec<&'static str> {
+    fn changes(&self, next: &Self, mapping: &BTreeMap<Key, Key>) -> Vec<&'static str> {
         [
             ("type", self.resource_type != next.resource_type),
             ("role", self.role != next.role),
@@ -51,7 +52,14 @@ impl Fields {
                     || self.deployment != next.deployment,
             ),
             ("import", self.import != next.import),
-            ("members", self.members != next.members),
+            (
+                "members",
+                self.members
+                    .iter()
+                    .map(|k| mapping.get(k).unwrap_or(k))
+                    .collect::<BTreeSet<_>>()
+                    != next.members.iter().collect(),
+            ),
         ]
         .into_iter()
         .filter_map(|(field, changed)| changed.then_some(field))
@@ -88,8 +96,17 @@ fn snapshot(files: &[(StateId, String)], mappings: &[Mapping]) -> Result<Snapsho
         })
         .collect::<Result<Vec<_>, String>>()?;
     let plans = crate::plan::parse_inputs_with(inputs, |_, json| crate::plan::parse(json))?;
+    crate::semantic::cross_state::validate_mappings(&plans, mappings)
+        .map_err(|e| e.description().to_owned())?;
+    let resolved = crate::semantic::cross_state::resolve(&plans, mappings);
+    if let Some(diagnostic) = resolved.diagnostics.first() {
+        return Err(format!(
+            "cannot compare remote-state relationships: {}",
+            diagnostic.reason.description()
+        ));
+    }
     let arch = Architecture {
-        relationships: crate::semantic::cross_state::resolve(&plans, mappings).edges,
+        relationships: resolved.edges,
         states: plans
             .states
             .iter()
@@ -123,11 +140,34 @@ fn snapshot(files: &[(StateId, String)], mappings: &[Mapping]) -> Result<Snapsho
                     provider: node.provider.source().map(str::to_owned),
                     mode: Some(node.mode),
                     previous: node.previous_address.clone(),
+                    owner: None,
                     fields,
                 },
             );
         }
         for component in &graph.components {
+            let member_key = |address: &str, deposed: Option<String>| Key {
+                state: state.as_str().into(),
+                address: address.into(),
+                deposed,
+                component: false,
+            };
+            let owner = component
+                .label_reference
+                .as_ref()
+                .map(|r| member_key(&r.source.address, r.source.deposed_key.clone()));
+            let previous = owner.as_ref().and_then(|owner| {
+                let previous = snapshot.nodes.get(owner)?.previous.as_ref()?;
+                let suffix = &component.label_reference.as_ref()?.suffix;
+                let id = |address: &str| {
+                    crate::model::ArchitectureId::synthetic(
+                        &component.kind,
+                        &format!("{address}{suffix}"),
+                    )
+                };
+                (id(&owner.address) == component.entity.id)
+                    .then(|| id(previous).as_str().to_owned())
+            });
             let key = Key {
                 state: state.as_str().into(),
                 address: component.entity.id.as_str().into(),
@@ -140,10 +180,15 @@ fn snapshot(files: &[(StateId, String)], mappings: &[Mapping]) -> Result<Snapsho
                 Record {
                     provider: None,
                     mode: None,
-                    previous: None,
+                    previous,
+                    owner,
                     fields: Fields {
                         resource_type: component.kind.clone(),
-                        members: component.members.iter().cloned().collect(),
+                        members: component
+                            .members
+                            .iter()
+                            .map(|a| member_key(a, None))
+                            .collect(),
                         ..Default::default()
                     },
                 },
@@ -220,7 +265,9 @@ fn compare(before: Snapshot, after: Snapshot, anonymous: bool) -> serde_json::Va
     let mut uncertain = BTreeSet::new();
     let mut changed = Vec::new();
     let mut mapping = BTreeMap::new();
-    for (old, targets) in &claims {
+    let resources = claims.iter().filter(|(key, _)| !key.component);
+    let components = claims.iter().filter(|(key, _)| key.component);
+    for (old, targets) in resources.chain(components) {
         if let [new] = targets.as_slice() {
             let a = &before.nodes[old];
             let b = &after.nodes[*new];
@@ -228,10 +275,15 @@ fn compare(before: Snapshot, after: Snapshot, anonymous: bool) -> serde_json::Va
                 && a.provider == b.provider
                 && a.mode == b.mode
                 && (old.component || a.provider.is_some())
+                && match (&a.owner, &b.owner) {
+                    (Some(old), Some(new)) => mapping.get(old) == Some(new),
+                    (None, None) => true,
+                    _ => false,
+                }
             {
                 mapping.insert(old.clone(), (*new).clone());
-                let fields = a.fields.changes(&b.fields);
-                if old != *new || !fields.is_empty() {
+                let fields = a.fields.changes(&b.fields, &mapping);
+                if (!old.component && old != *new) || !fields.is_empty() {
                     changed.push(json!({"before":show(old),"after":show(new),"fields":fields}));
                 }
                 continue;
