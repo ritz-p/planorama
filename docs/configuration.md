@@ -192,3 +192,12 @@ The two diagrams reserve space for the union of the snapshots. Matched resources
 with the same containment path share a position. A resource that changes parent
 appears under its respective parent in each diagram. Each side shows its own
 relationships. The same named-state arguments and `--anonymize` apply to both.
+
+For a pull request or a GitHub Actions job summary, use
+`planorama diff before.json after.json --format markdown -o changes.md`.
+Append the report in Actions with `cat changes.md >> "$GITHUB_STEP_SUMMARY"`.
+The report groups resource, containment and relationship changes. It pairs a
+parent or endpoint change when exactly one removal and one addition of the
+same kind and direction have a uniquely matched endpoint in common. Ambiguous
+resource matches and unavailable remote-state comparisons have separate
+messages. Use `--anonymize` to replace identifiers throughout the report.

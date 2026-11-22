@@ -1,8 +1,9 @@
 mod diagrams;
+mod markdown;
 
 use crate::model::{
     EntityMode, PlanInput, StateId,
-    cross_state::{Architecture, Mapping},
+    cross_state::{Architecture, Failure, Mapping},
 };
 use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
@@ -87,11 +88,36 @@ impl Link {
     }
 }
 
+enum SnapshotError {
+    Input(String),
+    Mapping(Failure),
+    Unresolved(Failure),
+}
+
+impl From<String> for SnapshotError {
+    fn from(message: String) -> Self {
+        Self::Input(message)
+    }
+}
+
+impl SnapshotError {
+    fn message(self) -> String {
+        match self {
+            Self::Input(message) => message,
+            Self::Mapping(reason) => reason.description().into(),
+            Self::Unresolved(reason) => format!(
+                "cannot compare remote-state relationships: {}",
+                reason.description()
+            ),
+        }
+    }
+}
+
 fn snapshot(
     files: &[(StateId, String)],
     mappings: &[Mapping],
     diagrams: bool,
-) -> Result<Snapshot, String> {
+) -> Result<Snapshot, SnapshotError> {
     let inputs = files
         .iter()
         .map(|(state, path)| {
@@ -104,13 +130,10 @@ fn snapshot(
         .collect::<Result<Vec<_>, String>>()?;
     let plans = crate::plan::parse_inputs_with(inputs, |_, json| crate::plan::parse(json))?;
     crate::semantic::cross_state::validate_mappings(&plans, mappings)
-        .map_err(|e| e.description().to_owned())?;
+        .map_err(SnapshotError::Mapping)?;
     let resolved = crate::semantic::cross_state::resolve(&plans, mappings);
     if let Some(diagnostic) = resolved.diagnostics.first() {
-        return Err(format!(
-            "cannot compare remote-state relationships: {}",
-            diagnostic.reason.description()
-        ));
+        return Err(SnapshotError::Unresolved(diagnostic.reason));
     }
     let arch = Architecture {
         relationships: resolved.edges,
@@ -216,8 +239,14 @@ fn snapshot(
             let kind = super::relationship_kind(edge.kind);
             snapshot.edges.insert(
                 Link {
-                    from: ids.get(&edge.from).ok_or("missing source entity")?.clone(),
-                    to: ids.get(&edge.to).ok_or("missing target entity")?.clone(),
+                    from: ids
+                        .get(&edge.from)
+                        .ok_or_else(|| "missing source entity".to_owned())?
+                        .clone(),
+                    to: ids
+                        .get(&edge.to)
+                        .ok_or_else(|| "missing target entity".to_owned())?
+                        .clone(),
                     kind,
                     direction: edge.directionality().as_str(),
                 }
@@ -242,20 +271,43 @@ fn snapshot(
     Ok(snapshot)
 }
 
-struct Comparison {
-    report: serde_json::Value,
-    mapping: BTreeMap<Key, Key>,
+struct Change {
+    before: Key,
+    after: Key,
+    fields: Vec<&'static str>,
 }
 
-fn compare(before: &Snapshot, after: &Snapshot, anonymous: bool) -> Comparison {
-    use serde_json::json;
-    let keys: BTreeSet<_> = before.nodes.keys().chain(after.nodes.keys()).collect();
-    let names: BTreeMap<_, _> = keys
-        .into_iter()
-        .enumerate()
-        .map(|(n, key)| (key, n + 1))
-        .collect();
-    let show = |k: &Key| if anonymous { json!(names[k]) } else { json!(k) };
+struct Comparison {
+    mapping: BTreeMap<Key, Key>,
+    added: Vec<Key>,
+    removed: Vec<Key>,
+    changed: Vec<Change>,
+    unknown: BTreeSet<Key>,
+    added_links: BTreeSet<Link>,
+    removed_links: BTreeSet<Link>,
+}
+
+type Names<'a> = Option<BTreeMap<&'a Key, usize>>;
+
+impl Comparison {
+    fn json(&self, names: &Names<'_>) -> serde_json::Value {
+        use serde_json::json;
+        let show = |k: &Key| match names {
+            Some(ids) => json!(ids[k]),
+            None => json!(k),
+        };
+        let link = |e: &Link| json!({"from":show(&e.from),"to":show(&e.to),"kind":e.kind,"direction":e.direction});
+        json!({"schema_version":1,"resources":{
+            "added": self.added.iter().map(show).collect::<Vec<_>>(),
+            "removed": self.removed.iter().map(show).collect::<Vec<_>>(),
+            "changed": self.changed.iter().map(|c| json!({"before":show(&c.before),"after":show(&c.after),"fields":c.fields})).collect::<Vec<_>>(),
+            "unknown": self.unknown.iter().map(show).collect::<Vec<_>>()},
+            "relationships":{"added":self.added_links.iter().map(link).collect::<Vec<_>>(),
+                             "removed":self.removed_links.iter().map(link).collect::<Vec<_>>()}})
+    }
+}
+
+fn compare(before: &Snapshot, after: &Snapshot) -> Comparison {
     let mut claims = BTreeMap::<Key, Vec<&Key>>::new();
     let mut added = Vec::new();
     for (key, record) in &after.nodes {
@@ -275,7 +327,7 @@ fn compare(before: &Snapshot, after: &Snapshot, anonymous: bool) -> Comparison {
             candidates.push(old);
         }
         if candidates.is_empty() {
-            added.push(key);
+            added.push(key.clone());
         }
         for old in candidates {
             claims.entry(old).or_default().push(key);
@@ -307,7 +359,11 @@ fn compare(before: &Snapshot, after: &Snapshot, anonymous: bool) -> Comparison {
                 mapping.insert(old.clone(), (*new).clone());
                 let fields = a.fields.changes(&b.fields, &mapping);
                 if (!old.component && old != *new) || !fields.is_empty() {
-                    changed.push(json!({"before":show(old),"after":show(new),"fields":fields}));
+                    changed.push(Change {
+                        before: old.clone(),
+                        after: (*new).clone(),
+                        fields,
+                    });
                 }
                 continue;
             }
@@ -319,7 +375,7 @@ fn compare(before: &Snapshot, after: &Snapshot, anonymous: bool) -> Comparison {
         .nodes
         .keys()
         .filter(|k| !claims.contains_key(*k))
-        .map(show)
+        .cloned()
         .collect();
     let links = |edges: &BTreeSet<Link>, remap: bool| {
         edges
@@ -344,10 +400,21 @@ fn compare(before: &Snapshot, after: &Snapshot, anonymous: bool) -> Comparison {
     };
     let old = links(&before.edges, true);
     let new = links(&after.edges, false);
-    let link = |e: &Link| json!({"from":show(&e.from),"to":show(&e.to),"kind":e.kind,"direction":e.direction});
-    let report = json!({"schema_version":1,"resources":{"added":added.into_iter().map(show).collect::<Vec<_>>(),"removed":removed,"changed":changed,"unknown":uncertain.iter().map(show).collect::<Vec<_>>()},
-        "relationships":{"added":new.difference(&old).map(link).collect::<Vec<_>>(),"removed":old.difference(&new).map(link).collect::<Vec<_>>()}});
-    Comparison { report, mapping }
+    Comparison {
+        mapping,
+        added,
+        removed,
+        changed,
+        unknown: uncertain,
+        added_links: new.difference(&old).cloned().collect(),
+        removed_links: old.difference(&new).cloned().collect(),
+    }
+}
+
+#[derive(PartialEq)]
+enum ReportFormat {
+    Json,
+    Markdown,
 }
 
 pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> {
@@ -356,6 +423,7 @@ pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
     let mut mappings = Vec::new();
     let mut output = None;
     let mut svg_dir = None;
+    let mut format = None;
     let mut anonymous = false;
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -373,6 +441,13 @@ pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
                 &args.next().ok_or("missing remote-state mapping")?,
             )?),
             "--anonymize" => anonymous = true,
+            "--format" => {
+                format = Some(match args.next().as_deref() {
+                    Some("json") => ReportFormat::Json,
+                    Some("markdown") => ReportFormat::Markdown,
+                    _ => return Err("diff --format requires json or markdown".into()),
+                });
+            }
             "--svg-dir" => {
                 svg_dir = Some(PathBuf::from(args.next().ok_or("missing SVG directory")?))
             }
@@ -395,18 +470,55 @@ pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
     if svg_dir.is_some() && output.is_some() {
         return Err("--svg-dir and --output select different diff outputs".into());
     }
+    if svg_dir.is_some() && format.is_some() {
+        return Err("--svg-dir and --format select different diff outputs".into());
+    }
     let output = output.unwrap_or_else(|| PathBuf::from("-"));
     for (_, path) in before.iter().chain(&after) {
         super::states::protect_input(path, &output)?;
     }
-    let before = snapshot(&before, &mappings, svg_dir.is_some())?;
-    let after = snapshot(&after, &mappings, svg_dir.is_some())?;
-    let diff = compare(&before, &after, anonymous);
-    if let Some(dir) = svg_dir {
-        return diagrams::write(&dir, &before, &after, &diff.mapping, anonymous)
-            .map_err(|e| e.to_string());
-    }
-    let bytes = serde_json::to_vec_pretty(&diff.report).map_err(|e| e.to_string())?;
+    let before = snapshot(&before, &mappings, svg_dir.is_some());
+    let after = snapshot(&after, &mappings, svg_dir.is_some());
+    let markdown = format == Some(ReportFormat::Markdown);
+    let bytes = match (before, after) {
+        (Ok(before), Ok(after)) => {
+            let diff = compare(&before, &after);
+            if let Some(dir) = svg_dir {
+                return diagrams::write(&dir, &before, &after, &diff.mapping, anonymous)
+                    .map_err(|e| e.to_string());
+            }
+            let names = anonymous.then(|| {
+                before
+                    .nodes
+                    .keys()
+                    .chain(after.nodes.keys())
+                    .collect::<BTreeSet<_>>()
+                    .into_iter()
+                    .enumerate()
+                    .map(|(i, key)| (key, i + 1))
+                    .collect()
+            });
+            if markdown {
+                markdown::render(&diff, &names, &before, &after).into_bytes()
+            } else {
+                serde_json::to_vec_pretty(&diff.json(&names)).map_err(|e| e.to_string())?
+            }
+        }
+        (before, after) if markdown => {
+            let mut message = String::from("# Architecture diff\n\n## Comparison unavailable\n\n");
+            for (side, result) in [("Before", before), ("After", after)] {
+                match result {
+                    Err(SnapshotError::Input(error)) => return Err(error),
+                    Err(reason) => {
+                        message.push_str(&format!("- {side} snapshot — {}\n", reason.message()))
+                    }
+                    Ok(_) => {}
+                }
+            }
+            message.into_bytes()
+        }
+        (Err(error), _) | (_, Err(error)) => return Err(error.message()),
+    };
     if output == Path::new("-") {
         std::io::stdout().lock().write_all(&bytes)
     } else {
