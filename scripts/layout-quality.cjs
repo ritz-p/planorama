@@ -399,4 +399,4 @@ if (require.main === module) {
     catch (error) { console.error(error.message); process.exitCode = 2; }
   }
 }
-module.exports = {compare, markdown, run};
+module.exports = {compare, markdown, run, validate, pairs};
