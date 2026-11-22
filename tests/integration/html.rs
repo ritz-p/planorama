@@ -434,7 +434,7 @@ fn format_is_explicit_and_validated() {
     for args in [vec!["--format"], vec!["--format", "pdf"]] {
         let output = support::run_with_args(input, &args);
         assert!(!output.status.success());
-        assert!(String::from_utf8_lossy(&output.stderr).contains("svg or html"));
+        assert!(String::from_utf8_lossy(&output.stderr).contains("svg, html or json"));
     }
     let help = super::cli().arg("--help").output().unwrap();
     assert!(String::from_utf8_lossy(&help.stdout).contains("--format"));
