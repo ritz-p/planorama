@@ -13,6 +13,7 @@ __PLANORAMA_VIEWER_MODULES__
   const details = byId('selection');
   const context = { byId, viewport, svg, search, results, details };
   const index = metadata(svg, byId);
+  for (const path of index.edges) path.removeAttribute('tabindex');
   const { resources, label, title, components } = index;
   const view = navigation(svg, viewport, byId);
   overview(context, view);

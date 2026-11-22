@@ -24,8 +24,9 @@ fn capped_legend_keeps_offsets_cards_and_routing_paths_on_wider_canvases() {
             root.attribute("viewBox").unwrap(),
             format!("0 0 {width} {}", layout.height + sections.height())
         );
-        assert_eq!(root.attribute("role"), Some("img"));
-        assert_eq!(root.attribute("aria-labelledby"), Some("title description"));
+        assert_eq!(root.attribute("role"), Some("group"));
+        assert_eq!(root.attribute("aria-labelledby"), Some("title"));
+        assert_eq!(root.attribute("aria-describedby"), Some("description"));
         let legend = document
             .descendants()
             .find(|node| node.attribute("id") == Some("relationship-legend"))
