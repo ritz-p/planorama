@@ -49,6 +49,25 @@ class ViewerTests {
             return ['x','y','width','height'].every(k => Math.abs(Number(r.getAttribute(k)) - b[k]) < .001);
         `), 'overview frame follows viewBox');
     }
+    test_verified_path_between_selections() {
+        const names = ['a', 'b', 'c'].map(name => 'terraform_data.' + name);
+        this.load('-', {input_plan: {format_version: '1.2',
+          resource_changes: names.map(address => ({address, type:'terraform_data'})),
+          configuration: {root_module: {resources: names.map((address, i) => ({address,
+            expressions: i ? {input: {references: [names[i - 1] + '.output']}} : {}}))}}}});
+        this.choose(names[0]);
+        this.find('#path-start').send_keys(Keys.ENTER);
+        this.choose(names[2]);
+        this.find('#path-find').send_keys(Keys.ENTER);
+        this.assertEqual(this.driver.execute_script("return document.querySelectorAll('#path-steps li').length"), 2);
+        this.assertIn('dependency', this.find('#path-steps').text);
+        this.find('#path-clear').click();
+        this.assertEqual(this.driver.execute_script("return document.querySelectorAll('[data-path-step]').length"), 0);
+        this.find('#path-start').click();
+        this.choose(names[0]);
+        this.find('#path-find').click();
+        this.assertIn('No verified path', this.find('#path-status').text);
+    }
     test_overview_navigation_history_and_exports() {
         this.load('--state', 'one=tests/fixtures/viewer-plan.json', '--state', 'two=tests/fixtures/viewer-plan.json', '--html-diagnostics');
         this.overview_frame();
