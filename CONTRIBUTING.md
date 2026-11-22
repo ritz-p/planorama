@@ -90,6 +90,9 @@ lean -DwarningAsError=true --run tests/experiments/architecture/Reference.lean t
 cargo test --locked --test cli containment_matches_reference_proof_cases
 lean -DwarningAsError=true tests/experiments/architecture/Shortcut.lean
 cargo test --locked --lib routing_shared::shortcuts::tests
+lean -DwarningAsError=true tests/experiments/architecture/Ports.lean
+cargo test --locked --lib unrelated_wide_labels_do_not_expand_a_small_terminal_or_slot
+cargo test --locked --lib refined_flat_bundle_keeps_opposite_role_port
 ```
 
 入力・表示設定変更による配置の変動を測定する任意の開発コマンドは
