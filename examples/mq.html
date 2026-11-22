@@ -71,6 +71,8 @@ p { line-height: 1.5; }
 #viewport[data-selection] path[data-edge-kind]:not([data-viewer-edge]) { opacity: .25; }
 #viewport path[data-viewer-edge] { filter: drop-shadow(0 0 2px #64748b); }
 @media (max-width: 700px) { main { grid-template-columns: 1fr; grid-template-rows: 40% 60%; } aside { border-bottom: 1px solid #cbd5e1; } #results { max-height: 15vh; } }
+#viewport g[data-path-step] { outline: 3px dashed #5b21b6; outline-offset: 3px; }
+#viewport[data-selection] path[data-path-step] { opacity: 1; stroke-width: 5; filter: drop-shadow(0 0 2px #5b21b6); }
 </style>
 </head>
 <body>
@@ -100,6 +102,7 @@ p { line-height: 1.5; }
 <div id="search-filters">
 <label for="search-action">Action</label><select id="search-action"><option value="">All actions</option></select>
 <label for="search-state">State</label><select id="search-state"><option value="">All states</option></select>
+<div id="search-cloudflare-scopes" hidden><p>Search Cloudflare administration (within this generated view)</p><label for="search-cloudflare-account">Account</label><select id="search-cloudflare-account"><option value="">All accounts</option></select><label for="search-cloudflare-zone">Zone</label><select id="search-cloudflare-zone"><option value="">All zones</option></select></div>
 <label for="search-type">Resource type / provider source</label><select id="search-type"><option value="">All resource types</option></select>
 <button id="search-reset" type="button">Reset search and filters</button>
 </div>
@@ -108,6 +111,15 @@ p { line-height: 1.5; }
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
 <p id="history-status" role="status">No selection history</p>
+<section aria-label="Relationship path">
+<h2>Trace a relationship path</h2>
+<button id="path-start" type="button">Use selection as start</button>
+<span id="path-origin"></span>
+<button id="path-find" type="button">Trace to selection</button>
+<button id="path-clear" type="button">Clear path</button>
+<p>Follows recorded relationship directions in the visible diagram. A path does not establish network reachability.</p>
+<output id="path-status"></output><ol id="path-steps"></ol>
+</section>
 <section id="impact" aria-label="Potentially related resources">
 <h2>Explore change relationships</h2>
 <label for="impact-depth">Maximum hops</label>
@@ -139,21 +151,21 @@ p { line-height: 1.5; }
 </section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<svg xmlns="http://www.w3.org/2000/svg" width="1740" height="2064" viewBox="0 0 1740 2064" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1740" height="1506" viewBox="0 0 1740 1506" role="img" aria-labelledby="title description" data-legend-mode="omitted">
 <title id="title">Terraform plan</title>
 <desc id="description">8 resources (7 spatial cards, 1 logical resources in 1 group cards) · 13 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1740" height="1096" style="mask-type:luminance"><rect width="1740" height="1096" fill="white"/>
-<rect data-occluder="resource-6177735f7375626e65742e61-current" x="98" y="515" width="404" height="156" rx="14" fill="black"/>
-<rect data-occluder="resource-6177735f7375626e65742e62-current" x="98" y="707" width="404" height="156" rx="14" fill="black"/>
-<rect data-occluder="resource-6177735f7670632e6f74686572-current" x="1258" y="198" width="404" height="156" rx="14" fill="black"/>
+<rect data-occluder="resource-6177735f7375626e65742e61-current" x="538" y="515" width="404" height="156" rx="14" fill="black"/>
+<rect data-occluder="resource-6177735f7375626e65742e62-current" x="538" y="707" width="404" height="156" rx="14" fill="black"/>
+<rect data-occluder="resource-6177735f7670632e6f74686572-current" x="58" y="198" width="404" height="156" rx="14" fill="black"/>
 </mask>
 <mask id="container-occlusion-1" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1740" height="1096" style="mask-type:luminance"><rect width="1740" height="1096" fill="white"/>
-<rect data-occluder="resource-6177735f7375626e65742e61-current" x="98" y="515" width="404" height="156" rx="14" fill="black"/>
-<rect data-occluder="resource-6177735f7670632e6f74686572-current" x="1258" y="198" width="404" height="156" rx="14" fill="black"/>
+<rect data-occluder="resource-6177735f7375626e65742e61-current" x="538" y="515" width="404" height="156" rx="14" fill="black"/>
+<rect data-occluder="resource-6177735f7670632e6f74686572-current" x="58" y="198" width="404" height="156" rx="14" fill="black"/>
 </mask>
 <mask id="container-occlusion-2" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1740" height="1096" style="mask-type:luminance"><rect width="1740" height="1096" fill="white"/>
-<rect data-occluder="resource-6177735f7375626e65742e62-current" x="98" y="707" width="404" height="156" rx="14" fill="black"/>
-<rect data-occluder="resource-6177735f7670632e6f74686572-current" x="1258" y="198" width="404" height="156" rx="14" fill="black"/>
+<rect data-occluder="resource-6177735f7375626e65742e62-current" x="538" y="707" width="404" height="156" rx="14" fill="black"/>
+<rect data-occluder="resource-6177735f7670632e6f74686572-current" x="58" y="198" width="404" height="156" rx="14" fill="black"/>
 </mask>
 </defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
@@ -170,81 +182,6 @@ p { line-height: 1.5; }
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
-<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
-<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
-<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
-<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
-<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
-<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
-<g data-legend-entry="dependency" transform="translate(0 132)">
-<g data-legend-sample="dependency">
-<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-<text x="174" y="12" font-weight="700">Dependency</text>
-<text x="174" y="30">Thin solid arrow from the</text>
-<text x="174" y="48">referenced resource to the</text>
-<text x="174" y="66">dependent resource; not exact</text>
-<text x="174" y="84">Terraform execution order.</text>
-</g>
-<g data-legend-entry="association" transform="translate(492 132)">
-<g data-legend-sample="association">
-<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
-<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-<g data-legend-badge="target">
-<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-</g>
-<text x="174" y="12" font-weight="700">Association</text>
-<text x="174" y="30">Dashed, undirected relationship.</text>
-<text x="174" y="48">Matching badges identify the same</text>
-<text x="174" y="66">Terraform-backed relationship at</text>
-<text x="174" y="84">both attachment points.</text>
-</g>
-<g data-legend-entry="directed-association" transform="translate(0 238)">
-<g data-legend-sample="directed-association">
-<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
-<g data-legend-badge="source">
-<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-<g data-legend-badge="target">
-<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-</g>
-<text x="174" y="12" font-weight="700">Directed Association</text>
-<text x="174" y="30">Dashed line from a Route to its</text>
-<text x="174" y="48">next hop. The destination arrow</text>
-<text x="174" y="66">expresses direction; matching</text>
-<text x="174" y="84">badges identify the same</text>
-<text x="174" y="102">relationship.</text>
-</g>
-<g data-legend-entry="connection" transform="translate(492 238)">
-<g data-legend-sample="connection">
-<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-<text x="174" y="12" font-weight="700">Connection</text>
-<text x="174" y="30">Thicker dotted line shows an</text>
-<text x="174" y="48">inferred, undirected connection;</text>
-<text x="174" y="66">this does not guarantee actual</text>
-<text x="174" y="84">network reachability.</text>
-</g>
-<g data-legend-entry="containment" transform="translate(0 362)">
-<g data-legend-sample="containment">
-<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
-</g>
-<text x="174" y="12" font-weight="700">Containment</text>
-<text x="174" y="30">Nested boxes show containment;</text>
-<text x="174" y="48">nesting replaces a redundant</text>
-<text x="174" y="66">relationship line.</text>
-</g>
-<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
-<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
-<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
-<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
-</g>
-<g transform="translate(0 558)">
 <g data-annotation-area="true" data-packing-width="1740" data-measured-height="410">
 <g data-annotation-card="true" transform="translate(40 160)"><rect width="392" height="386" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources" data-packing-width="1660"><rect width="392" height="386" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="322" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_mq_configuration" data-mode="managed"><title>aws_mq_configuration · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_mq_configuration · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
@@ -263,100 +200,99 @@ p { line-height: 1.5; }
 </g>
 <g data-architecture="true" transform="translate(0 410)">
 <g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="1640" height="816" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
-<g data-container="resource-6177735f7670632e6d61696e-current"><title>module.root.aws_vpc.main</title><rect x="60" y="200" width="1160" height="756" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7375626e65742e61-current"><title>module.root.aws_subnet.a</title><rect x="100" y="517" width="400" height="152" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7375626e65742e62-current"><title>module.root.aws_subnet.b</title><rect x="100" y="709" width="400" height="152" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7670632e6f74686572-current"><title>module.root.aws_vpc.other</title><rect x="1260" y="200" width="400" height="152" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7670632e6d61696e-current"><title>module.root.aws_vpc.main</title><rect x="500" y="200" width="1160" height="756" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e61-current"><title>module.root.aws_subnet.a</title><rect x="540" y="517" width="400" height="152" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e62-current"><title>module.root.aws_subnet.b</title><rect x="540" y="709" width="400" height="152" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7670632e6f74686572-current"><title>module.root.aws_vpc.other</title><rect x="60" y="200" width="400" height="152" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current"><title>module.root.aws_mq_configuration.shared → module.root.aws_mq_broker.primary (dependency)</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current"><title>module.root.aws_mq_configuration.shared → module.root.aws_mq_broker.secondary (dependency)</title></g>
-<path d="M 420 409 L 508 409 Q 516 409 516 417 L 516 419 Q 516 427 524 427 L 540 427 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_security_group.broker → module.root.aws_mq_broker.primary (dependency)</title></path>
-<path d="M 420 433 L 516 433 Q 524 433 524 441 L 524 721 Q 524 729 532 729 L 540 729 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_security_group.broker → module.root.aws_mq_broker.secondary (dependency)</title></path>
-<path d="M 500 574 L 508 574 Q 516 574 516 566 L 516 435 Q 516 427 524 427 L 540 427 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-2)"><title>module.root.aws_subnet.a → module.root.aws_mq_broker.primary (dependency)</title></path>
-<path d="M 500 611 L 516 611 Q 524 611 524 619 L 524 721 Q 524 729 532 729 L 540 729 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-2)"><title>module.root.aws_subnet.a → module.root.aws_mq_broker.secondary (dependency)</title></path>
-<path d="M 500 766 L 508 766 Q 516 766 516 758 L 516 435 Q 516 427 524 427 L 540 427 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-1)"><title>module.root.aws_subnet.b → module.root.aws_mq_broker.primary (dependency)</title></path>
-<path d="M 500 803 L 516 803 Q 524 803 524 795 L 524 737 Q 524 729 532 729 L 540 729 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-1)"><title>module.root.aws_subnet.b → module.root.aws_mq_broker.secondary (dependency)</title></path>
+<path d="M 860 409 L 948 409 Q 956 409 956 417 L 956 419 Q 956 427 964 427 L 980 427 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_security_group.broker → module.root.aws_mq_broker.primary (dependency)</title></path>
+<path d="M 860 433 L 956 433 Q 964 433 964 441 L 964 721 Q 964 729 972 729 L 980 729 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_security_group.broker → module.root.aws_mq_broker.secondary (dependency)</title></path>
+<path d="M 940 574 L 948 574 Q 956 574 956 566 L 956 435 Q 956 427 964 427 L 980 427 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-2)"><title>module.root.aws_subnet.a → module.root.aws_mq_broker.primary (dependency)</title></path>
+<path d="M 940 611 L 956 611 Q 964 611 964 619 L 964 721 Q 964 729 972 729 L 980 729 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-2)"><title>module.root.aws_subnet.a → module.root.aws_mq_broker.secondary (dependency)</title></path>
+<path d="M 940 766 L 948 766 Q 956 766 956 758 L 956 435 Q 956 427 964 427 L 980 427 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-1)"><title>module.root.aws_subnet.b → module.root.aws_mq_broker.primary (dependency)</title></path>
+<path d="M 940 803 L 956 803 Q 964 803 964 795 L 964 737 Q 964 729 972 729 L 980 729 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-1)"><title>module.root.aws_subnet.b → module.root.aws_mq_broker.secondary (dependency)</title></path>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f73656375726974795f67726f75702e62726f6b6572-current"><title>module.root.aws_vpc.main → module.root.aws_security_group.broker (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e61-current"><title>module.root.aws_vpc.main → module.root.aws_subnet.a (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e62-current"><title>module.root.aws_vpc.main → module.root.aws_subnet.b (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current"><title>module.root.aws_vpc.main → module.root.aws_mq_broker.primary (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current"><title>module.root.aws_vpc.main → module.root.aws_mq_broker.secondary (containment)</title></g>
-<circle data-junction-edges="[[&quot;resource-6177735f73656375726974795f67726f75702e62726f6b6572-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7072696d617279-current&quot;],[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7072696d617279-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7072696d617279-current&quot;]]" cx="516" cy="427" r="3" fill="#94a3b8" mask="url(#container-occlusion-0)"/>
-<circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7072696d617279-current&quot;]]" cx="516" cy="574" r="3" fill="#94a3b8" mask="url(#container-occlusion-2)"/>
-<circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current&quot;]]" cx="524" cy="611" r="3" fill="#94a3b8" mask="url(#container-occlusion-2)"/>
-<circle data-junction-edges="[[&quot;resource-6177735f73656375726974795f67726f75702e62726f6b6572-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current&quot;],[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current&quot;]]" cx="524" cy="729" r="3" fill="#94a3b8" mask="url(#container-occlusion-0)"/>
+<circle data-junction-edges="[[&quot;resource-6177735f73656375726974795f67726f75702e62726f6b6572-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7072696d617279-current&quot;],[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7072696d617279-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7072696d617279-current&quot;]]" cx="956" cy="427" r="3" fill="#94a3b8" mask="url(#container-occlusion-0)"/>
+<circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7072696d617279-current&quot;]]" cx="956" cy="574" r="3" fill="#94a3b8" mask="url(#container-occlusion-2)"/>
+<circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current&quot;]]" cx="964" cy="611" r="3" fill="#94a3b8" mask="url(#container-occlusion-2)"/>
+<circle data-junction-edges="[[&quot;resource-6177735f73656375726974795f67726f75702e62726f6b6572-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current&quot;],[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current&quot;]]" cx="964" cy="729" r="3" fill="#94a3b8" mask="url(#container-occlusion-0)"/>
 <g id="resource-6177735f6d715f62726f6b65722e7072696d617279-current" data-architecture-id="terraform:6177735f6d715f62726f6b65722e7072696d617279-current" data-qualified-address="module.root.aws_mq_broker.primary" data-terraform-address="aws_mq_broker.primary"><title>module.root.aws_mq_broker.primary — create</title>
-<rect x="540" y="352" width="640" height="262" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="552" y="380" font-size="11" fill="#047857" xml:space="preserve">aws_mq_broker · create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon MQ" data-display-name="Amazon MQ" x="1053" y="360" width="119" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1063" y="382" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon MQ</text><text x="552" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_mq_broker.primary</text>
+<rect x="980" y="352" width="640" height="262" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="992" y="380" font-size="11" fill="#047857" xml:space="preserve">aws_mq_broker · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon MQ" data-display-name="Amazon MQ" x="1493" y="360" width="119" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1503" y="382" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon MQ</text><text x="992" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_mq_broker.primary</text>
 <g data-resource-references="true"><title>Configured security groups: module.root.aws_security_group.broker [security_groups; direct attribute reference]
 Configured subnets: module.root.aws_subnet.a [subnet_ids; direct attribute reference]
 Configured subnets: module.root.aws_subnet.b [subnet_ids; direct attribute reference]
 MQ configuration: module.root.aws_mq_configuration.shared [configuration.id; direct attribute reference]
-References: module.root.aws_mq_configuration.shared [configuration.revision; direct attribute reference]</title><text x="552" y="454" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-reference-attribute="security_groups"><title>Configured security groups: module.root.aws_security_group.broker [security_groups; direct attribute reference]</title><text x="552" y="472" font-size="11" fill="#334155" xml:space="preserve">Configured security groups: module.root.aws_security_group.broker</text>
-</a><a href="#resource-6177735f7375626e65742e61-current" data-reference-attribute="subnet_ids"><title>Configured subnets: module.root.aws_subnet.a [subnet_ids; direct attribute reference]</title><text x="552" y="508" font-size="11" fill="#334155" xml:space="preserve">Configured subnets: module.root.aws_subnet.a</text>
-</a><a href="#resource-6177735f7375626e65742e62-current" data-reference-attribute="subnet_ids"><title>Configured subnets: module.root.aws_subnet.b [subnet_ids; direct attribute reference]</title><text x="552" y="526" font-size="11" fill="#334155" xml:space="preserve">Configured subnets: module.root.aws_subnet.b</text>
-</a><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-reference-attribute="configuration.id"><title>MQ configuration: module.root.aws_mq_configuration.shared [configuration.id; direct attribute reference]</title><text x="552" y="544" font-size="11" fill="#334155" xml:space="preserve">MQ configuration: module.root.aws_mq_configuration.shared</text>
-</a><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-reference-attribute="configuration.revision"><title>References: module.root.aws_mq_configuration.shared [configuration.revision; direct attribute reference]</title><text x="552" y="562" font-size="11" fill="#334155" xml:space="preserve">References: module.root.aws_mq_configuration.shared</text>
+References: module.root.aws_mq_configuration.shared [configuration.revision; direct attribute reference]</title><text x="992" y="454" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-reference-attribute="security_groups"><title>Configured security groups: module.root.aws_security_group.broker [security_groups; direct attribute reference]</title><text x="992" y="472" font-size="11" fill="#334155" xml:space="preserve">Configured security groups: module.root.aws_security_group.broker</text>
+</a><a href="#resource-6177735f7375626e65742e61-current" data-reference-attribute="subnet_ids"><title>Configured subnets: module.root.aws_subnet.a [subnet_ids; direct attribute reference]</title><text x="992" y="508" font-size="11" fill="#334155" xml:space="preserve">Configured subnets: module.root.aws_subnet.a</text>
+</a><a href="#resource-6177735f7375626e65742e62-current" data-reference-attribute="subnet_ids"><title>Configured subnets: module.root.aws_subnet.b [subnet_ids; direct attribute reference]</title><text x="992" y="526" font-size="11" fill="#334155" xml:space="preserve">Configured subnets: module.root.aws_subnet.b</text>
+</a><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-reference-attribute="configuration.id"><title>MQ configuration: module.root.aws_mq_configuration.shared [configuration.id; direct attribute reference]</title><text x="992" y="544" font-size="11" fill="#334155" xml:space="preserve">MQ configuration: module.root.aws_mq_configuration.shared</text>
+</a><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-reference-attribute="configuration.revision"><title>References: module.root.aws_mq_configuration.shared [configuration.revision; direct attribute reference]</title><text x="992" y="562" font-size="11" fill="#334155" xml:space="preserve">References: module.root.aws_mq_configuration.shared</text>
 </a></g>
-<text x="552" y="602" font-size="10" fill="#64748b"><title>root</title>root</text>
-<text x="552" y="584" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
+<text x="992" y="602" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="992" y="584" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" data-architecture-id="terraform:6177735f6d715f62726f6b65722e7365636f6e64617279-current" data-qualified-address="module.root.aws_mq_broker.secondary" data-terraform-address="aws_mq_broker.secondary"><title>module.root.aws_mq_broker.secondary — create</title>
-<rect x="540" y="654" width="640" height="262" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="552" y="682" font-size="11" fill="#047857" xml:space="preserve">aws_mq_broker · create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon MQ" data-display-name="Amazon MQ" x="1053" y="662" width="119" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1063" y="684" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon MQ</text><text x="552" y="715" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_mq_broker.secondary</text>
+<rect x="980" y="654" width="640" height="262" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="992" y="682" font-size="11" fill="#047857" xml:space="preserve">aws_mq_broker · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon MQ" data-display-name="Amazon MQ" x="1493" y="662" width="119" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1503" y="684" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon MQ</text><text x="992" y="715" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_mq_broker.secondary</text>
 <g data-resource-references="true"><title>Configured security groups: module.root.aws_security_group.broker [security_groups; direct attribute reference]
 Configured subnets: module.root.aws_subnet.a [subnet_ids; direct attribute reference]
 Configured subnets: module.root.aws_subnet.b [subnet_ids; direct attribute reference]
 MQ configuration: module.root.aws_mq_configuration.shared [configuration.id; direct attribute reference]
-References: module.root.aws_mq_configuration.shared [configuration.revision; direct attribute reference]</title><text x="552" y="756" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-reference-attribute="security_groups"><title>Configured security groups: module.root.aws_security_group.broker [security_groups; direct attribute reference]</title><text x="552" y="774" font-size="11" fill="#334155" xml:space="preserve">Configured security groups: module.root.aws_security_group.broker</text>
-</a><a href="#resource-6177735f7375626e65742e61-current" data-reference-attribute="subnet_ids"><title>Configured subnets: module.root.aws_subnet.a [subnet_ids; direct attribute reference]</title><text x="552" y="810" font-size="11" fill="#334155" xml:space="preserve">Configured subnets: module.root.aws_subnet.a</text>
-</a><a href="#resource-6177735f7375626e65742e62-current" data-reference-attribute="subnet_ids"><title>Configured subnets: module.root.aws_subnet.b [subnet_ids; direct attribute reference]</title><text x="552" y="828" font-size="11" fill="#334155" xml:space="preserve">Configured subnets: module.root.aws_subnet.b</text>
-</a><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-reference-attribute="configuration.id"><title>MQ configuration: module.root.aws_mq_configuration.shared [configuration.id; direct attribute reference]</title><text x="552" y="846" font-size="11" fill="#334155" xml:space="preserve">MQ configuration: module.root.aws_mq_configuration.shared</text>
-</a><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-reference-attribute="configuration.revision"><title>References: module.root.aws_mq_configuration.shared [configuration.revision; direct attribute reference]</title><text x="552" y="864" font-size="11" fill="#334155" xml:space="preserve">References: module.root.aws_mq_configuration.shared</text>
+References: module.root.aws_mq_configuration.shared [configuration.revision; direct attribute reference]</title><text x="992" y="756" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-reference-attribute="security_groups"><title>Configured security groups: module.root.aws_security_group.broker [security_groups; direct attribute reference]</title><text x="992" y="774" font-size="11" fill="#334155" xml:space="preserve">Configured security groups: module.root.aws_security_group.broker</text>
+</a><a href="#resource-6177735f7375626e65742e61-current" data-reference-attribute="subnet_ids"><title>Configured subnets: module.root.aws_subnet.a [subnet_ids; direct attribute reference]</title><text x="992" y="810" font-size="11" fill="#334155" xml:space="preserve">Configured subnets: module.root.aws_subnet.a</text>
+</a><a href="#resource-6177735f7375626e65742e62-current" data-reference-attribute="subnet_ids"><title>Configured subnets: module.root.aws_subnet.b [subnet_ids; direct attribute reference]</title><text x="992" y="828" font-size="11" fill="#334155" xml:space="preserve">Configured subnets: module.root.aws_subnet.b</text>
+</a><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-reference-attribute="configuration.id"><title>MQ configuration: module.root.aws_mq_configuration.shared [configuration.id; direct attribute reference]</title><text x="992" y="846" font-size="11" fill="#334155" xml:space="preserve">MQ configuration: module.root.aws_mq_configuration.shared</text>
+</a><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current" data-reference-attribute="configuration.revision"><title>References: module.root.aws_mq_configuration.shared [configuration.revision; direct attribute reference]</title><text x="992" y="864" font-size="11" fill="#334155" xml:space="preserve">References: module.root.aws_mq_configuration.shared</text>
 </a></g>
-<text x="552" y="904" font-size="10" fill="#64748b"><title>root</title>root</text>
-<text x="552" y="886" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
+<text x="992" y="904" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="992" y="886" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e62726f6b6572-current" data-qualified-address="module.root.aws_security_group.broker" data-terraform-address="aws_security_group.broker"><title>module.root.aws_security_group.broker — create</title>
-<rect x="100" y="365" width="320" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="112" y="393" font-size="11" fill="#047857" xml:space="preserve">create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="238" y="373" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="248" y="395" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="112" y="426" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.broker</text>
-<text x="112" y="465" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+<rect x="540" y="365" width="320" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="552" y="393" font-size="11" fill="#047857" xml:space="preserve">create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="678" y="373" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="688" y="395" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="552" y="426" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.broker</text>
+<text x="552" y="465" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
-<g id="resource-6177735f7375626e65742e61-current" data-architecture-id="terraform:6177735f7375626e65742e61-current" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a" data-presentation-header="100 517 400 112"><title>module.root.aws_subnet.a — create</title>
-<text data-resource-type-heading="true" x="112" y="545" font-size="11" fill="#047857" xml:space="preserve">create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="525" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="547" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="578" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
-<text x="112" y="617" font-size="10" fill="#64748b"><title>root</title>root</text>
+<g id="resource-6177735f7375626e65742e61-current" data-architecture-id="terraform:6177735f7375626e65742e61-current" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a" data-presentation-header="540 517 400 112"><title>module.root.aws_subnet.a — create</title>
+<text data-resource-type-heading="true" x="552" y="545" font-size="11" fill="#047857" xml:space="preserve">create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="846" y="525" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="856" y="547" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="552" y="578" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
+<text x="552" y="617" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7375626e65742e62-current" data-architecture-id="terraform:6177735f7375626e65742e62-current" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b" data-presentation-header="100 709 400 112"><title>module.root.aws_subnet.b — create</title>
-<text data-resource-type-heading="true" x="112" y="737" font-size="11" fill="#047857" xml:space="preserve">create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="717" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="739" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="770" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
-<text x="112" y="809" font-size="10" fill="#64748b"><title>root</title>root</text>
+<g id="resource-6177735f7375626e65742e62-current" data-architecture-id="terraform:6177735f7375626e65742e62-current" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b" data-presentation-header="540 709 400 112"><title>module.root.aws_subnet.b — create</title>
+<text data-resource-type-heading="true" x="552" y="737" font-size="11" fill="#047857" xml:space="preserve">create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="846" y="717" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="856" y="739" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="552" y="770" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
+<text x="552" y="809" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main" data-presentation-header="60 200 1160 112"><title>module.root.aws_vpc.main — create</title>
+<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main" data-presentation-header="500 200 1160 112"><title>module.root.aws_vpc.main — create</title>
+<text data-resource-type-heading="true" x="512" y="228" font-size="11" fill="#047857" xml:space="preserve">create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1599" y="208" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1609" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="512" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
+<text x="512" y="300" font-size="10" fill="#64748b"><title>root</title>root</text>
+</g>
+<g id="resource-6177735f7670632e6f74686572-current" data-architecture-id="terraform:6177735f7670632e6f74686572-current" data-qualified-address="module.root.aws_vpc.other" data-terraform-address="aws_vpc.other" data-presentation-header="60 200 400 112"><title>module.root.aws_vpc.other — create</title>
 <text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#047857" xml:space="preserve">create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1159" y="208" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1169" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="399" y="208" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="409" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.other</text>
 <text x="72" y="300" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e6f74686572-current" data-architecture-id="terraform:6177735f7670632e6f74686572-current" data-qualified-address="module.root.aws_vpc.other" data-terraform-address="aws_vpc.other" data-presentation-header="1260 200 400 112"><title>module.root.aws_vpc.other — create</title>
-<text data-resource-type-heading="true" x="1272" y="228" font-size="11" fill="#047857" xml:space="preserve">create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1599" y="208" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1609" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="1272" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.other</text>
-<text x="1272" y="300" font-size="10" fill="#64748b"><title>root</title>root</text>
-</g>
 <g data-endpoints="true" data-source="resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" aria-hidden="true">
-<circle data-endpoint="source" cx="420" cy="409" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="860" cy="409" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f73656375726974795f67726f75702e62726f6b6572-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" aria-hidden="true">
-<circle data-endpoint="source" cx="420" cy="433" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="860" cy="433" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" aria-hidden="true">
-<circle data-endpoint="source" cx="500" cy="574" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="940" cy="574" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" aria-hidden="true">
-<circle data-endpoint="source" cx="500" cy="611" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="940" cy="611" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6d715f62726f6b65722e7072696d617279-current" aria-hidden="true">
-<circle data-endpoint="source" cx="500" cy="766" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="940" cy="766" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current" aria-hidden="true">
-<circle data-endpoint="source" cx="500" cy="803" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-</g>
+<circle data-endpoint="source" cx="940" cy="803" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>
@@ -364,8 +300,8 @@ References: module.root.aws_mq_configuration.shared [configuration.revision; dir
 </section>
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
-<script id="viewer-data" type="application/json">[{"action":"create","address":"aws_mq_broker.primary","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f6d715f62726f6b65722e7072696d617279-current","identity":"terraform:6177735f6d715f62726f6b65722e7072696d617279-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_mq_broker.primary","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_mq_broker"},{"action":"create","address":"aws_mq_broker.secondary","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current","identity":"terraform:6177735f6d715f62726f6b65722e7365636f6e64617279-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_mq_broker.secondary","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_mq_broker"},{"action":"create","address":"aws_mq_configuration.shared","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current","identity":"terraform:6177735f6d715f636f6e66696775726174696f6e2e736861726564-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_mq_configuration.shared","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_mq_configuration"},{"action":"create","address":"aws_security_group.broker","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f73656375726974795f67726f75702e62726f6b6572-current","identity":"terraform:6177735f73656375726974795f67726f75702e62726f6b6572-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_security_group.broker","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_security_group"},{"action":"create","address":"aws_subnet.a","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f7375626e65742e61-current","identity":"terraform:6177735f7375626e65742e61-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_subnet.a","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_subnet"},{"action":"create","address":"aws_subnet.b","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f7375626e65742e62-current","identity":"terraform:6177735f7375626e65742e62-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_subnet.b","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_subnet"},{"action":"create","address":"aws_vpc.main","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f7670632e6d61696e-current","identity":"terraform:6177735f7670632e6d61696e-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_vpc.main","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_vpc"},{"action":"create","address":"aws_vpc.other","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f7670632e6f74686572-current","identity":"terraform:6177735f7670632e6f74686572-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_vpc.other","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_vpc"}]</script>
-<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":null,"version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"full","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
+<script id="viewer-data" type="application/json">[{"action":"create","address":"aws_mq_broker.primary","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f6d715f62726f6b65722e7072696d617279-current","identity":"terraform:6177735f6d715f62726f6b65722e7072696d617279-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_mq_broker.primary","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_mq_broker"},{"action":"create","address":"aws_mq_broker.secondary","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f6d715f62726f6b65722e7365636f6e64617279-current","identity":"terraform:6177735f6d715f62726f6b65722e7365636f6e64617279-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_mq_broker.secondary","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_mq_broker"},{"action":"create","address":"aws_mq_configuration.shared","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6d715f636f6e66696775726174696f6e2e736861726564-current","identity":"terraform:6177735f6d715f636f6e66696775726174696f6e2e736861726564-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_mq_configuration.shared","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_mq_configuration"},{"action":"create","address":"aws_security_group.broker","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f73656375726974795f67726f75702e62726f6b6572-current","identity":"terraform:6177735f73656375726974795f67726f75702e62726f6b6572-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_security_group.broker","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_security_group"},{"action":"create","address":"aws_subnet.a","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f7375626e65742e61-current","identity":"terraform:6177735f7375626e65742e61-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_subnet.a","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_subnet"},{"action":"create","address":"aws_subnet.b","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":["resource-6177735f7670632e6d61696e-current"],"deposed":null,"id":"resource-6177735f7375626e65742e62-current","identity":"terraform:6177735f7375626e65742e62-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_subnet.b","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_subnet"},{"action":"create","address":"aws_vpc.main","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f7670632e6d61696e-current","identity":"terraform:6177735f7670632e6d61696e-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_vpc.main","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_vpc"},{"action":"create","address":"aws_vpc.other","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f7670632e6f74686572-current","identity":"terraform:6177735f7670632e6f74686572-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_vpc.other","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_vpc"}]</script>
+<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":"06aabf0f13e67a43f9f5234d7c4629eeced5a15c-dirty","version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"cloudflare_accounts":[],"cloudflare_groups":false,"cloudflare_zones":[],"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"omitted","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
 <script id="viewer-provider-data" type="application/json">[]</script>
 
 
@@ -382,10 +318,10 @@ function generationInformation(byId) {
     return;
   }
   paragraph(`${metadata.generator.name} ${metadata.generator.version}. Revision: ${metadata.generator.revision || 'unavailable'}.`);
-  paragraph(metadata.selected_view ? 'Selected view. Omitted resources may still exist in Terraform.' : 'Full input view: no changed-only, module or focus selection. This describes the supplied inputs, not all resources in Terraform.');
+  paragraph(metadata.selected_view ? 'Selected view. Omitted resources may still exist in Terraform.' : 'Full input view: no changed-only, module, focus or Cloudflare scope selection. This describes the supplied inputs, not all resources in Terraform.');
   paragraph('Values below are effective generation settings. Whether a value was explicitly supplied or defaulted is unavailable; “matches default” describes the value only.');
-  const defaults = { changed_only: false, modules: [], focus: null, focus_depth: null, spatial_types: [], address_format: 'qualified', icon_mode: 'service-name', relationship_legend: 'full', html_diagnostics: false, html_semantic_diagnostics: false, states: [], remote_state_mappings: [] };
-  const labels = { changed_only: 'Changed only', modules: 'Module selection', focus: 'Focus', focus_depth: 'Focus depth', spatial_types: 'Spatial type overrides', address_format: 'Address format', icon_mode: 'Service labels', relationship_legend: 'Relationship legend', html_diagnostics: 'Routing diagnostics', html_semantic_diagnostics: 'Semantic diagnostics', states: 'Named states', remote_state_mappings: 'Remote state mappings' };
+  const defaults = { cloudflare_accounts: [], cloudflare_zones: [], cloudflare_groups: false, changed_only: false, modules: [], focus: null, focus_depth: null, spatial_types: [], address_format: 'qualified', icon_mode: 'service-name', relationship_legend: 'omitted', html_diagnostics: false, html_semantic_diagnostics: false, states: [], remote_state_mappings: [] };
+  const labels = { cloudflare_accounts: 'Cloudflare Account selection', cloudflare_zones: 'Cloudflare Zone selection', cloudflare_groups: 'Cloudflare administrative index', changed_only: 'Changed only', modules: 'Module selection', focus: 'Focus', focus_depth: 'Focus depth', spatial_types: 'Spatial type overrides', address_format: 'Address format', icon_mode: 'Service labels', relationship_legend: 'Relationship legend', html_diagnostics: 'Routing diagnostics', html_semantic_diagnostics: 'Semantic diagnostics', states: 'Named states', remote_state_mappings: 'Remote state mappings' };
   const list = document.createElement('dl');
   for (const [key, label] of Object.entries(labels)) {
     const term = document.createElement('dt'), value = document.createElement('dd');
@@ -473,7 +409,7 @@ function diagramExport(context) {
         ids.add(el.id);
       }
       for (const attr of [...el.attributes]) {
-        if (/^on/i.test(attr.name) || /^data-(viewer|impact)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
+        if (/^on/i.test(attr.name) || /^data-(viewer|impact|path)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
       }
     }
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
@@ -1115,6 +1051,12 @@ function searching(context, index, selection, coordinator) {
   const { resources, label } = index;
   const { button, select } = selection;
   const action = byId('search-action'), state = byId('search-state'), type = byId('search-type');
+  const account = byId('search-cloudflare-account'), zone = byId('search-cloudflare-zone');
+  const cloudflare = resource => resource.provider === 'registry.terraform.io/cloudflare/cloudflare';
+  const scoped = resources.filter(cloudflare);
+  byId('search-cloudflare-scopes').hidden = !scoped.length;
+  const scopeKey = (resource, key) => JSON.stringify(resource.cloudflare_scope?.[key] ?? null);
+  const scopeMatches = (resource, control, key) => !control.value || (cloudflare(resource) && scopeKey(resource, key) === control.value);
   const typeKey = resource => JSON.stringify([resource.provider || null, resource.type]);
   function options(control, entries) {
     for (const [value, text] of entries) {
@@ -1125,11 +1067,14 @@ function searching(context, index, selection, coordinator) {
   options(action, ['Create', 'Update', 'Delete', 'Replace', 'Read', 'Unchanged', 'Other'].map(label => [label.toLowerCase(), label]));
   options(state, [...new Set(resources.map(r => r.state))].sort().map(value => [JSON.stringify(value), value || '(unnamed)']));
   options(type, [...new Map(resources.map(r => [typeKey(r), `${r.type} · ${r.provider || 'unknown provider source'}`]))].sort((a, b) => a[1].localeCompare(b[1])));
+  for (const [control, key] of [[account, 'account'], [zone, 'zone']]) {
+    options(control, [...new Set(scoped.map(r => scopeKey(r, key)))].sort().map(value => [value, JSON.parse(value) ?? 'unknown']));
+  }
   function renderResults() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
     const focused = results.contains(document.activeElement);
     const visible = resources.filter(r => byId(r.id));
-    const matched = visible.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
+    const matched = visible.filter(r => scopeMatches(r, account, 'account') && scopeMatches(r, zone, 'zone') && (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
     results.replaceChildren();
     for (const r of matched) {
       const b = button(label(r), () => select(r.id));
@@ -1140,11 +1085,11 @@ function searching(context, index, selection, coordinator) {
     if (!matched.length) byId('result-count').textContent += '. No visible resources match this search.';
     if (focused) (results.firstElementChild || search).focus();
   }
-  for (const control of [action, state, type]) control.addEventListener('change', () => {
+  for (const control of [action, state, type, account, zone]) control.addEventListener('change', () => {
     search.dispatchEvent(new Event('input'));
   });
   byId('search-reset').addEventListener('click', () => {
-    search.value = ''; action.value = ''; state.value = ''; type.value = '';
+    search.value = ''; action.value = ''; state.value = ''; type.value = ''; account.value = ''; zone.value = '';
     search.dispatchEvent(new Event('input')); search.focus();
   });
   search.addEventListener('input', renderResults);
@@ -1633,6 +1578,92 @@ function impact(context, index, selection, coordinator) {
   return { reset };
 }
 
+function shortestRelationshipPath(graph, start, end) {
+  const queue = [start], distance = new Map([[start, 0]]), ways = new Map([[start, 1]]);
+  const previous = new Map();
+  let scanned = 0, limited = graph.truncated;
+  search: for (let cursor = 0; cursor < queue.length; cursor++) {
+    const here = queue[cursor], depth = distance.get(here);
+    if (distance.has(end) && depth >= distance.get(end)) break;
+    for (const edge of graph.adjacent.get(here) || []) {
+      if (++scanned > 4000) { limited = true; break search; }
+      if (!['dependency', 'association', 'connection', 'subscription', 'eventsource', 'eventtarget'].includes(edge.kind)
+          || !edge.provenance.length || !edge.provenance.every(p => ['reference', 'resource', 'remote-state'].includes(p.kind))) continue;
+      if (edge.direction !== 'undirected' && !(edge.direction === 'directed' && edge.from === here)) continue;
+      const next = edge.from === here ? edge.to : edge.from;
+      if (!graph.nodes.has(next)) continue;
+      if (distance.has(next)) {
+        if (distance.get(next) === depth + 1) ways.set(next, Math.min(2, ways.get(next) + ways.get(here)));
+        continue;
+      }
+      if (queue.length >= 500 || depth >= 12) { limited = true; continue; }
+      distance.set(next, depth + 1); ways.set(next, ways.get(here));
+      previous.set(next, {here, next, edge}); queue.push(next);
+    }
+  }
+  const steps = [];
+  if (distance.has(end)) {
+    for (let current = end; current !== start;) {
+      const step = previous.get(current);
+      steps.unshift(step); current = step.here;
+    }
+  }
+  return {steps, multiple: ways.get(end) > 1, limited};
+}
+
+function relationshipPath(context, index, coordinator) {
+  const {byId, svg} = context;
+  const status = byId('path-status'), origin = byId('path-origin'), steps = byId('path-steps');
+  let start;
+  function reset() {
+    for (const el of svg.querySelectorAll('[data-path-step]')) el.removeAttribute('data-path-step');
+    steps.replaceChildren(); status.textContent = '';
+  }
+  byId('path-start').addEventListener('click', () => {
+    reset();
+    const resource = index.targets.get(coordinator.selected);
+    if (!resource) { status.textContent = 'Select a resource first.'; return; }
+    start = resource.id;
+    origin.textContent = 'From ' + index.label(resource);
+  });
+  byId('path-clear').addEventListener('click', () => {
+    reset(); start = null; origin.textContent = '';
+  });
+  byId('path-find').addEventListener('click', () => {
+    reset();
+    const graph = impactGraph(index, svg);
+    const from = graph.domKeys.get(start), to = graph.domKeys.get(coordinator.selected);
+    if (!from || !to || from === to) {
+      status.textContent = 'Set a visible starting resource, then select a different destination.'; return;
+    }
+    const result = shortestRelationshipPath(graph, from, to);
+    const limit = result.limited ? ' Search limit reached.' : '';
+    if (!result.steps.length) { status.textContent = 'No verified path found in the searched relationships.' + limit; return; }
+    status.textContent = (result.multiple ? 'Multiple shortest paths found. Showing one.' : 'Showing one recorded relationship path.') + limit;
+    const marked = new Set();
+    for (const {here, next, edge} of result.steps) {
+      const a = graph.nodes.get(here), b = graph.nodes.get(next);
+      byId(a.id).setAttribute('data-path-step', 'true'); byId(b.id).setAttribute('data-path-step', 'true');
+      const row = document.createElement('li');
+      row.textContent = index.label(a) + (edge.direction === 'directed' ? ' → ' : ' ↔ ') + index.label(b) + ' · ' + edge.kind;
+      const proofs = new Set(edge.provenance.filter(p => p.kind === 'resource').map(index.sourceIdentity));
+      for (const el of index.edges.slice(0, 10000)) {
+        if (el.dataset.edgeKind !== edge.kind || graph.domKeys.get(el.dataset.source) !== edge.from
+          || graph.domKeys.get(el.dataset.target) !== edge.to) continue;
+        const ids = (el.dataset.relationshipIds || '').split(' ').filter(Boolean);
+        if (proofs.size && !ids.some(id => [...(index.relationshipEntries.get(id)?.querySelectorAll('[data-source-identity]') || [])]
+          .some(r => proofs.has(r.dataset.sourceIdentity)))) continue;
+        if (marked.has(el)) continue;
+        marked.add(el); el.setAttribute('data-path-step', 'true');
+        const numbers = ids.map(id => index.relationshipEntries.get(id)?.dataset.relationshipEntry).filter(Boolean);
+        if (numbers.length) row.append(' · #' + numbers.join(', #'));
+      }
+      steps.append(row);
+    }
+  });
+  return {reset};
+}
+
   const byId = id => {
     const el = document.getElementById(id);
     return el?.closest('[data-html-filtered]') ? null : el;
@@ -1670,6 +1701,7 @@ function impact(context, index, selection, coordinator) {
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
+  adapters.register(relationshipPath(context, index, coordinator));
   actionFiltering(context, index, view, coordinator, renderResults);
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;

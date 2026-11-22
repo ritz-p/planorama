@@ -382,6 +382,19 @@ Run `docker compose exec -T dev node --test tests/browser/webdriver.test.cjs`
 to verify the monitor's failure paths and cleanup.
 Build the CLI with `cargo build --locked` in the same container first.
 
+## Trace a relationship path
+
+Select a resource and choose **Use selection as start**. Select a destination
+and choose **Trace to selection**. The ordered list follows recorded directions.
+Undirected connections can be followed both ways. A dashed outline marks resources
+on the path. **Clear path** restores the usual selection highlight.
+
+The viewer shows one shortest verified path and indicates ties found during the
+search. It uses visible endpoints and reference, resource or explicit remote-state
+provenance. Search stops at 12 hops, 500 discovered resources or 4,000 adjacency
+checks within the bounded relationship index. A limit message indicates incomplete
+coverage. These relationships describe the Terraform model.
+
 ## Viewer source modules
 
 `src/html/viewer.js` initializes the viewer and coordinates selection/reset.
@@ -432,6 +445,7 @@ small interfaces; their functions remain inside the viewer's private closure.
 through the same reset lifecycle.
 `impact-graph.js` indexes verified graph metadata and performs bounded traversal;
 `impact.js` owns exploration controls, summaries and transient highlighting.
+`relationship-path.js` searches for verified paths between two visible selections.
 
 `src/html.rs` concatenates the sources in a fixed order with `include_str!` and
 `concat!` at compile time, inside one inline script. Edit the source modules and

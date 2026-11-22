@@ -71,6 +71,8 @@ p { line-height: 1.5; }
 #viewport[data-selection] path[data-edge-kind]:not([data-viewer-edge]) { opacity: .25; }
 #viewport path[data-viewer-edge] { filter: drop-shadow(0 0 2px #64748b); }
 @media (max-width: 700px) { main { grid-template-columns: 1fr; grid-template-rows: 40% 60%; } aside { border-bottom: 1px solid #cbd5e1; } #results { max-height: 15vh; } }
+#viewport g[data-path-step] { outline: 3px dashed #5b21b6; outline-offset: 3px; }
+#viewport[data-selection] path[data-path-step] { opacity: 1; stroke-width: 5; filter: drop-shadow(0 0 2px #5b21b6); }
 </style>
 </head>
 <body>
@@ -100,6 +102,7 @@ p { line-height: 1.5; }
 <div id="search-filters">
 <label for="search-action">Action</label><select id="search-action"><option value="">All actions</option></select>
 <label for="search-state">State</label><select id="search-state"><option value="">All states</option></select>
+<div id="search-cloudflare-scopes" hidden><p>Search Cloudflare administration (within this generated view)</p><label for="search-cloudflare-account">Account</label><select id="search-cloudflare-account"><option value="">All accounts</option></select><label for="search-cloudflare-zone">Zone</label><select id="search-cloudflare-zone"><option value="">All zones</option></select></div>
 <label for="search-type">Resource type / provider source</label><select id="search-type"><option value="">All resource types</option></select>
 <button id="search-reset" type="button">Reset search and filters</button>
 </div>
@@ -108,6 +111,15 @@ p { line-height: 1.5; }
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
 <p id="history-status" role="status">No selection history</p>
+<section aria-label="Relationship path">
+<h2>Trace a relationship path</h2>
+<button id="path-start" type="button">Use selection as start</button>
+<span id="path-origin"></span>
+<button id="path-find" type="button">Trace to selection</button>
+<button id="path-clear" type="button">Clear path</button>
+<p>Follows recorded relationship directions in the visible diagram. A path does not establish network reachability.</p>
+<output id="path-status"></output><ol id="path-steps"></ol>
+</section>
 <section id="impact" aria-label="Potentially related resources">
 <h2>Explore change relationships</h2>
 <label for="impact-depth">Maximum hops</label>
@@ -139,7 +151,7 @@ p { line-height: 1.5; }
 </section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<svg xmlns="http://www.w3.org/2000/svg" width="1571" height="1508" viewBox="0 0 1571 1508" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1643" height="970" viewBox="0 0 1643 970" role="img" aria-labelledby="title description" data-legend-mode="omitted">
 <title id="title">Terraform plan</title>
 <desc id="description">9 resources, 2 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
@@ -149,7 +161,7 @@ p { line-height: 1.5; }
 <text x="40" y="73" font-size="13" fill="#475569">9 resources · 2 reference edges · dependency → dependent</text>
 <metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f617468656e615f646174615f636174616c6f672e6c616b65-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_athena_data_catalog.lake&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f617468656e615f646174615f636174616c6f672e7465616d735b226c6f6e675f696e64657865645f636174616c6f675f666f725f7368617265645f66696e616e6369616c5f7265706f7274696e675f616e645f617263686976616c5f616e616c7974696373225d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_athena_data_catalog.teams[\&quot;long_indexed_catalog_for_shared_financial_reporting_and_archival_analytics\&quot;]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f617468656e615f646174615f636174616c6f672e7465616d735b227265706f7274696e673c26225d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_athena_data_catalog.teams[\&quot;reporting&lt;&amp;\&quot;]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_athena_workgroup.analytics&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e6c69746572616c-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_athena_workgroup.literal&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e7465616d735b227265706f7274696e673c26225d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_athena_workgroup.teams[\&quot;reporting&lt;&amp;\&quot;]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f676c75655f636174616c6f675f64617461626173652e6c616b65-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_glue_catalog_database.lake&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6b6d735f6b65792e726573756c7473-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_kms_key.results&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e726573756c7473-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.results&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6b6d735f6b65792e726573756c7473-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_kms_key.results&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_athena_workgroup.analytics&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f73335f6275636b65742e726573756c7473-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_s3_bucket.results&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_athena_workgroup.analytics&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;}]</metadata>
-<metadata id="resource-references">[{&quot;attribute&quot;:&quot;configuration&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_kms_key.results&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_s3_bucket.results&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;configuration.result_configuration.encryption_configuration.kms_key_arn&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_kms_key.results&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;configuration.result_configuration.output_location&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.results&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e726573756c7473-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;parameters&quot;,&quot;complete&quot;:false,&quot;consumer&quot;:&quot;terraform:6177735f617468656e615f646174615f636174616c6f672e6c616b65-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[&quot;UnprovenEndpointValue&quot;],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;configuration&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_kms_key.results&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_s3_bucket.results&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;configuration.result_configuration.encryption_configuration.kms_key_arn&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_kms_key.results&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;configuration.result_configuration.output_location&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.results&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e726573756c7473-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (4)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (1)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
@@ -157,145 +169,71 @@ p { line-height: 1.5; }
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (4)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
-<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
-<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
-<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
-<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
-<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
-<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
-<g data-legend-entry="dependency" transform="translate(0 132)">
-<g data-legend-sample="dependency">
-<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-<text x="174" y="12" font-weight="700">Dependency</text>
-<text x="174" y="30">Thin solid arrow from the</text>
-<text x="174" y="48">referenced resource to the</text>
-<text x="174" y="66">dependent resource; not exact</text>
-<text x="174" y="84">Terraform execution order.</text>
-</g>
-<g data-legend-entry="association" transform="translate(492 132)">
-<g data-legend-sample="association">
-<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
-<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-<g data-legend-badge="target">
-<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-</g>
-<text x="174" y="12" font-weight="700">Association</text>
-<text x="174" y="30">Dashed, undirected relationship.</text>
-<text x="174" y="48">Matching badges identify the same</text>
-<text x="174" y="66">Terraform-backed relationship at</text>
-<text x="174" y="84">both attachment points.</text>
-</g>
-<g data-legend-entry="directed-association" transform="translate(0 238)">
-<g data-legend-sample="directed-association">
-<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
-<g data-legend-badge="source">
-<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-<g data-legend-badge="target">
-<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-</g>
-<text x="174" y="12" font-weight="700">Directed Association</text>
-<text x="174" y="30">Dashed line from a Route to its</text>
-<text x="174" y="48">next hop. The destination arrow</text>
-<text x="174" y="66">expresses direction; matching</text>
-<text x="174" y="84">badges identify the same</text>
-<text x="174" y="102">relationship.</text>
-</g>
-<g data-legend-entry="connection" transform="translate(492 238)">
-<g data-legend-sample="connection">
-<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-<text x="174" y="12" font-weight="700">Connection</text>
-<text x="174" y="30">Thicker dotted line shows an</text>
-<text x="174" y="48">inferred, undirected connection;</text>
-<text x="174" y="66">this does not guarantee actual</text>
-<text x="174" y="84">network reachability.</text>
-</g>
-<g data-legend-entry="containment" transform="translate(0 362)">
-<g data-legend-sample="containment">
-<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
-</g>
-<text x="174" y="12" font-weight="700">Containment</text>
-<text x="174" y="30">Nested boxes show containment;</text>
-<text x="174" y="48">nesting replaces a redundant</text>
-<text x="174" y="66">relationship line.</text>
-</g>
-<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
-<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
-<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
-<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
-</g>
-<g transform="translate(0 558)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="1471" height="670" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
-<path d="M 1235 412 L 1235 404 Q 1235 396 1227 396 L 1164 396 Q 1156 396 1156 388 L 1156 372 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6b6d735f6b65792e726573756c7473-current" data-target="resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_kms_key.results → module.root.aws_athena_workgroup.analytics</title></path>
-<path d="M 1235 564 L 1235 404 Q 1235 396 1227 396 L 1164 396 Q 1156 396 1156 388 L 1156 372 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e726573756c7473-current" data-target="resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_s3_bucket.results → module.root.aws_athena_workgroup.analytics</title></path>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="1543" height="690" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<path d="M 1271 412 L 1271 404 Q 1271 396 1263 396 L 1188 396 Q 1180 396 1180 388 L 1180 372 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6b6d735f6b65792e726573756c7473-current" data-target="resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_kms_key.results → module.root.aws_athena_workgroup.analytics</title></path>
+<path d="M 1271 564 L 1271 404 Q 1271 396 1263 396 L 1188 396 Q 1180 396 1180 388 L 1180 372 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e726573756c7473-current" data-target="resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_s3_bucket.results → module.root.aws_athena_workgroup.analytics</title></path>
 <g id="resource-6177735f617468656e615f646174615f636174616c6f672e6c616b65-current" data-architecture-id="terraform:6177735f617468656e615f646174615f636174616c6f672e6c616b65-current" data-qualified-address="module.root.aws_athena_data_catalog.lake" data-terraform-address="aws_athena_data_catalog.lake"><title>module.root.aws_athena_data_catalog.lake — create</title>
-<rect x="60" y="200" width="419" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<rect x="60" y="200" width="419" height="154" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#047857" xml:space="preserve">aws_athena_data_catalog · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="308" y="208" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="318" y="230" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_data_catalog.lake</text>
+<g data-resource-references="true"><title>Catalog Lambda functions: unresolved [parameters; unresolved attribute reference]</title><text x="72" y="302" font-size="11" font-weight="700" fill="#475569">Uses</text><g data-reference-status="unresolved"><title>Catalog Lambda functions: unresolved [parameters; unresolved attribute reference]</title><text x="72" y="320" font-size="11" fill="#334155" xml:space="preserve">Catalog Lambda functions: unresolved</text>
+</g></g>
 </g>
 <g id="resource-6177735f617468656e615f646174615f636174616c6f672e7465616d735b226c6f6e675f696e64657865645f636174616c6f675f666f725f7368617265645f66696e616e6369616c5f7265706f7274696e675f616e645f617263686976616c5f616e616c7974696373225d-current" data-architecture-id="terraform:6177735f617468656e615f646174615f636174616c6f672e7465616d735b226c6f6e675f696e64657865645f636174616c6f675f666f725f7368617265645f66696e616e6369616c5f7265706f7274696e675f616e645f617263686976616c5f616e616c7974696373225d-current" data-qualified-address="module.root.aws_athena_data_catalog.teams[&quot;long_indexed_catalog_for_shared_financial_reporting_and_archival_analytics&quot;]" data-terraform-address="aws_athena_data_catalog.teams[&quot;long_indexed_catalog_for_shared_financial_reporting_and_archival_analytics&quot;]"><title>module.root.aws_athena_data_catalog.teams[&quot;long_indexed_catalog_for_shared_financial_reporting_and_archival_analytics&quot;] — create</title>
-<rect x="60" y="504" width="419" height="132" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="72" y="532" font-size="11" fill="#047857" xml:space="preserve">aws_athena_data_catalog · create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="308" y="512" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="318" y="534" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="72" y="565" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_data_catalog.</text>
-<text x="72" y="585" font-size="13" fill="#0f172a" xml:space="preserve">teams[&quot;long_indexed_catalog_for_shared_financial_</text>
-<text x="72" y="605" font-size="13" fill="#0f172a" xml:space="preserve">reporting_and_archival_analytics&quot;]</text>
+<rect x="60" y="546" width="419" height="132" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="72" y="574" font-size="11" fill="#047857" xml:space="preserve">aws_athena_data_catalog · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="308" y="554" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="318" y="576" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="72" y="607" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_data_catalog.</text>
+<text x="72" y="627" font-size="13" fill="#0f172a" xml:space="preserve">teams[&quot;long_indexed_catalog_for_shared_financial_</text>
+<text x="72" y="647" font-size="13" fill="#0f172a" xml:space="preserve">reporting_and_archival_analytics&quot;]</text>
 </g>
 <g id="resource-6177735f617468656e615f646174615f636174616c6f672e7465616d735b227265706f7274696e673c26225d-current" data-architecture-id="terraform:6177735f617468656e615f646174615f636174616c6f672e7465616d735b227265706f7274696e673c26225d-current" data-qualified-address="module.root.aws_athena_data_catalog.teams[&quot;reporting&lt;&amp;&quot;]" data-terraform-address="aws_athena_data_catalog.teams[&quot;reporting&lt;&amp;&quot;]"><title>module.root.aws_athena_data_catalog.teams[&quot;reporting&lt;&amp;&quot;] — unchanged</title>
-<rect x="60" y="676" width="440" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="72" y="704" font-size="11" fill="#64748b" xml:space="preserve">aws_athena_data_catalog · unchanged</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="329" y="684" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="339" y="706" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="72" y="737" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_data_catalog.</text>
-<text x="72" y="757" font-size="13" fill="#0f172a" xml:space="preserve">teams[&quot;reporting&lt;&amp;&quot;]</text>
+<rect x="60" y="718" width="440" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="72" y="746" font-size="11" fill="#64748b" xml:space="preserve">aws_athena_data_catalog · unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="329" y="726" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="339" y="748" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="72" y="779" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_data_catalog.</text>
+<text x="72" y="799" font-size="13" fill="#0f172a" xml:space="preserve">teams[&quot;reporting&lt;&amp;&quot;]</text>
 </g>
 <g id="resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current" data-architecture-id="terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current" data-qualified-address="module.root.aws_athena_workgroup.analytics" data-terraform-address="aws_athena_workgroup.analytics"><title>module.root.aws_athena_workgroup.analytics — create</title>
-<rect x="979" y="200" width="512" height="172" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<rect x="979" y="200" width="584" height="172" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="991" y="228" font-size="11" fill="#047857" xml:space="preserve">aws_athena_workgroup · create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="1320" y="208" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1330" y="230" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="991" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_workgroup.analytics</text>
-<g data-resource-references="true"><title>References: module.root.aws_kms_key.results [configuration.result_configuration.encryption_configuration.kms_key_arn; direct attribute reference]
-References: module.root.aws_s3_bucket.results [configuration.result_configuration.output_location; direct attribute reference]</title><text x="991" y="302" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6b6d735f6b65792e726573756c7473-current" data-reference-attribute="configuration.result_configuration.encryption_configuration.kms_key_arn"><title>References: module.root.aws_kms_key.results [configuration.result_configuration.encryption_configuration.kms_key_arn; direct attribute reference]</title><text x="991" y="320" font-size="11" fill="#334155" xml:space="preserve">References: module.root.aws_kms_key.results</text>
-</a><a href="#resource-6177735f73335f6275636b65742e726573756c7473-current" data-reference-attribute="configuration.result_configuration.output_location"><title>References: module.root.aws_s3_bucket.results [configuration.result_configuration.output_location; direct attribute reference]</title><text x="991" y="338" font-size="11" fill="#334155" xml:space="preserve">References: module.root.aws_s3_bucket.results</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="1392" y="208" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1402" y="230" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="991" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_workgroup.analytics</text>
+<g data-resource-references="true"><title>Query output key: module.root.aws_kms_key.results [configuration.result_configuration.encryption_configuration.kms_key_arn; direct attribute reference]
+Query result bucket: module.root.aws_s3_bucket.results [configuration.result_configuration.output_location; direct attribute reference]</title><text x="991" y="302" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6b6d735f6b65792e726573756c7473-current" data-reference-attribute="configuration.result_configuration.encryption_configuration.kms_key_arn"><title>Query output key: module.root.aws_kms_key.results [configuration.result_configuration.encryption_configuration.kms_key_arn; direct attribute reference]</title><text x="991" y="320" font-size="11" fill="#334155" xml:space="preserve">Query output key: module.root.aws_kms_key.results</text>
+</a><a href="#resource-6177735f73335f6275636b65742e726573756c7473-current" data-reference-attribute="configuration.result_configuration.output_location"><title>Query result bucket: module.root.aws_s3_bucket.results [configuration.result_configuration.output_location; direct attribute reference]</title><text x="991" y="338" font-size="11" fill="#334155" xml:space="preserve">Query result bucket: module.root.aws_s3_bucket.results</text>
 </a></g>
 </g>
 <g id="resource-6177735f617468656e615f776f726b67726f75702e6c69746572616c-current" data-architecture-id="terraform:6177735f617468656e615f776f726b67726f75702e6c69746572616c-current" data-qualified-address="module.root.aws_athena_workgroup.literal" data-terraform-address="aws_athena_workgroup.literal"><title>module.root.aws_athena_workgroup.literal — create</title>
-<rect x="540" y="394" width="398" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="552" y="422" font-size="11" fill="#047857" xml:space="preserve">aws_athena_workgroup · create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="767" y="402" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="777" y="424" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="552" y="455" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_workgroup.literal</text>
+<rect x="540" y="403" width="398" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="552" y="431" font-size="11" fill="#047857" xml:space="preserve">aws_athena_workgroup · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="767" y="411" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="777" y="433" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="552" y="464" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_workgroup.literal</text>
 </g>
 <g id="resource-6177735f617468656e615f776f726b67726f75702e7465616d735b227265706f7274696e673c26225d-current" data-architecture-id="terraform:6177735f617468656e615f776f726b67726f75702e7465616d735b227265706f7274696e673c26225d-current" data-qualified-address="module.root.aws_athena_workgroup.teams[&quot;reporting&lt;&amp;&quot;]" data-terraform-address="aws_athena_workgroup.teams[&quot;reporting&lt;&amp;&quot;]"><title>module.root.aws_athena_workgroup.teams[&quot;reporting&lt;&amp;&quot;] — update</title>
-<rect x="540" y="546" width="398" height="112" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="552" y="574" font-size="11" fill="#1d4ed8" xml:space="preserve">aws_athena_workgroup · update</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="767" y="554" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="777" y="576" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="552" y="607" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_workgroup.</text>
-<text x="552" y="627" font-size="13" fill="#0f172a" xml:space="preserve">teams[&quot;reporting&lt;&amp;&quot;]</text>
+<rect x="540" y="555" width="398" height="112" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="552" y="583" font-size="11" fill="#1d4ed8" xml:space="preserve">aws_athena_workgroup · update</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Athena" data-display-name="Amazon Athena" x="767" y="563" width="163" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="777" y="585" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Athena</text><text x="552" y="616" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_athena_workgroup.</text>
+<text x="552" y="636" font-size="13" fill="#0f172a" xml:space="preserve">teams[&quot;reporting&lt;&amp;&quot;]</text>
 </g>
 <g id="resource-6177735f676c75655f636174616c6f675f64617461626173652e6c616b65-current" data-architecture-id="terraform:6177735f676c75655f636174616c6f675f64617461626173652e6c616b65-current" data-qualified-address="module.root.aws_glue_catalog_database.lake" data-terraform-address="aws_glue_catalog_database.lake"><title>module.root.aws_glue_catalog_database.lake — unchanged</title>
-<rect x="540" y="698" width="399" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="552" y="726" font-size="11" fill="#64748b" xml:space="preserve">aws_glue_catalog_database · unchanged</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Glue" data-display-name="AWS Glue" x="823" y="706" width="108" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="833" y="728" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Glue</text><text x="552" y="759" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_glue_catalog_database.lake</text>
+<rect x="540" y="707" width="399" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="552" y="735" font-size="11" fill="#64748b" xml:space="preserve">aws_glue_catalog_database · unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Glue" data-display-name="AWS Glue" x="823" y="715" width="108" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="833" y="737" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Glue</text><text x="552" y="768" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_glue_catalog_database.lake</text>
 </g>
 <g id="resource-6177735f6b6d735f6b65792e726573756c7473-current" data-architecture-id="terraform:6177735f6b6d735f6b65792e726573756c7473-current" data-qualified-address="module.root.aws_kms_key.results" data-terraform-address="aws_kms_key.results"><title>module.root.aws_kms_key.results — unchanged</title>
-<rect x="1075" y="412" width="320" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="1087" y="440" font-size="11" fill="#64748b" xml:space="preserve">aws_kms_key · unchanged</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Key Management Service" data-display-name="KMS" x="1334" y="420" width="53" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1344" y="442" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">KMS</text><text x="1087" y="473" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kms_key.results</text>
+<rect x="1111" y="412" width="320" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="1123" y="440" font-size="11" fill="#64748b" xml:space="preserve">aws_kms_key · unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Key Management Service" data-display-name="KMS" x="1370" y="420" width="53" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1380" y="442" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">KMS</text><text x="1123" y="473" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kms_key.results</text>
 </g>
 <g id="resource-6177735f73335f6275636b65742e726573756c7473-current" data-architecture-id="terraform:6177735f73335f6275636b65742e726573756c7473-current" data-qualified-address="module.root.aws_s3_bucket.results" data-terraform-address="aws_s3_bucket.results"><title>module.root.aws_s3_bucket.results — unchanged</title>
-<rect x="1075" y="564" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="1087" y="592" font-size="11" fill="#64748b" xml:space="preserve">aws_s3_bucket · unchanged</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="1345" y="572" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="1355" y="594" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><text x="1087" y="625" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.results</text>
-<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="1087" y="666" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="1087" y="684" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+<rect x="1111" y="564" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="1123" y="592" font-size="11" fill="#64748b" xml:space="preserve">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="1381" y="572" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="1391" y="594" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><text x="1123" y="625" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.results</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="1123" y="666" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="1123" y="684" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
 </g></g>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f6b6d735f6b65792e726573756c7473-current" data-target="resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current" aria-hidden="true">
-<circle data-endpoint="source" cx="1235" cy="412" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="1271" cy="412" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f73335f6275636b65742e726573756c7473-current" data-target="resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current" aria-hidden="true">
-<circle data-endpoint="source" cx="1235" cy="564" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-</g>
+<circle data-endpoint="source" cx="1271" cy="564" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>
@@ -303,8 +241,8 @@ References: module.root.aws_s3_bucket.results [configuration.result_configuratio
 </section>
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
-<script id="viewer-data" type="application/json">[{"action":"create","address":"aws_athena_data_catalog.lake","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f617468656e615f646174615f636174616c6f672e6c616b65-current","identity":"terraform:6177735f617468656e615f646174615f636174616c6f672e6c616b65-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_data_catalog.lake","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_data_catalog"},{"action":"create","address":"aws_athena_data_catalog.teams[\"long_indexed_catalog_for_shared_financial_reporting_and_archival_analytics\"]","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f617468656e615f646174615f636174616c6f672e7465616d735b226c6f6e675f696e64657865645f636174616c6f675f666f725f7368617265645f66696e616e6369616c5f7265706f7274696e675f616e645f617263686976616c5f616e616c7974696373225d-current","identity":"terraform:6177735f617468656e615f646174615f636174616c6f672e7465616d735b226c6f6e675f696e64657865645f636174616c6f675f666f725f7368617265645f66696e616e6369616c5f7265706f7274696e675f616e645f617263686976616c5f616e616c7974696373225d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_data_catalog.teams[\"long_indexed_catalog_for_shared_financial_reporting_and_archival_analytics\"]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_data_catalog"},{"action":"unchanged","address":"aws_athena_data_catalog.teams[\"reporting\u003c\u0026\"]","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f617468656e615f646174615f636174616c6f672e7465616d735b227265706f7274696e673c26225d-current","identity":"terraform:6177735f617468656e615f646174615f636174616c6f672e7465616d735b227265706f7274696e673c26225d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_data_catalog.teams[\"reporting\u003c\u0026\"]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_data_catalog"},{"action":"create","address":"aws_athena_workgroup.analytics","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current","identity":"terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_workgroup.analytics","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_workgroup"},{"action":"create","address":"aws_athena_workgroup.literal","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f617468656e615f776f726b67726f75702e6c69746572616c-current","identity":"terraform:6177735f617468656e615f776f726b67726f75702e6c69746572616c-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_workgroup.literal","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_workgroup"},{"action":"update","address":"aws_athena_workgroup.teams[\"reporting\u003c\u0026\"]","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f617468656e615f776f726b67726f75702e7465616d735b227265706f7274696e673c26225d-current","identity":"terraform:6177735f617468656e615f776f726b67726f75702e7465616d735b227265706f7274696e673c26225d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_workgroup.teams[\"reporting\u003c\u0026\"]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_workgroup"},{"action":"unchanged","address":"aws_glue_catalog_database.lake","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f676c75655f636174616c6f675f64617461626173652e6c616b65-current","identity":"terraform:6177735f676c75655f636174616c6f675f64617461626173652e6c616b65-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_glue_catalog_database.lake","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_glue_catalog_database"},{"action":"unchanged","address":"aws_kms_key.results","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6b6d735f6b65792e726573756c7473-current","identity":"terraform:6177735f6b6d735f6b65792e726573756c7473-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_kms_key.results","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_kms_key"},{"action":"unchanged","address":"aws_s3_bucket.results","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f73335f6275636b65742e726573756c7473-current","identity":"terraform:6177735f73335f6275636b65742e726573756c7473-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_s3_bucket.results","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_s3_bucket"}]</script>
-<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":null,"version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"full","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
+<script id="viewer-data" type="application/json">[{"action":"create","address":"aws_athena_data_catalog.lake","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f617468656e615f646174615f636174616c6f672e6c616b65-current","identity":"terraform:6177735f617468656e615f646174615f636174616c6f672e6c616b65-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_data_catalog.lake","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_data_catalog"},{"action":"create","address":"aws_athena_data_catalog.teams[\"long_indexed_catalog_for_shared_financial_reporting_and_archival_analytics\"]","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f617468656e615f646174615f636174616c6f672e7465616d735b226c6f6e675f696e64657865645f636174616c6f675f666f725f7368617265645f66696e616e6369616c5f7265706f7274696e675f616e645f617263686976616c5f616e616c7974696373225d-current","identity":"terraform:6177735f617468656e615f646174615f636174616c6f672e7465616d735b226c6f6e675f696e64657865645f636174616c6f675f666f725f7368617265645f66696e616e6369616c5f7265706f7274696e675f616e645f617263686976616c5f616e616c7974696373225d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_data_catalog.teams[\"long_indexed_catalog_for_shared_financial_reporting_and_archival_analytics\"]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_data_catalog"},{"action":"unchanged","address":"aws_athena_data_catalog.teams[\"reporting\u003c\u0026\"]","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f617468656e615f646174615f636174616c6f672e7465616d735b227265706f7274696e673c26225d-current","identity":"terraform:6177735f617468656e615f646174615f636174616c6f672e7465616d735b227265706f7274696e673c26225d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_data_catalog.teams[\"reporting\u003c\u0026\"]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_data_catalog"},{"action":"create","address":"aws_athena_workgroup.analytics","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current","identity":"terraform:6177735f617468656e615f776f726b67726f75702e616e616c7974696373-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_workgroup.analytics","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_workgroup"},{"action":"create","address":"aws_athena_workgroup.literal","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f617468656e615f776f726b67726f75702e6c69746572616c-current","identity":"terraform:6177735f617468656e615f776f726b67726f75702e6c69746572616c-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_workgroup.literal","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_workgroup"},{"action":"update","address":"aws_athena_workgroup.teams[\"reporting\u003c\u0026\"]","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f617468656e615f776f726b67726f75702e7465616d735b227265706f7274696e673c26225d-current","identity":"terraform:6177735f617468656e615f776f726b67726f75702e7465616d735b227265706f7274696e673c26225d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_athena_workgroup.teams[\"reporting\u003c\u0026\"]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_athena_workgroup"},{"action":"unchanged","address":"aws_glue_catalog_database.lake","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f676c75655f636174616c6f675f64617461626173652e6c616b65-current","identity":"terraform:6177735f676c75655f636174616c6f675f64617461626173652e6c616b65-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_glue_catalog_database.lake","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_glue_catalog_database"},{"action":"unchanged","address":"aws_kms_key.results","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6b6d735f6b65792e726573756c7473-current","identity":"terraform:6177735f6b6d735f6b65792e726573756c7473-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_kms_key.results","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_kms_key"},{"action":"unchanged","address":"aws_s3_bucket.results","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f73335f6275636b65742e726573756c7473-current","identity":"terraform:6177735f73335f6275636b65742e726573756c7473-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_s3_bucket.results","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_s3_bucket"}]</script>
+<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":"06aabf0f13e67a43f9f5234d7c4629eeced5a15c-dirty","version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"cloudflare_accounts":[],"cloudflare_groups":false,"cloudflare_zones":[],"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"omitted","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
 <script id="viewer-provider-data" type="application/json">[]</script>
 
 
@@ -321,10 +259,10 @@ function generationInformation(byId) {
     return;
   }
   paragraph(`${metadata.generator.name} ${metadata.generator.version}. Revision: ${metadata.generator.revision || 'unavailable'}.`);
-  paragraph(metadata.selected_view ? 'Selected view. Omitted resources may still exist in Terraform.' : 'Full input view: no changed-only, module or focus selection. This describes the supplied inputs, not all resources in Terraform.');
+  paragraph(metadata.selected_view ? 'Selected view. Omitted resources may still exist in Terraform.' : 'Full input view: no changed-only, module, focus or Cloudflare scope selection. This describes the supplied inputs, not all resources in Terraform.');
   paragraph('Values below are effective generation settings. Whether a value was explicitly supplied or defaulted is unavailable; “matches default” describes the value only.');
-  const defaults = { changed_only: false, modules: [], focus: null, focus_depth: null, spatial_types: [], address_format: 'qualified', icon_mode: 'service-name', relationship_legend: 'full', html_diagnostics: false, html_semantic_diagnostics: false, states: [], remote_state_mappings: [] };
-  const labels = { changed_only: 'Changed only', modules: 'Module selection', focus: 'Focus', focus_depth: 'Focus depth', spatial_types: 'Spatial type overrides', address_format: 'Address format', icon_mode: 'Service labels', relationship_legend: 'Relationship legend', html_diagnostics: 'Routing diagnostics', html_semantic_diagnostics: 'Semantic diagnostics', states: 'Named states', remote_state_mappings: 'Remote state mappings' };
+  const defaults = { cloudflare_accounts: [], cloudflare_zones: [], cloudflare_groups: false, changed_only: false, modules: [], focus: null, focus_depth: null, spatial_types: [], address_format: 'qualified', icon_mode: 'service-name', relationship_legend: 'omitted', html_diagnostics: false, html_semantic_diagnostics: false, states: [], remote_state_mappings: [] };
+  const labels = { cloudflare_accounts: 'Cloudflare Account selection', cloudflare_zones: 'Cloudflare Zone selection', cloudflare_groups: 'Cloudflare administrative index', changed_only: 'Changed only', modules: 'Module selection', focus: 'Focus', focus_depth: 'Focus depth', spatial_types: 'Spatial type overrides', address_format: 'Address format', icon_mode: 'Service labels', relationship_legend: 'Relationship legend', html_diagnostics: 'Routing diagnostics', html_semantic_diagnostics: 'Semantic diagnostics', states: 'Named states', remote_state_mappings: 'Remote state mappings' };
   const list = document.createElement('dl');
   for (const [key, label] of Object.entries(labels)) {
     const term = document.createElement('dt'), value = document.createElement('dd');
@@ -412,7 +350,7 @@ function diagramExport(context) {
         ids.add(el.id);
       }
       for (const attr of [...el.attributes]) {
-        if (/^on/i.test(attr.name) || /^data-(viewer|impact)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
+        if (/^on/i.test(attr.name) || /^data-(viewer|impact|path)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
       }
     }
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
@@ -1054,6 +992,12 @@ function searching(context, index, selection, coordinator) {
   const { resources, label } = index;
   const { button, select } = selection;
   const action = byId('search-action'), state = byId('search-state'), type = byId('search-type');
+  const account = byId('search-cloudflare-account'), zone = byId('search-cloudflare-zone');
+  const cloudflare = resource => resource.provider === 'registry.terraform.io/cloudflare/cloudflare';
+  const scoped = resources.filter(cloudflare);
+  byId('search-cloudflare-scopes').hidden = !scoped.length;
+  const scopeKey = (resource, key) => JSON.stringify(resource.cloudflare_scope?.[key] ?? null);
+  const scopeMatches = (resource, control, key) => !control.value || (cloudflare(resource) && scopeKey(resource, key) === control.value);
   const typeKey = resource => JSON.stringify([resource.provider || null, resource.type]);
   function options(control, entries) {
     for (const [value, text] of entries) {
@@ -1064,11 +1008,14 @@ function searching(context, index, selection, coordinator) {
   options(action, ['Create', 'Update', 'Delete', 'Replace', 'Read', 'Unchanged', 'Other'].map(label => [label.toLowerCase(), label]));
   options(state, [...new Set(resources.map(r => r.state))].sort().map(value => [JSON.stringify(value), value || '(unnamed)']));
   options(type, [...new Map(resources.map(r => [typeKey(r), `${r.type} · ${r.provider || 'unknown provider source'}`]))].sort((a, b) => a[1].localeCompare(b[1])));
+  for (const [control, key] of [[account, 'account'], [zone, 'zone']]) {
+    options(control, [...new Set(scoped.map(r => scopeKey(r, key)))].sort().map(value => [value, JSON.parse(value) ?? 'unknown']));
+  }
   function renderResults() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
     const focused = results.contains(document.activeElement);
     const visible = resources.filter(r => byId(r.id));
-    const matched = visible.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
+    const matched = visible.filter(r => scopeMatches(r, account, 'account') && scopeMatches(r, zone, 'zone') && (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
     results.replaceChildren();
     for (const r of matched) {
       const b = button(label(r), () => select(r.id));
@@ -1079,11 +1026,11 @@ function searching(context, index, selection, coordinator) {
     if (!matched.length) byId('result-count').textContent += '. No visible resources match this search.';
     if (focused) (results.firstElementChild || search).focus();
   }
-  for (const control of [action, state, type]) control.addEventListener('change', () => {
+  for (const control of [action, state, type, account, zone]) control.addEventListener('change', () => {
     search.dispatchEvent(new Event('input'));
   });
   byId('search-reset').addEventListener('click', () => {
-    search.value = ''; action.value = ''; state.value = ''; type.value = '';
+    search.value = ''; action.value = ''; state.value = ''; type.value = ''; account.value = ''; zone.value = '';
     search.dispatchEvent(new Event('input')); search.focus();
   });
   search.addEventListener('input', renderResults);
@@ -1572,6 +1519,92 @@ function impact(context, index, selection, coordinator) {
   return { reset };
 }
 
+function shortestRelationshipPath(graph, start, end) {
+  const queue = [start], distance = new Map([[start, 0]]), ways = new Map([[start, 1]]);
+  const previous = new Map();
+  let scanned = 0, limited = graph.truncated;
+  search: for (let cursor = 0; cursor < queue.length; cursor++) {
+    const here = queue[cursor], depth = distance.get(here);
+    if (distance.has(end) && depth >= distance.get(end)) break;
+    for (const edge of graph.adjacent.get(here) || []) {
+      if (++scanned > 4000) { limited = true; break search; }
+      if (!['dependency', 'association', 'connection', 'subscription', 'eventsource', 'eventtarget'].includes(edge.kind)
+          || !edge.provenance.length || !edge.provenance.every(p => ['reference', 'resource', 'remote-state'].includes(p.kind))) continue;
+      if (edge.direction !== 'undirected' && !(edge.direction === 'directed' && edge.from === here)) continue;
+      const next = edge.from === here ? edge.to : edge.from;
+      if (!graph.nodes.has(next)) continue;
+      if (distance.has(next)) {
+        if (distance.get(next) === depth + 1) ways.set(next, Math.min(2, ways.get(next) + ways.get(here)));
+        continue;
+      }
+      if (queue.length >= 500 || depth >= 12) { limited = true; continue; }
+      distance.set(next, depth + 1); ways.set(next, ways.get(here));
+      previous.set(next, {here, next, edge}); queue.push(next);
+    }
+  }
+  const steps = [];
+  if (distance.has(end)) {
+    for (let current = end; current !== start;) {
+      const step = previous.get(current);
+      steps.unshift(step); current = step.here;
+    }
+  }
+  return {steps, multiple: ways.get(end) > 1, limited};
+}
+
+function relationshipPath(context, index, coordinator) {
+  const {byId, svg} = context;
+  const status = byId('path-status'), origin = byId('path-origin'), steps = byId('path-steps');
+  let start;
+  function reset() {
+    for (const el of svg.querySelectorAll('[data-path-step]')) el.removeAttribute('data-path-step');
+    steps.replaceChildren(); status.textContent = '';
+  }
+  byId('path-start').addEventListener('click', () => {
+    reset();
+    const resource = index.targets.get(coordinator.selected);
+    if (!resource) { status.textContent = 'Select a resource first.'; return; }
+    start = resource.id;
+    origin.textContent = 'From ' + index.label(resource);
+  });
+  byId('path-clear').addEventListener('click', () => {
+    reset(); start = null; origin.textContent = '';
+  });
+  byId('path-find').addEventListener('click', () => {
+    reset();
+    const graph = impactGraph(index, svg);
+    const from = graph.domKeys.get(start), to = graph.domKeys.get(coordinator.selected);
+    if (!from || !to || from === to) {
+      status.textContent = 'Set a visible starting resource, then select a different destination.'; return;
+    }
+    const result = shortestRelationshipPath(graph, from, to);
+    const limit = result.limited ? ' Search limit reached.' : '';
+    if (!result.steps.length) { status.textContent = 'No verified path found in the searched relationships.' + limit; return; }
+    status.textContent = (result.multiple ? 'Multiple shortest paths found. Showing one.' : 'Showing one recorded relationship path.') + limit;
+    const marked = new Set();
+    for (const {here, next, edge} of result.steps) {
+      const a = graph.nodes.get(here), b = graph.nodes.get(next);
+      byId(a.id).setAttribute('data-path-step', 'true'); byId(b.id).setAttribute('data-path-step', 'true');
+      const row = document.createElement('li');
+      row.textContent = index.label(a) + (edge.direction === 'directed' ? ' → ' : ' ↔ ') + index.label(b) + ' · ' + edge.kind;
+      const proofs = new Set(edge.provenance.filter(p => p.kind === 'resource').map(index.sourceIdentity));
+      for (const el of index.edges.slice(0, 10000)) {
+        if (el.dataset.edgeKind !== edge.kind || graph.domKeys.get(el.dataset.source) !== edge.from
+          || graph.domKeys.get(el.dataset.target) !== edge.to) continue;
+        const ids = (el.dataset.relationshipIds || '').split(' ').filter(Boolean);
+        if (proofs.size && !ids.some(id => [...(index.relationshipEntries.get(id)?.querySelectorAll('[data-source-identity]') || [])]
+          .some(r => proofs.has(r.dataset.sourceIdentity)))) continue;
+        if (marked.has(el)) continue;
+        marked.add(el); el.setAttribute('data-path-step', 'true');
+        const numbers = ids.map(id => index.relationshipEntries.get(id)?.dataset.relationshipEntry).filter(Boolean);
+        if (numbers.length) row.append(' · #' + numbers.join(', #'));
+      }
+      steps.append(row);
+    }
+  });
+  return {reset};
+}
+
   const byId = id => {
     const el = document.getElementById(id);
     return el?.closest('[data-html-filtered]') ? null : el;
@@ -1609,6 +1642,7 @@ function impact(context, index, selection, coordinator) {
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
+  adapters.register(relationshipPath(context, index, coordinator));
   actionFiltering(context, index, view, coordinator, renderResults);
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;

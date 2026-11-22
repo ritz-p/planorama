@@ -38,6 +38,7 @@ __PLANORAMA_VIEWER_MODULES__
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
+  adapters.register(relationshipPath(context, index, coordinator));
   actionFiltering(context, index, view, coordinator, renderResults);
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
