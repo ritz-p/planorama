@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const test = require('node:test');
 const context = vm.createContext({});
-for (const name of ['lifecycle', 'highlighting', 'impact-graph', 'neighborhood']) {
+for (const name of ['lifecycle', 'highlighting', 'impact-graph', 'relationship-path', 'neighborhood']) {
   vm.runInContext(fs.readFileSync(`src/html/${name}.js`, 'utf8'), context);
 }
 
@@ -100,4 +100,20 @@ test('highlight reset removes all selection roles without touching edge styling'
   context.highlighting({ querySelectorAll: () => [element] }, { removeAttribute: key => viewport.delete(key) }).clear();
   assert.deepEqual([...attrs], [['stroke', 'red']]);
   assert.equal(viewport.size, 0);
+});
+
+test('path tracing reports ties and rejects value matches, missing resources and reverse dependencies', () => {
+  const verified = (a, b) => ({...edge(a, b), provenance: [{kind: 'reference'}]});
+  const g = graph([verified('a','b'), verified('a','c'), verified('b','d'), verified('c','d'),
+    {...edge('a','d'), provenance: [{kind:'configured-value'}]}, verified('a','hidden'), verified('hidden','d')],
+    ['a','b','c','d']);
+  const path = context.shortestRelationshipPath(g,'a','d');
+  assert.equal(path.multiple, true);
+  assert.equal(path.steps.length, 2);
+  assert.equal(context.shortestRelationshipPath(g,'d','a').steps.length, 0);
+  const ids = Array.from({length: 14}, (_, i) => String(i));
+  const chain = graph(ids.slice(1).map((id, i) => verified(ids[i], id)), ids);
+  const limited = context.shortestRelationshipPath(chain, '0', '13');
+  assert.equal(limited.limited, true);
+  assert.equal(limited.steps.length, 0);
 });

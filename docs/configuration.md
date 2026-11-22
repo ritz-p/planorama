@@ -2,8 +2,8 @@
 
 ## CLI output and addresses
 
-`-o PATH` chooses the destination; `--format svg|html` chooses the format.
-The default is SVG with `diagram.svg`; HTML defaults to `diagram.html`.
+`-o PATH` chooses the destination; `--format svg|html|json` chooses the format.
+The default is SVG with `diagram.svg`; HTML defaults to `diagram.html` and JSON to `architecture.json`.
 `--address-format qualified` (default) displays Planorama-qualified labels;
 `--address-format terraform` uses native Terraform addresses. Both preserve full
 identities and wrap long addresses rather than truncating them.
@@ -55,7 +55,7 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 | `cloudflare-accounts`, `cloudflare-zones` | Arrays of Cloudflare IDs or `unknown` | `[]` |
 | `cloudflare-groups` | Boolean | `false` |
 | `anonymize` | boolean; [full identifier anonymization](anonymization.md), incompatible with reports/diagnostics | `false` |
-| `format` | `"svg"` or `"html"` | `"svg"` |
+| `format` | `"svg"`, `"html"` or `"json"` | `"svg"` |
 | `icon-mode` | `"service-name"` (`"icon"` is rejected) | `"service-name"` |
 | `address-format` | `"qualified"` or `"terraform"` | `"qualified"` |
 | `hide-relationship-legend` | boolean | `false` |
@@ -110,7 +110,7 @@ Inputs, named states, provider evidence, remote-state mappings, output paths,
 coverage report options and layout JSON report paths remain explicit CLI arguments.
 Configuration cannot invoke external commands. `--list-modules` rejects
 `--config`/`--preset`, as it lists the original input rather than generating a view.
-The resolved output format determines the usual default `diagram.svg` or
+The resolved output format determines the usual default `diagram.svg`, `architecture.json` or
 `diagram.html`; output and report destinations cannot overwrite the config file.
 
 Unknown keys (including in unused presets), invalid types or enum values, malformed
@@ -153,3 +153,51 @@ Service and ordinary configuration references retain their meaning and details,
 including unresolved and unavailable endpoints. This adds no Embedded owner,
 effective-permission, trust or monitoring-success claim and exposes no attribute
 values. See the [comparison](purpose-placement.md) for the five scenarios.
+
+## Architecture JSON
+
+`planorama plan.json --format json -o architecture.json` exports the selected
+architecture before layout. Named states, selection and anonymization use the
+same projection as the diagram. The default output path for JSON is
+`architecture.json`. Schema version 1 has these fields:
+
+- `schema_version` is an integer. Readers should ignore additional fields and reject unrecognized versions. Removing fields or changing their meaning requires a new version.
+- `resources` contains resources and synthetic components. Each identity is a pair of nullable state name and opaque architecture ID. Resource records include the Terraform address, deposed key, mode, type, provider source and resolved scope. Components identify their type and members.
+- `relationships` contains endpoint identities (`from`, `to`), kind (including parent-to-child `containment`), direction and sorted evidence categories. An empty evidence list indicates missing provenance. The opt-in `configured-value` category identifies a typed value match. Cross-state dependencies carry `remote-state` evidence.
+
+Anonymized IDs are local to one export. The document contains no layout coordinates or raw change values.
+
+## Comparing architecture snapshots
+
+Run `planorama diff before.json after.json` on two local Terraform plan files.
+The version 1 JSON diff goes to stdout or the path given by `-o`. For named
+states, repeat `--before-state ID=PATH` and `--after-state ID=PATH`; optional
+`--remote-state CONSUMER:ADDRESS=PRODUCER` mappings apply to both snapshots.
+Invalid mappings or unresolved remote-state output provenance stop the comparison.
+Use `--anonymize` for report-local numeric identities.
+
+Resource identity includes state, address and deposed key. A unique explicit
+move can match across addresses when provider and mode agree. Overlapping
+claims and incompatible or missing provider identities on potential matches
+appear in `resources.unknown`; incident links are omitted. Changed records list
+the names of changed architecture fields. An import contributes only its
+metadata flags. Resource and relationship additions/removals describe the
+two snapshots independently of Terraform's proposed actions. Relationships
+compare their endpoints, kind and direction after resolving moves.
+
+To compare diagrams at the same scale, run
+`planorama diff before.json after.json --svg-dir comparison`.
+The command creates a new directory containing `before.svg` and `after.svg`.
+The two diagrams reserve space for the union of the snapshots. Matched resources
+with the same containment path share a position. A resource that changes parent
+appears under its respective parent in each diagram. Each side shows its own
+relationships. The same named-state arguments and `--anonymize` apply to both.
+
+For a pull request or a GitHub Actions job summary, use
+`planorama diff before.json after.json --format markdown -o changes.md`.
+Append the report in Actions with `cat changes.md >> "$GITHUB_STEP_SUMMARY"`.
+The report groups resource, containment and relationship changes. It pairs a
+parent or endpoint change when exactly one removal and one addition of the
+same kind and direction have a uniquely matched endpoint in common. Ambiguous
+resource matches and unavailable remote-state comparisons have separate
+messages. Use `--anonymize` to replace identifiers throughout the report.

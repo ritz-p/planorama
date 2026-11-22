@@ -127,6 +127,13 @@ pub(super) fn run(
         &[("states", architecture.states.len())],
     );
     let image = match output_format {
+        super::OutputFormat::Json => super::architecture_json::export(
+            architecture
+                .states
+                .iter()
+                .map(|(id, graph)| (Some(id.as_str()), &**graph)),
+            architecture.relationships(),
+        )?,
         super::OutputFormat::Svg if layout_diagnostics.enabled() => svg::render_states_report(
             &architecture,
             format,

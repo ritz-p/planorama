@@ -276,26 +276,36 @@ pub(in crate::layout) fn pack_with_affinity(
         for (node, point) in &mut positions {
             *point = trial[*node];
         }
-        candidates.push((score, (width, height), positions));
+        candidates.push((score, ((width, height), positions)));
     }
-    let compact = candidates.iter().map(|(score, _, _)| *score).min().unwrap();
     let mut trial = offsets.to_vec();
-    let (_, size, positions) = candidates
-        .into_iter()
-        .filter(|(score, _, _)| score.0 * 10 <= compact.0 * 11 && score.1 * 4 <= compact.1 * 5)
-        .min_by_key(|(score, _, positions)| {
-            for &(node, point) in positions {
-                trial[node] = point;
-            }
-            (
-                cost::estimate(relationships, sizes, &trial)
-                    + super::affinity::deviation(&nodes, affinities, sizes, &trial),
-                *score,
-            )
-        })
-        .unwrap();
+    let (_, (size, positions)) = select_packing(candidates, |(_, positions)| {
+        for &(node, point) in positions {
+            trial[node] = point;
+        }
+        cost::estimate(relationships, sizes, &trial)
+            + super::affinity::deviation(&nodes, affinities, sizes, &trial)
+    })
+    .unwrap();
     for (node, position) in positions {
         offsets[node] = position;
     }
     size
 }
+
+type ShapeScore = (u128, u128, usize);
+
+fn select_packing<T>(
+    candidates: Vec<(ShapeScore, T)>,
+    mut cost: impl FnMut(&T) -> u128,
+) -> Option<(ShapeScore, T)> {
+    let compact = candidates.iter().map(|(score, _)| *score).min()?;
+    candidates
+        .into_iter()
+        .filter(|(score, _)| score.0 * 10 <= compact.0 * 11 && score.1 * 4 <= compact.1 * 5)
+        .min_by_key(|(score, candidate)| (cost(candidate), *score))
+}
+
+#[cfg(test)]
+#[path = "../../../tests/unit/layout/containers/packing_selection.rs"]
+mod selection_tests;

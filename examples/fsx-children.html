@@ -71,6 +71,9 @@ p { line-height: 1.5; }
 #viewport[data-selection] path[data-edge-kind]:not([data-viewer-edge]) { opacity: .25; }
 #viewport path[data-viewer-edge] { filter: drop-shadow(0 0 2px #64748b); }
 @media (max-width: 700px) { main { grid-template-columns: 1fr; grid-template-rows: 40% 60%; } aside { border-bottom: 1px solid #cbd5e1; } #results { max-height: 15vh; } }
+#viewport g[data-path-step] { outline: 3px dashed #5b21b6; outline-offset: 3px; }
+#viewport[data-selection] path[data-path-step] { opacity: 1; stroke-width: 5; filter: drop-shadow(0 0 2px #5b21b6); }
+[data-vpc-hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -84,6 +87,7 @@ p { line-height: 1.5; }
 <p id="overview-status"></p>
 </details>
 <nav aria-label="Diagram sections"><label for="section-destination">Diagram section</label><select id="section-destination"></select><button id="section-go" type="button">Go to section</button><p id="section-status" role="status"></p></nav>
+<section id="vpc-controls" hidden><label for="vpc-destination">VPC</label><select id="vpc-destination"></select><button id="vpc-toggle" type="button" aria-controls="viewport">Collapse VPC</button></section>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
 <label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
@@ -100,6 +104,7 @@ p { line-height: 1.5; }
 <div id="search-filters">
 <label for="search-action">Action</label><select id="search-action"><option value="">All actions</option></select>
 <label for="search-state">State</label><select id="search-state"><option value="">All states</option></select>
+<div id="search-cloudflare-scopes" hidden><p>Search Cloudflare administration (within this generated view)</p><label for="search-cloudflare-account">Account</label><select id="search-cloudflare-account"><option value="">All accounts</option></select><label for="search-cloudflare-zone">Zone</label><select id="search-cloudflare-zone"><option value="">All zones</option></select></div>
 <label for="search-type">Resource type / provider source</label><select id="search-type"><option value="">All resource types</option></select>
 <button id="search-reset" type="button">Reset search and filters</button>
 </div>
@@ -108,6 +113,15 @@ p { line-height: 1.5; }
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
 <p id="history-status" role="status">No selection history</p>
+<section aria-label="Relationship path">
+<h2>Trace a relationship path</h2>
+<button id="path-start" type="button">Use selection as start</button>
+<span id="path-origin"></span>
+<button id="path-find" type="button">Trace to selection</button>
+<button id="path-clear" type="button">Clear path</button>
+<p>Follows recorded relationship directions in the visible diagram. A path does not establish network reachability.</p>
+<output id="path-status"></output><ol id="path-steps"></ol>
+</section>
 <section id="impact" aria-label="Potentially related resources">
 <h2>Explore change relationships</h2>
 <label for="impact-depth">Maximum hops</label>
@@ -139,7 +153,7 @@ p { line-height: 1.5; }
 </section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<svg xmlns="http://www.w3.org/2000/svg" width="1912" height="3296" viewBox="0 0 1912 3296" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1912" height="2738" viewBox="0 0 1912 2738" role="group" aria-labelledby="title" aria-describedby="description" data-legend-mode="omitted">
 <title id="title">Terraform plan</title>
 <desc id="description">20 resources (12 spatial cards, 8 logical resources in 4 group cards) · 14 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1912" height="1628" style="mask-type:luminance"><rect width="1912" height="1628" fill="white"/>
@@ -160,95 +174,20 @@ p { line-height: 1.5; }
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
-<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
-<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
-<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
-<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
-<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
-<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
-<g data-legend-entry="dependency" transform="translate(0 132)">
-<g data-legend-sample="dependency">
-<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-<text x="174" y="12" font-weight="700">Dependency</text>
-<text x="174" y="30">Thin solid arrow from the</text>
-<text x="174" y="48">referenced resource to the</text>
-<text x="174" y="66">dependent resource; not exact</text>
-<text x="174" y="84">Terraform execution order.</text>
-</g>
-<g data-legend-entry="association" transform="translate(492 132)">
-<g data-legend-sample="association">
-<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
-<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-<g data-legend-badge="target">
-<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-</g>
-<text x="174" y="12" font-weight="700">Association</text>
-<text x="174" y="30">Dashed, undirected relationship.</text>
-<text x="174" y="48">Matching badges identify the same</text>
-<text x="174" y="66">Terraform-backed relationship at</text>
-<text x="174" y="84">both attachment points.</text>
-</g>
-<g data-legend-entry="directed-association" transform="translate(0 238)">
-<g data-legend-sample="directed-association">
-<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
-<g data-legend-badge="source">
-<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-<g data-legend-badge="target">
-<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
-</g>
-</g>
-<text x="174" y="12" font-weight="700">Directed Association</text>
-<text x="174" y="30">Dashed line from a Route to its</text>
-<text x="174" y="48">next hop. The destination arrow</text>
-<text x="174" y="66">expresses direction; matching</text>
-<text x="174" y="84">badges identify the same</text>
-<text x="174" y="102">relationship.</text>
-</g>
-<g data-legend-entry="connection" transform="translate(492 238)">
-<g data-legend-sample="connection">
-<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
-<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-<text x="174" y="12" font-weight="700">Connection</text>
-<text x="174" y="30">Thicker dotted line shows an</text>
-<text x="174" y="48">inferred, undirected connection;</text>
-<text x="174" y="66">this does not guarantee actual</text>
-<text x="174" y="84">network reachability.</text>
-</g>
-<g data-legend-entry="containment" transform="translate(0 362)">
-<g data-legend-sample="containment">
-<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
-</g>
-<text x="174" y="12" font-weight="700">Containment</text>
-<text x="174" y="30">Nested boxes show containment;</text>
-<text x="174" y="48">nesting replaces a redundant</text>
-<text x="174" y="66">relationship line.</text>
-</g>
-<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
-<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
-<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
-<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
-</g>
-<g transform="translate(0 558)">
 <g data-annotation-area="true" data-packing-width="1912" data-measured-height="1110">
 <g data-annotation-card="true" transform="translate(40 160)"><rect width="1332" height="1086" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources" data-packing-width="1832"><rect width="1332" height="1086" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="640" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_fsx_backup" data-mode="managed"><title>aws_fsx_backup · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_fsx_backup · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
-<g data-action-section="create"><rect x="8" y="66" width="624" height="452" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (3)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (3)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="490" y="78" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="500" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><g id="resource-6177735f6673785f6261636b75702e66696c6573797374656d-current" data-architecture-id="terraform:6177735f6673785f6261636b75702e66696c6573797374656d-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_backup.filesystem" data-qualified-address="module.root.aws_fsx_backup.filesystem" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_fsx_backup.filesystem — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_backup.filesystem</text>
+<g data-action-section="create"><rect x="8" y="66" width="624" height="452" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (3)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (3)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="490" y="78" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="500" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><g id="resource-6177735f6673785f6261636b75702e66696c6573797374656d-current" data-architecture-id="terraform:6177735f6673785f6261636b75702e66696c6573797374656d-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_backup.filesystem" data-qualified-address="module.root.aws_fsx_backup.filesystem" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_fsx_backup.filesystem — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_backup.filesystem</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
 <g data-resource-references="true"><title>Backup source: module.root.aws_fsx_lustre_file_system.storage [file_system_id; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current" data-reference-attribute="file_system_id"><title>Backup source: module.root.aws_fsx_lustre_file_system.storage [file_system_id; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Backup source: module.root.aws_fsx_lustre_file_system.storage</text>
 </a></g>
 <line data-resource-underline="true" x1="16" y1="110" x2="624" y2="110" stroke="#047857" stroke-width="2"/></g>
-<g id="resource-6177735f6673785f6261636b75702e766f6c756d65-current" data-architecture-id="terraform:6177735f6673785f6261636b75702e766f6c756d65-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_backup.volume" data-qualified-address="module.root.aws_fsx_backup.volume" data-mode="managed" transform="translate(0 248)"><title>module.root.aws_fsx_backup.volume — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_backup.volume</text>
+<g id="resource-6177735f6673785f6261636b75702e766f6c756d65-current" data-architecture-id="terraform:6177735f6673785f6261636b75702e766f6c756d65-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_backup.volume" data-qualified-address="module.root.aws_fsx_backup.volume" data-mode="managed" transform="translate(0 248)"><title>module.root.aws_fsx_backup.volume — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_backup.volume</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
 <g data-resource-references="true"><title>Backup source: module.root.aws_fsx_ontap_volume.data [volume_id; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" data-reference-attribute="volume_id"><title>Backup source: module.root.aws_fsx_ontap_volume.data [volume_id; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Backup source: module.root.aws_fsx_ontap_volume.data</text>
 </a></g>
 <line data-resource-underline="true" x1="16" y1="110" x2="624" y2="110" stroke="#047857" stroke-width="2"/></g>
-<g id="resource-6177735f6673785f6261636b75702e77696e646f7773-current" data-architecture-id="terraform:6177735f6673785f6261636b75702e77696e646f7773-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_backup.windows" data-qualified-address="module.root.aws_fsx_backup.windows" data-mode="managed" transform="translate(0 374)"><title>module.root.aws_fsx_backup.windows — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_backup.windows</text>
+<g id="resource-6177735f6673785f6261636b75702e77696e646f7773-current" data-architecture-id="terraform:6177735f6673785f6261636b75702e77696e646f7773-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_backup.windows" data-qualified-address="module.root.aws_fsx_backup.windows" data-mode="managed" transform="translate(0 374)"><title>module.root.aws_fsx_backup.windows — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_backup.windows</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
 <g data-resource-references="true"><title>Backup source: module.root.aws_fsx_windows_file_system.storage [file_system_id; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current" data-reference-attribute="file_system_id"><title>Backup source: module.root.aws_fsx_windows_file_system.storage [file_system_id; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Backup source: module.root.aws_fsx_windows_file_system.storage</text>
 </a></g>
@@ -258,7 +197,7 @@ p { line-height: 1.5; }
 </g>
 <g data-annotation-card="true" transform="translate(676 48)"><rect width="640" height="294" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_fsx_data_repository_association" data-mode="managed"><title>aws_fsx_data_repository_association · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_fsx_data_repository_association · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
-<g data-action-section="create"><rect x="8" y="66" width="624" height="200" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="490" y="78" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="500" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><g id="resource-6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current" data-architecture-id="terraform:6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_data_repository_association.repository" data-qualified-address="module.root.aws_fsx_data_repository_association.repository" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_fsx_data_repository_association.repository — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_data_repository_association.repository</text>
+<g data-action-section="create"><rect x="8" y="66" width="624" height="200" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="490" y="78" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="500" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><g id="resource-6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current" data-architecture-id="terraform:6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_data_repository_association.repository" data-qualified-address="module.root.aws_fsx_data_repository_association.repository" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_fsx_data_repository_association.repository — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_data_repository_association.repository</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
 <g data-resource-references="true"><title>Repository association filesystem: module.root.aws_fsx_lustre_file_system.storage [file_system_id; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current" data-reference-attribute="file_system_id"><title>Repository association filesystem: module.root.aws_fsx_lustre_file_system.storage [file_system_id; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Repository association filesystem: module.root.aws_fsx_lustre_file_system.</text>
 <text x="16" y="112" font-size="11" fill="#334155" xml:space="preserve">storage</text>
@@ -269,12 +208,12 @@ p { line-height: 1.5; }
 </g>
 <g data-annotation-card="true" transform="translate(16 614)"><rect width="640" height="420" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_fsx_openzfs_snapshot" data-mode="managed"><title>aws_fsx_openzfs_snapshot · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_fsx_openzfs_snapshot · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
-<g data-action-section="create"><rect x="8" y="66" width="624" height="326" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (2)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (2)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="490" y="78" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="500" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><g id="resource-6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_openzfs_snapshot.child" data-qualified-address="module.root.aws_fsx_openzfs_snapshot.child" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_fsx_openzfs_snapshot.child — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_openzfs_snapshot.child</text>
+<g data-action-section="create"><rect x="8" y="66" width="624" height="326" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (2)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (2)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="490" y="78" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="500" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><g id="resource-6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_openzfs_snapshot.child" data-qualified-address="module.root.aws_fsx_openzfs_snapshot.child" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_fsx_openzfs_snapshot.child — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_openzfs_snapshot.child</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
 <g data-resource-references="true"><title>Snapshot volume: module.root.aws_fsx_openzfs_volume.child [volume_id; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" data-reference-attribute="volume_id"><title>Snapshot volume: module.root.aws_fsx_openzfs_volume.child [volume_id; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Snapshot volume: module.root.aws_fsx_openzfs_volume.child</text>
 </a></g>
 <line data-resource-underline="true" x1="16" y1="110" x2="624" y2="110" stroke="#047857" stroke-width="2"/></g>
-<g id="resource-6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_openzfs_snapshot.root" data-qualified-address="module.root.aws_fsx_openzfs_snapshot.root" data-mode="managed" transform="translate(0 248)"><title>module.root.aws_fsx_openzfs_snapshot.root — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_openzfs_snapshot.root</text>
+<g id="resource-6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_openzfs_snapshot.root" data-qualified-address="module.root.aws_fsx_openzfs_snapshot.root" data-mode="managed" transform="translate(0 248)"><title>module.root.aws_fsx_openzfs_snapshot.root — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_openzfs_snapshot.root</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
 <g data-resource-references="true"><title>Snapshot volume: module.root.aws_fsx_openzfs_file_system.storage [volume_id; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-reference-attribute="volume_id"><title>Snapshot volume: module.root.aws_fsx_openzfs_file_system.storage [volume_id; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Snapshot volume: module.root.aws_fsx_openzfs_file_system.storage</text>
 </a></g>
@@ -284,12 +223,12 @@ p { line-height: 1.5; }
 </g>
 <g data-annotation-card="true" transform="translate(676 614)"><rect width="640" height="456" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_fsx_s3_access_point_attachment" data-mode="managed"><title>aws_fsx_s3_access_point_attachment · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_fsx_s3_access_point_attachment · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
-<g data-action-section="create"><rect x="8" y="66" width="624" height="362" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (2)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (2)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="490" y="78" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="500" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><g id="resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current" data-architecture-id="terraform:6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_s3_access_point_attachment.child" data-qualified-address="module.root.aws_fsx_s3_access_point_attachment.child" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_fsx_s3_access_point_attachment.child — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_s3_access_point_attachment.child</text>
+<g data-action-section="create"><rect x="8" y="66" width="624" height="362" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (2)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (2)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="490" y="78" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="500" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><g id="resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current" data-architecture-id="terraform:6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_s3_access_point_attachment.child" data-qualified-address="module.root.aws_fsx_s3_access_point_attachment.child" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_fsx_s3_access_point_attachment.child — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_s3_access_point_attachment.child</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
 <g data-resource-references="true"><title>Attached OpenZFS volume: module.root.aws_fsx_openzfs_volume.child [openzfs_configuration.volume_id; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" data-reference-attribute="openzfs_configuration.volume_id"><title>Attached OpenZFS volume: module.root.aws_fsx_openzfs_volume.child [openzfs_configuration.volume_id; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Attached OpenZFS volume: module.root.aws_fsx_openzfs_volume.child</text>
 </a></g>
 <line data-resource-underline="true" x1="16" y1="128" x2="624" y2="128" stroke="#047857" stroke-width="2"/></g>
-<g id="resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current" data-architecture-id="terraform:6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_s3_access_point_attachment.root" data-qualified-address="module.root.aws_fsx_s3_access_point_attachment.root" data-mode="managed" transform="translate(0 266)"><title>module.root.aws_fsx_s3_access_point_attachment.root — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_s3_access_point_attachment.root</text>
+<g id="resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current" data-architecture-id="terraform:6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_fsx_s3_access_point_attachment.root" data-qualified-address="module.root.aws_fsx_s3_access_point_attachment.root" data-mode="managed" transform="translate(0 266)"><title>module.root.aws_fsx_s3_access_point_attachment.root — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_fsx_s3_access_point_attachment.root</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
 <g data-resource-references="true"><title>Access restriction VPC: module.root.aws_vpc.restricted [s3_access_point.vpc_configuration.vpc_id; direct attribute reference]
 Attached OpenZFS volume: module.root.aws_fsx_openzfs_file_system.storage [openzfs_configuration.volume_id; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f7670632e72657374726963746564-current" data-reference-attribute="s3_access_point.vpc_configuration.vpc_id"><title>Access restriction VPC: module.root.aws_vpc.restricted [s3_access_point.vpc_configuration.vpc_id; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Access restriction VPC: module.root.aws_vpc.restricted</text>
@@ -306,32 +245,32 @@ Attached OpenZFS volume: module.root.aws_fsx_openzfs_file_system.storage [openzf
 <g data-container="resource-6177735f7670632e72657374726963746564-current"><title>module.root.aws_vpc.restricted</title><rect x="60" y="200" width="400" height="152" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6261636b75702e66696c6573797374656d-current"><title>module.root.aws_fsx_lustre_file_system.storage → module.root.aws_fsx_backup.filesystem</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current"><title>module.root.aws_fsx_lustre_file_system.storage → module.root.aws_fsx_data_repository_association.repository</title></g>
-<path d="M 632 698 L 504 698 Q 496 698 496 690 L 496 290 Q 496 282 504 282 L 512 282 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_fsx_ontap_file_system.storage → module.root.aws_fsx_ontap_storage_virtual_machine.svm</title></path>
-<path d="M 1152 326 L 1160 326 Q 1168 326 1168 334 L 1168 872 Q 1168 880 1160 880 L 1152 880 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" data-target="resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_fsx_ontap_storage_virtual_machine.svm → module.root.aws_fsx_ontap_volume.data</title></path>
+<path d="M 632 698 L 504 698 Q 496 698 496 690 L 496 290 Q 496 282 504 282 L 512 282 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_fsx_ontap_file_system.storage → module.root.aws_fsx_ontap_storage_virtual_machine.svm</title></path>
+<path d="M 1152 326 L 1160 326 Q 1168 326 1168 334 L 1168 872 Q 1168 880 1160 880 L 1152 880 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" data-target="resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_fsx_ontap_storage_virtual_machine.svm → module.root.aws_fsx_ontap_volume.data</title></path>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" data-target="resource-6177735f6673785f6261636b75702e766f6c756d65-current"><title>module.root.aws_fsx_ontap_volume.data → module.root.aws_fsx_backup.volume</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current"><title>module.root.aws_fsx_openzfs_file_system.storage → module.root.aws_fsx_openzfs_snapshot.root</title></g>
-<path d="M 632 1067 L 486 1067 Q 478 1067 478 1059 L 478 546 Q 478 538 486 538 L 512 538 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_fsx_openzfs_file_system.storage → module.root.aws_fsx_openzfs_volume.parent</title></path>
+<path d="M 632 1067 L 486 1067 Q 478 1067 478 1059 L 478 546 Q 478 538 486 538 L 512 538 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_fsx_openzfs_file_system.storage → module.root.aws_fsx_openzfs_volume.parent</title></path>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current"><title>module.root.aws_fsx_openzfs_file_system.storage → module.root.aws_fsx_s3_access_point_attachment.root</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current" data-target="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current"><title>module.root.aws_fsx_openzfs_snapshot.root → module.root.aws_fsx_openzfs_volume.child</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" data-target="resource-6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current"><title>module.root.aws_fsx_openzfs_volume.child → module.root.aws_fsx_openzfs_snapshot.child</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" data-target="resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current"><title>module.root.aws_fsx_openzfs_volume.child → module.root.aws_fsx_s3_access_point_attachment.child</title></g>
-<path d="M 1152 494 L 1164 494 Q 1172 494 1172 502 L 1172 508 Q 1172 516 1180 516 L 1192 516 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" data-target="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_fsx_openzfs_volume.parent → module.root.aws_fsx_openzfs_volume.child</title></path>
+<path d="M 1152 494 L 1164 494 Q 1172 494 1172 502 L 1172 508 Q 1172 516 1180 516 L 1192 516 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" data-target="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_fsx_openzfs_volume.parent → module.root.aws_fsx_openzfs_volume.child</title></path>
 <g data-edge-kind="dependency" data-source="resource-6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6261636b75702e77696e646f7773-current"><title>module.root.aws_fsx_windows_file_system.storage → module.root.aws_fsx_backup.windows</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f7670632e72657374726963746564-current" data-target="resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current"><title>module.root.aws_vpc.restricted → module.root.aws_fsx_s3_access_point_attachment.root</title></g>
-<g id="resource-6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current" data-architecture-id="terraform:6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current" data-qualified-address="module.root.aws_fsx_lustre_file_system.storage" data-terraform-address="aws_fsx_lustre_file_system.storage"><title>module.root.aws_fsx_lustre_file_system.storage — create</title>
+<g id="resource-6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current" data-architecture-id="terraform:6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current" data-qualified-address="module.root.aws_fsx_lustre_file_system.storage" data-terraform-address="aws_fsx_lustre_file_system.storage" role="group" tabindex="0"><title>module.root.aws_fsx_lustre_file_system.storage — create</title>
 <rect x="60" y="706" width="400" height="122" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="734" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_lustre_file_system · </text>
 <text data-resource-type-heading="true" x="72" y="752" font-size="11" fill="#047857" xml:space="preserve">create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="322" y="714" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="332" y="736" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="72" y="777" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_lustre_file_system.storage</text>
 <text x="72" y="816" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current" data-architecture-id="terraform:6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current" data-qualified-address="module.root.aws_fsx_ontap_file_system.storage" data-terraform-address="aws_fsx_ontap_file_system.storage"><title>module.root.aws_fsx_ontap_file_system.storage — create</title>
+<g id="resource-6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current" data-architecture-id="terraform:6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current" data-qualified-address="module.root.aws_fsx_ontap_file_system.storage" data-terraform-address="aws_fsx_ontap_file_system.storage" role="group" tabindex="0"><title>module.root.aws_fsx_ontap_file_system.storage — create</title>
 <rect x="632" y="642" width="400" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="644" y="670" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_ontap_file_system · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="894" y="650" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="904" y="672" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="644" y="703" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_ontap_file_system.storage</text>
 <text x="644" y="742" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" data-architecture-id="terraform:6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" data-qualified-address="module.root.aws_fsx_ontap_storage_virtual_machine.svm" data-terraform-address="aws_fsx_ontap_storage_virtual_machine.svm"><title>module.root.aws_fsx_ontap_storage_virtual_machine.svm — create</title>
+<g id="resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" data-architecture-id="terraform:6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" data-qualified-address="module.root.aws_fsx_ontap_storage_virtual_machine.svm" data-terraform-address="aws_fsx_ontap_storage_virtual_machine.svm" role="group" tabindex="0"><title>module.root.aws_fsx_ontap_storage_virtual_machine.svm — create</title>
 <rect x="512" y="218" width="640" height="172" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="524" y="246" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_ontap_storage_virtual_machine · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="1014" y="226" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1024" y="248" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="524" y="279" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_ontap_storage_virtual_machine.svm</text>
@@ -339,13 +278,13 @@ Attached OpenZFS volume: module.root.aws_fsx_openzfs_file_system.storage [openzf
 </a></g>
 <text x="524" y="378" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f6e7461705f766f6c756d652e636f6d7075746564-current" data-architecture-id="terraform:6177735f6673785f6f6e7461705f766f6c756d652e636f6d7075746564-current" data-qualified-address="module.root.aws_fsx_ontap_volume.computed" data-terraform-address="aws_fsx_ontap_volume.computed"><title>module.root.aws_fsx_ontap_volume.computed — create</title>
+<g id="resource-6177735f6673785f6f6e7461705f766f6c756d652e636f6d7075746564-current" data-architecture-id="terraform:6177735f6673785f6f6e7461705f766f6c756d652e636f6d7075746564-current" data-qualified-address="module.root.aws_fsx_ontap_volume.computed" data-terraform-address="aws_fsx_ontap_volume.computed" role="group" tabindex="0"><title>module.root.aws_fsx_ontap_volume.computed — create</title>
 <rect x="60" y="868" width="365" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="896" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_ontap_volume · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="287" y="876" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="297" y="898" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="72" y="929" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_ontap_volume.computed</text>
 <text x="72" y="968" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" data-architecture-id="terraform:6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" data-qualified-address="module.root.aws_fsx_ontap_volume.data" data-terraform-address="aws_fsx_ontap_volume.data"><title>module.root.aws_fsx_ontap_volume.data — create</title>
+<g id="resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" data-architecture-id="terraform:6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" data-qualified-address="module.root.aws_fsx_ontap_volume.data" data-terraform-address="aws_fsx_ontap_volume.data" role="group" tabindex="0"><title>module.root.aws_fsx_ontap_volume.data — create</title>
 <rect x="512" y="794" width="640" height="172" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="524" y="822" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_ontap_volume · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="1014" y="802" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1024" y="824" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="524" y="855" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_ontap_volume.data</text>
@@ -353,14 +292,14 @@ Attached OpenZFS volume: module.root.aws_fsx_openzfs_file_system.storage [openzf
 </a></g>
 <text x="524" y="954" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-qualified-address="module.root.aws_fsx_openzfs_file_system.storage" data-terraform-address="aws_fsx_openzfs_file_system.storage"><title>module.root.aws_fsx_openzfs_file_system.storage — create</title>
+<g id="resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-qualified-address="module.root.aws_fsx_openzfs_file_system.storage" data-terraform-address="aws_fsx_openzfs_file_system.storage" role="group" tabindex="0"><title>module.root.aws_fsx_openzfs_file_system.storage — create</title>
 <rect x="632" y="1006" width="400" height="122" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="644" y="1034" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_openzfs_file_system · </text>
 <text data-resource-type-heading="true" x="644" y="1052" font-size="11" fill="#047857" xml:space="preserve">create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="894" y="1014" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="904" y="1036" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="644" y="1077" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_openzfs_file_system.storage</text>
 <text x="644" y="1116" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" data-qualified-address="module.root.aws_fsx_openzfs_volume.child" data-terraform-address="aws_fsx_openzfs_volume.child"><title>module.root.aws_fsx_openzfs_volume.child — create</title>
+<g id="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" data-qualified-address="module.root.aws_fsx_openzfs_volume.child" data-terraform-address="aws_fsx_openzfs_volume.child" role="group" tabindex="0"><title>module.root.aws_fsx_openzfs_volume.child — create</title>
 <rect x="1192" y="412" width="640" height="208" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="1204" y="440" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_openzfs_volume · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="1694" y="420" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1704" y="442" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="1204" y="473" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_openzfs_volume.child</text>
@@ -370,7 +309,7 @@ Origin snapshot reference: module.root.aws_fsx_openzfs_snapshot.root [origin_sna
 </a></g>
 <text x="1204" y="608" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6379636c65-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6379636c65-current" data-qualified-address="module.root.aws_fsx_openzfs_volume.cycle" data-terraform-address="aws_fsx_openzfs_volume.cycle"><title>module.root.aws_fsx_openzfs_volume.cycle — create</title>
+<g id="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6379636c65-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6379636c65-current" data-qualified-address="module.root.aws_fsx_openzfs_volume.cycle" data-terraform-address="aws_fsx_openzfs_volume.cycle" role="group" tabindex="0"><title>module.root.aws_fsx_openzfs_volume.cycle — create</title>
 <rect x="60" y="1020" width="379" height="154" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="1048" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_openzfs_volume · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="301" y="1028" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="311" y="1050" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="72" y="1081" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_openzfs_volume.cycle</text>
@@ -378,13 +317,13 @@ Origin snapshot reference: module.root.aws_fsx_openzfs_snapshot.root [origin_sna
 </g></g>
 <text x="72" y="1162" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6c69746572616c-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6c69746572616c-current" data-qualified-address="module.root.aws_fsx_openzfs_volume.literal" data-terraform-address="aws_fsx_openzfs_volume.literal"><title>module.root.aws_fsx_openzfs_volume.literal — create</title>
+<g id="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6c69746572616c-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6c69746572616c-current" data-qualified-address="module.root.aws_fsx_openzfs_volume.literal" data-terraform-address="aws_fsx_openzfs_volume.literal" role="group" tabindex="0"><title>module.root.aws_fsx_openzfs_volume.literal — create</title>
 <rect x="60" y="1214" width="379" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="1242" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_openzfs_volume · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="301" y="1222" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="311" y="1244" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="72" y="1275" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_openzfs_volume.literal</text>
 <text x="72" y="1314" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" data-qualified-address="module.root.aws_fsx_openzfs_volume.parent" data-terraform-address="aws_fsx_openzfs_volume.parent"><title>module.root.aws_fsx_openzfs_volume.parent — create</title>
+<g id="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" data-architecture-id="terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" data-qualified-address="module.root.aws_fsx_openzfs_volume.parent" data-terraform-address="aws_fsx_openzfs_volume.parent" role="group" tabindex="0"><title>module.root.aws_fsx_openzfs_volume.parent — create</title>
 <rect x="512" y="430" width="640" height="172" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="524" y="458" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_openzfs_volume · create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="1014" y="438" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1024" y="460" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="524" y="491" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_openzfs_volume.parent</text>
@@ -392,27 +331,26 @@ Origin snapshot reference: module.root.aws_fsx_openzfs_snapshot.root [origin_sna
 </a></g>
 <text x="524" y="590" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current" data-architecture-id="terraform:6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current" data-qualified-address="module.root.aws_fsx_windows_file_system.storage" data-terraform-address="aws_fsx_windows_file_system.storage"><title>module.root.aws_fsx_windows_file_system.storage — create</title>
+<g id="resource-6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current" data-architecture-id="terraform:6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current" data-qualified-address="module.root.aws_fsx_windows_file_system.storage" data-terraform-address="aws_fsx_windows_file_system.storage" role="group" tabindex="0"><title>module.root.aws_fsx_windows_file_system.storage — create</title>
 <rect x="60" y="1366" width="400" height="122" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="1394" font-size="11" fill="#047857" xml:space="preserve">aws_fsx_windows_file_system · </text>
 <text data-resource-type-heading="true" x="72" y="1412" font-size="11" fill="#047857" xml:space="preserve">create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon FSx" data-display-name="Amazon FSx" x="322" y="1374" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="332" y="1396" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon FSx</text><text x="72" y="1437" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_fsx_windows_file_system.storage</text>
 <text x="72" y="1476" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e72657374726963746564-current" data-architecture-id="terraform:6177735f7670632e72657374726963746564-current" data-qualified-address="module.root.aws_vpc.restricted" data-terraform-address="aws_vpc.restricted" data-presentation-header="60 200 400 112"><title>module.root.aws_vpc.restricted — create</title>
+<g id="resource-6177735f7670632e72657374726963746564-current" data-architecture-id="terraform:6177735f7670632e72657374726963746564-current" data-qualified-address="module.root.aws_vpc.restricted" data-terraform-address="aws_vpc.restricted" role="group" tabindex="0" data-presentation-header="60 200 400 112"><title>module.root.aws_vpc.restricted — create</title>
 <text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#047857" xml:space="preserve">create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="399" y="208" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="409" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.restricted</text>
 <text x="72" y="300" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" aria-hidden="true">
-<circle data-endpoint="source" cx="632" cy="698" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="632" cy="698" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current" data-target="resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current" aria-hidden="true">
-<circle data-endpoint="source" cx="1152" cy="326" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="1152" cy="326" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current" data-target="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" aria-hidden="true">
-<circle data-endpoint="source" cx="632" cy="1067" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="632" cy="1067" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current" data-target="resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current" aria-hidden="true">
-<circle data-endpoint="source" cx="1152" cy="494" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
-</g>
+<circle data-endpoint="source" aria-hidden="true" cx="1152" cy="494" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>
@@ -420,8 +358,8 @@ Origin snapshot reference: module.root.aws_fsx_openzfs_snapshot.root [origin_sna
 </section>
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
-<script id="viewer-data" type="application/json">[{"action":"create","address":"aws_fsx_backup.filesystem","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6261636b75702e66696c6573797374656d-current","identity":"terraform:6177735f6673785f6261636b75702e66696c6573797374656d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_backup.filesystem","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_backup"},{"action":"create","address":"aws_fsx_backup.volume","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6261636b75702e766f6c756d65-current","identity":"terraform:6177735f6673785f6261636b75702e766f6c756d65-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_backup.volume","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_backup"},{"action":"create","address":"aws_fsx_backup.windows","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6261636b75702e77696e646f7773-current","identity":"terraform:6177735f6673785f6261636b75702e77696e646f7773-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_backup.windows","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_backup"},{"action":"create","address":"aws_fsx_data_repository_association.repository","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current","identity":"terraform:6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_data_repository_association.repository","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_data_repository_association"},{"action":"create","address":"aws_fsx_lustre_file_system.storage","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current","identity":"terraform:6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_lustre_file_system.storage","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_lustre_file_system"},{"action":"create","address":"aws_fsx_ontap_file_system.storage","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current","identity":"terraform:6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_ontap_file_system.storage","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_ontap_file_system"},{"action":"create","address":"aws_fsx_ontap_storage_virtual_machine.svm","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current","identity":"terraform:6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_ontap_storage_virtual_machine.svm","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_ontap_storage_virtual_machine"},{"action":"create","address":"aws_fsx_ontap_volume.computed","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f6e7461705f766f6c756d652e636f6d7075746564-current","identity":"terraform:6177735f6673785f6f6e7461705f766f6c756d652e636f6d7075746564-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_ontap_volume.computed","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_ontap_volume"},{"action":"create","address":"aws_fsx_ontap_volume.data","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current","identity":"terraform:6177735f6673785f6f6e7461705f766f6c756d652e64617461-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_ontap_volume.data","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_ontap_volume"},{"action":"create","address":"aws_fsx_openzfs_file_system.storage","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current","identity":"terraform:6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_file_system.storage","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_file_system"},{"action":"create","address":"aws_fsx_openzfs_snapshot.child","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current","identity":"terraform:6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_snapshot.child","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_snapshot"},{"action":"create","address":"aws_fsx_openzfs_snapshot.root","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current","identity":"terraform:6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_snapshot.root","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_snapshot"},{"action":"create","address":"aws_fsx_openzfs_volume.child","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current","identity":"terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_volume.child","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_volume"},{"action":"create","address":"aws_fsx_openzfs_volume.cycle","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6379636c65-current","identity":"terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6379636c65-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_volume.cycle","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_volume"},{"action":"create","address":"aws_fsx_openzfs_volume.literal","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6c69746572616c-current","identity":"terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6c69746572616c-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_volume.literal","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_volume"},{"action":"create","address":"aws_fsx_openzfs_volume.parent","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current","identity":"terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_volume.parent","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_volume"},{"action":"create","address":"aws_fsx_s3_access_point_attachment.child","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current","identity":"terraform:6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_s3_access_point_attachment.child","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_s3_access_point_attachment"},{"action":"create","address":"aws_fsx_s3_access_point_attachment.root","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current","identity":"terraform:6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_s3_access_point_attachment.root","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_s3_access_point_attachment"},{"action":"create","address":"aws_fsx_windows_file_system.storage","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current","identity":"terraform:6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_windows_file_system.storage","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_windows_file_system"},{"action":"create","address":"aws_vpc.restricted","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f7670632e72657374726963746564-current","identity":"terraform:6177735f7670632e72657374726963746564-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_vpc.restricted","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_vpc"}]</script>
-<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":null,"version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"full","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
+<script id="viewer-data" type="application/json">[{"action":"create","address":"aws_fsx_backup.filesystem","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6261636b75702e66696c6573797374656d-current","identity":"terraform:6177735f6673785f6261636b75702e66696c6573797374656d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_backup.filesystem","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_backup"},{"action":"create","address":"aws_fsx_backup.volume","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6261636b75702e766f6c756d65-current","identity":"terraform:6177735f6673785f6261636b75702e766f6c756d65-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_backup.volume","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_backup"},{"action":"create","address":"aws_fsx_backup.windows","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6261636b75702e77696e646f7773-current","identity":"terraform:6177735f6673785f6261636b75702e77696e646f7773-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_backup.windows","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_backup"},{"action":"create","address":"aws_fsx_data_repository_association.repository","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current","identity":"terraform:6177735f6673785f646174615f7265706f7369746f72795f6173736f63696174696f6e2e7265706f7369746f7279-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_data_repository_association.repository","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_data_repository_association"},{"action":"create","address":"aws_fsx_lustre_file_system.storage","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current","identity":"terraform:6177735f6673785f6c75737472655f66696c655f73797374656d2e73746f72616765-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_lustre_file_system.storage","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_lustre_file_system"},{"action":"create","address":"aws_fsx_ontap_file_system.storage","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current","identity":"terraform:6177735f6673785f6f6e7461705f66696c655f73797374656d2e73746f72616765-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_ontap_file_system.storage","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_ontap_file_system"},{"action":"create","address":"aws_fsx_ontap_storage_virtual_machine.svm","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current","identity":"terraform:6177735f6673785f6f6e7461705f73746f726167655f7669727475616c5f6d616368696e652e73766d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_ontap_storage_virtual_machine.svm","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_ontap_storage_virtual_machine"},{"action":"create","address":"aws_fsx_ontap_volume.computed","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f6e7461705f766f6c756d652e636f6d7075746564-current","identity":"terraform:6177735f6673785f6f6e7461705f766f6c756d652e636f6d7075746564-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_ontap_volume.computed","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_ontap_volume"},{"action":"create","address":"aws_fsx_ontap_volume.data","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f6e7461705f766f6c756d652e64617461-current","identity":"terraform:6177735f6673785f6f6e7461705f766f6c756d652e64617461-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_ontap_volume.data","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_ontap_volume"},{"action":"create","address":"aws_fsx_openzfs_file_system.storage","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current","identity":"terraform:6177735f6673785f6f70656e7a66735f66696c655f73797374656d2e73746f72616765-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_file_system.storage","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_file_system"},{"action":"create","address":"aws_fsx_openzfs_snapshot.child","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current","identity":"terraform:6177735f6673785f6f70656e7a66735f736e617073686f742e6368696c64-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_snapshot.child","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_snapshot"},{"action":"create","address":"aws_fsx_openzfs_snapshot.root","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current","identity":"terraform:6177735f6673785f6f70656e7a66735f736e617073686f742e726f6f74-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_snapshot.root","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_snapshot"},{"action":"create","address":"aws_fsx_openzfs_volume.child","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current","identity":"terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6368696c64-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_volume.child","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_volume"},{"action":"create","address":"aws_fsx_openzfs_volume.cycle","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6379636c65-current","identity":"terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6379636c65-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_volume.cycle","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_volume"},{"action":"create","address":"aws_fsx_openzfs_volume.literal","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f766f6c756d652e6c69746572616c-current","identity":"terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e6c69746572616c-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_volume.literal","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_volume"},{"action":"create","address":"aws_fsx_openzfs_volume.parent","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current","identity":"terraform:6177735f6673785f6f70656e7a66735f766f6c756d652e706172656e74-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_openzfs_volume.parent","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_openzfs_volume"},{"action":"create","address":"aws_fsx_s3_access_point_attachment.child","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current","identity":"terraform:6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e6368696c64-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_s3_access_point_attachment.child","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_s3_access_point_attachment"},{"action":"create","address":"aws_fsx_s3_access_point_attachment.root","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current","identity":"terraform:6177735f6673785f73335f6163636573735f706f696e745f6174746163686d656e742e726f6f74-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_s3_access_point_attachment.root","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_s3_access_point_attachment"},{"action":"create","address":"aws_fsx_windows_file_system.storage","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current","identity":"terraform:6177735f6673785f77696e646f77735f66696c655f73797374656d2e73746f72616765-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_fsx_windows_file_system.storage","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_fsx_windows_file_system"},{"action":"create","address":"aws_vpc.restricted","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f7670632e72657374726963746564-current","identity":"terraform:6177735f7670632e72657374726963746564-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_vpc.restricted","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_vpc"}]</script>
+<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":"7e82ae8e61d62ff4f65b6e90f74c83efa37e8562-dirty","version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"cloudflare_accounts":[],"cloudflare_groups":false,"cloudflare_zones":[],"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"omitted","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
 <script id="viewer-provider-data" type="application/json">[]</script>
 
 
@@ -438,10 +376,10 @@ function generationInformation(byId) {
     return;
   }
   paragraph(`${metadata.generator.name} ${metadata.generator.version}. Revision: ${metadata.generator.revision || 'unavailable'}.`);
-  paragraph(metadata.selected_view ? 'Selected view. Omitted resources may still exist in Terraform.' : 'Full input view: no changed-only, module or focus selection. This describes the supplied inputs, not all resources in Terraform.');
+  paragraph(metadata.selected_view ? 'Selected view. Omitted resources may still exist in Terraform.' : 'Full input view: no changed-only, module, focus or Cloudflare scope selection. This describes the supplied inputs, not all resources in Terraform.');
   paragraph('Values below are effective generation settings. Whether a value was explicitly supplied or defaulted is unavailable; “matches default” describes the value only.');
-  const defaults = { changed_only: false, modules: [], focus: null, focus_depth: null, spatial_types: [], address_format: 'qualified', icon_mode: 'service-name', relationship_legend: 'full', html_diagnostics: false, html_semantic_diagnostics: false, states: [], remote_state_mappings: [] };
-  const labels = { changed_only: 'Changed only', modules: 'Module selection', focus: 'Focus', focus_depth: 'Focus depth', spatial_types: 'Spatial type overrides', address_format: 'Address format', icon_mode: 'Service labels', relationship_legend: 'Relationship legend', html_diagnostics: 'Routing diagnostics', html_semantic_diagnostics: 'Semantic diagnostics', states: 'Named states', remote_state_mappings: 'Remote state mappings' };
+  const defaults = { cloudflare_accounts: [], cloudflare_zones: [], cloudflare_groups: false, changed_only: false, modules: [], focus: null, focus_depth: null, spatial_types: [], address_format: 'qualified', icon_mode: 'service-name', relationship_legend: 'omitted', html_diagnostics: false, html_semantic_diagnostics: false, states: [], remote_state_mappings: [] };
+  const labels = { cloudflare_accounts: 'Cloudflare Account selection', cloudflare_zones: 'Cloudflare Zone selection', cloudflare_groups: 'Cloudflare administrative index', changed_only: 'Changed only', modules: 'Module selection', focus: 'Focus', focus_depth: 'Focus depth', spatial_types: 'Spatial type overrides', address_format: 'Address format', icon_mode: 'Service labels', relationship_legend: 'Relationship legend', html_diagnostics: 'Routing diagnostics', html_semantic_diagnostics: 'Semantic diagnostics', states: 'Named states', remote_state_mappings: 'Remote state mappings' };
   const list = document.createElement('dl');
   for (const [key, label] of Object.entries(labels)) {
     const term = document.createElement('dt'), value = document.createElement('dd');
@@ -521,7 +459,7 @@ function diagramExport(context) {
     const box = clone.getAttribute('viewBox').trim().split(/[ ,]+/).map(Number);
     if (box.length !== 4 || !box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0) throw new Error('Invalid export viewport');
     clone.setAttribute('width', box[2]); clone.setAttribute('height', box[3]);
-    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], script, foreignObject')) el.remove();
+    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], [data-vpc-hidden], script, foreignObject')) el.remove();
     const ids = new Set();
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
       if (el.id) {
@@ -529,7 +467,7 @@ function diagramExport(context) {
         ids.add(el.id);
       }
       for (const attr of [...el.attributes]) {
-        if (/^on/i.test(attr.name) || /^data-(viewer|impact)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
+        if (/^on/i.test(attr.name) || /^data-(viewer|impact|path)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
       }
     }
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
@@ -1171,6 +1109,12 @@ function searching(context, index, selection, coordinator) {
   const { resources, label } = index;
   const { button, select } = selection;
   const action = byId('search-action'), state = byId('search-state'), type = byId('search-type');
+  const account = byId('search-cloudflare-account'), zone = byId('search-cloudflare-zone');
+  const cloudflare = resource => resource.provider === 'registry.terraform.io/cloudflare/cloudflare';
+  const scoped = resources.filter(cloudflare);
+  byId('search-cloudflare-scopes').hidden = !scoped.length;
+  const scopeKey = (resource, key) => JSON.stringify(resource.cloudflare_scope?.[key] ?? null);
+  const scopeMatches = (resource, control, key) => !control.value || (cloudflare(resource) && scopeKey(resource, key) === control.value);
   const typeKey = resource => JSON.stringify([resource.provider || null, resource.type]);
   function options(control, entries) {
     for (const [value, text] of entries) {
@@ -1181,11 +1125,14 @@ function searching(context, index, selection, coordinator) {
   options(action, ['Create', 'Update', 'Delete', 'Replace', 'Read', 'Unchanged', 'Other'].map(label => [label.toLowerCase(), label]));
   options(state, [...new Set(resources.map(r => r.state))].sort().map(value => [JSON.stringify(value), value || '(unnamed)']));
   options(type, [...new Map(resources.map(r => [typeKey(r), `${r.type} · ${r.provider || 'unknown provider source'}`]))].sort((a, b) => a[1].localeCompare(b[1])));
+  for (const [control, key] of [[account, 'account'], [zone, 'zone']]) {
+    options(control, [...new Set(scoped.map(r => scopeKey(r, key)))].sort().map(value => [value, JSON.parse(value) ?? 'unknown']));
+  }
   function renderResults() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
     const focused = results.contains(document.activeElement);
     const visible = resources.filter(r => byId(r.id));
-    const matched = visible.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
+    const matched = visible.filter(r => scopeMatches(r, account, 'account') && scopeMatches(r, zone, 'zone') && (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
     results.replaceChildren();
     for (const r of matched) {
       const b = button(label(r), () => select(r.id));
@@ -1196,11 +1143,11 @@ function searching(context, index, selection, coordinator) {
     if (!matched.length) byId('result-count').textContent += '. No visible resources match this search.';
     if (focused) (results.firstElementChild || search).focus();
   }
-  for (const control of [action, state, type]) control.addEventListener('change', () => {
+  for (const control of [action, state, type, account, zone]) control.addEventListener('change', () => {
     search.dispatchEvent(new Event('input'));
   });
   byId('search-reset').addEventListener('click', () => {
-    search.value = ''; action.value = ''; state.value = ''; type.value = '';
+    search.value = ''; action.value = ''; state.value = ''; type.value = ''; account.value = ''; zone.value = '';
     search.dispatchEvent(new Event('input')); search.focus();
   });
   search.addEventListener('input', renderResults);
@@ -1354,7 +1301,7 @@ function actionFiltering(context, index, view, coordinator, renderResults) {
     svg.setAttribute('height', rootHeight + delta);
     view.resize(rootHeight + delta);
     for (const link of links) {
-      if (!byId(link.target)) {
+      if (document.getElementById(link.target)?.closest('[data-html-filtered]')) {
         link.el.removeAttribute('href'); link.el.setAttribute('aria-disabled', 'true');
         if (!link.title) {
           link.title = document.createElementNS(svg.namespaceURI, 'title');
@@ -1689,9 +1636,230 @@ function impact(context, index, selection, coordinator) {
   return { reset };
 }
 
+function shortestRelationshipPath(graph, start, end) {
+  const queue = [start], distance = new Map([[start, 0]]), ways = new Map([[start, 1]]);
+  const previous = new Map();
+  let scanned = 0, limited = graph.truncated;
+  search: for (let cursor = 0; cursor < queue.length; cursor++) {
+    const here = queue[cursor], depth = distance.get(here);
+    if (distance.has(end) && depth >= distance.get(end)) break;
+    for (const edge of graph.adjacent.get(here) || []) {
+      if (++scanned > 4000) { limited = true; break search; }
+      if (!['dependency', 'association', 'connection', 'subscription', 'eventsource', 'eventtarget'].includes(edge.kind)
+          || !edge.provenance.length || !edge.provenance.every(p => ['reference', 'resource', 'remote-state'].includes(p.kind))) continue;
+      if (edge.direction !== 'undirected' && !(edge.direction === 'directed' && edge.from === here)) continue;
+      const next = edge.from === here ? edge.to : edge.from;
+      if (!graph.nodes.has(next)) continue;
+      if (distance.has(next)) {
+        if (distance.get(next) === depth + 1) ways.set(next, Math.min(2, ways.get(next) + ways.get(here)));
+        continue;
+      }
+      if (queue.length >= 500 || depth >= 12) { limited = true; continue; }
+      distance.set(next, depth + 1); ways.set(next, ways.get(here));
+      previous.set(next, {here, next, edge}); queue.push(next);
+    }
+  }
+  const steps = [];
+  if (distance.has(end)) {
+    for (let current = end; current !== start;) {
+      const step = previous.get(current);
+      steps.unshift(step); current = step.here;
+    }
+  }
+  return {steps, multiple: ways.get(end) > 1, limited};
+}
+
+function relationshipPath(context, index, coordinator) {
+  const {byId, svg} = context;
+  const status = byId('path-status'), origin = byId('path-origin'), steps = byId('path-steps');
+  let start;
+  function reset() {
+    for (const el of svg.querySelectorAll('[data-path-step]')) el.removeAttribute('data-path-step');
+    steps.replaceChildren(); status.textContent = '';
+  }
+  byId('path-start').addEventListener('click', () => {
+    reset();
+    const resource = index.targets.get(coordinator.selected);
+    if (!resource) { status.textContent = 'Select a resource first.'; return; }
+    start = resource.id;
+    origin.textContent = 'From ' + index.label(resource);
+  });
+  byId('path-clear').addEventListener('click', () => {
+    reset(); start = null; origin.textContent = '';
+  });
+  byId('path-find').addEventListener('click', () => {
+    reset();
+    const graph = impactGraph(index, svg);
+    const from = graph.domKeys.get(start), to = graph.domKeys.get(coordinator.selected);
+    if (!from || !to || from === to) {
+      status.textContent = 'Set a visible starting resource, then select a different destination.'; return;
+    }
+    const result = shortestRelationshipPath(graph, from, to);
+    const limit = result.limited ? ' Search limit reached.' : '';
+    if (!result.steps.length) { status.textContent = 'No verified path found in the searched relationships.' + limit; return; }
+    status.textContent = (result.multiple ? 'Multiple shortest paths found. Showing one.' : 'Showing one recorded relationship path.') + limit;
+    const marked = new Set();
+    for (const {here, next, edge} of result.steps) {
+      const a = graph.nodes.get(here), b = graph.nodes.get(next);
+      byId(a.id).setAttribute('data-path-step', 'true'); byId(b.id).setAttribute('data-path-step', 'true');
+      const row = document.createElement('li');
+      row.textContent = index.label(a) + (edge.direction === 'directed' ? ' → ' : ' ↔ ') + index.label(b) + ' · ' + edge.kind;
+      const proofs = new Set(edge.provenance.filter(p => p.kind === 'resource').map(index.sourceIdentity));
+      for (const el of index.edges.slice(0, 10000)) {
+        if (el.dataset.edgeKind !== edge.kind || graph.domKeys.get(el.dataset.source) !== edge.from
+          || graph.domKeys.get(el.dataset.target) !== edge.to) continue;
+        const ids = (el.dataset.relationshipIds || '').split(' ').filter(Boolean);
+        if (proofs.size && !ids.some(id => [...(index.relationshipEntries.get(id)?.querySelectorAll('[data-source-identity]') || [])]
+          .some(r => proofs.has(r.dataset.sourceIdentity)))) continue;
+        if (marked.has(el)) continue;
+        marked.add(el); el.setAttribute('data-path-step', 'true');
+        const numbers = ids.map(id => index.relationshipEntries.get(id)?.dataset.relationshipEntry).filter(Boolean);
+        if (numbers.length) row.append(' · #' + numbers.join(', #'));
+      }
+      steps.append(row);
+    }
+  });
+  return {reset};
+}
+
+function vpcFolding(context, index, coordinator, renderResults) {
+  const {svg, byId} = context;
+  const menu = byId('vpc-destination'), toggle = byId('vpc-toggle');
+  const frames = [...svg.querySelectorAll('[data-container], [data-route-table], [data-member-cluster]')];
+  const vpcs = frames.map(el => index.targets.get(el.dataset.container)).filter(r => r?.type === 'aws_vpc');
+  if (!vpcs.length) return;
+  byId('vpc-controls').hidden = false;
+  for (const r of vpcs) menu.add(new Option(r.state ? r.state + ': ' + r.address : r.address, r.id));
+  const closed = new Set();
+  const native = new Map(index.resources.map(r => [JSON.stringify([r.state, r.identity]), r.id]));
+  for (const el of index.components) native.set(JSON.stringify([el.closest('[data-state-id]')?.dataset.stateId || '', el.dataset.architectureId]), el.id);
+  const relations = [];
+  for (const data of svg.querySelectorAll('metadata[id$="architecture-relationships"]')) {
+    const state = data.closest('[data-state-id]')?.dataset.stateId || '';
+    for (const r of JSON.parse(data.textContent)) {
+      const from = native.get(JSON.stringify([state, r.from])), to = native.get(JSON.stringify([state, r.to]));
+      if (from && to) relations.push({from, to, kind:r.kind, direction:r.directionality});
+    }
+  }
+  for (const path of index.edges.filter(el => el.dataset.crossState)) {
+    relations.push({from:path.dataset.source, to:path.dataset.target, kind:'dependency', direction:'directed'});
+  }
+  function element(parent, name, attributes, text) {
+    const el = document.createElementNS(svg.namespaceURI, name);
+    for (const [key,value] of Object.entries(attributes)) el.setAttribute(key,value);
+    if (text !== undefined) el.textContent = text;
+    parent.append(el);
+    return el;
+  }
+  function refreshButton() {
+    toggle.textContent = closed.has(menu.value) ? 'Expand VPC' : 'Collapse VPC';
+    toggle.setAttribute('aria-expanded', String(!closed.has(menu.value)));
+  }
+  function redraw() {
+    for (const el of svg.querySelectorAll('[data-vpc-hidden]')) el.removeAttribute('data-vpc-hidden');
+    for (const el of svg.querySelectorAll('[data-vpc-overlay]')) el.remove();
+    if (!closed.size) return;
+    const representative = new Map();
+    for (const r of index.resources) {
+      let id = r.id;
+      const seen = new Set();
+      while (!closed.has(id) && !seen.has(id)) {
+        seen.add(id);
+        id = index.targets.get(id)?.context?.[0];
+        if (!id) break;
+      }
+      if (closed.has(id)) representative.set(r.id,id);
+    }
+    const hide = el => el?.setAttribute('data-vpc-hidden','');
+    for (const [id,owner] of representative) {
+      const el = document.getElementById(id);
+      if (id !== owner) { hide(el); continue; }
+      const [x,y] = el.dataset.presentationHeader.split(' ').map(Number);
+      for (const child of el.children) if (child.localName !== 'title') hide(child);
+      const card = element(el,'g',{'data-vpc-overlay':''});
+      const name = index.targets.get(id).address;
+      const label = element(card,'text',{x:x+12,y:y+28,'font-size':15,fill:'#134e4a'},name);
+      const width = Math.max(140,label.getComputedTextLength()+24);
+      const rect = element(card,'rect',{x,y,width,height:44,rx:8,fill:'#ecfdf5',stroke:'#047857','stroke-width':2});
+      card.prepend(rect);
+    }
+    for (const frame of frames) if (representative.has(frame.dataset.container || frame.dataset.routeTable || frame.dataset.memberCluster)) hide(frame);
+    for (const mask of svg.querySelectorAll('[data-occluder]')) {
+      if (representative.has(mask.dataset.occluder)) hide(mask);
+    }
+    const affected = new Set();
+    for (const edge of svg.querySelectorAll('[data-source][data-target]')) {
+      if (representative.has(edge.dataset.source) || representative.has(edge.dataset.target)) {
+        hide(edge);
+        for (const id of (edge.dataset.relationshipIds || '').split(' ').filter(Boolean)) affected.add(id);
+        if (edge.dataset.crossState && edge.nextElementSibling?.localName === 'circle') hide(edge.nextElementSibling);
+      }
+    }
+    for (const marker of svg.querySelectorAll('[data-relationship-marker]')) {
+      if (affected.has(marker.querySelector('a')?.getAttribute('href')?.slice(1))) hide(marker);
+    }
+    for (const id of affected) hide(document.getElementById(id));
+    for (const dot of svg.querySelectorAll('[data-junction-edges]')) {
+      const prefix = dot.closest('[data-state-id]')?.id.replace(/state$/, '') || '';
+      if (JSON.parse(dot.dataset.junctionEdges).some(pair => pair.some(id => representative.has(prefix+id)))) hide(dot);
+    }
+    const filtered = id => document.getElementById(id)?.closest('[data-html-filtered]');
+    const groups = new Map();
+    for (const {from,to,kind,direction} of relations) {
+      if (!representative.has(from) && !representative.has(to)) continue;
+      if (filtered(from) || filtered(to)) continue;
+      let a = representative.get(from) || from, b = representative.get(to) || to;
+      if (a === b || !byId(a) || !byId(b)) continue;
+      if (direction === 'undirected' && a > b) [a,b] = [b,a];
+      const key = JSON.stringify([a,b,kind,direction]);
+      const group = groups.get(key) || {a,b,kind,direction,count:0};
+      group.count++;
+      groups.set(key,group);
+    }
+    const overlay = element(svg,'g',{'data-vpc-overlay':''});
+    const rootMatrix = svg.getScreenCTM().inverse();
+    const center = id => {
+      const el = byId(id), box = el.getBBox();
+      const p = new DOMPoint(box.x+box.width/2, box.y+box.height/2).matrixTransform(rootMatrix.multiply(el.getScreenCTM()));
+      return {x:p.x,y:p.y,w:box.width/2,h:box.height/2};
+    };
+    const counts = new Map();
+    for (const {a,b,kind,direction,count} of groups.values()) {
+      const p = center(a), q = center(b), dx=q.x-p.x, dy=q.y-p.y;
+      const length=Math.hypot(dx,dy) || 1;
+      const pair=JSON.stringify([a,b].sort()), n=counts.get(pair) || 0;
+      counts.set(pair,n+1);
+      const offset=(a < b ? 1 : -1)*Math.ceil(n/2)*(n%2 ? 52 : -52);
+      const mid={x:(p.x+q.x)/2-dy/length*offset,y:(p.y+q.y)/2+dx/length*offset};
+      const port = box => {
+        const x=mid.x-box.x, y=mid.y-box.y;
+        const scale=Math.min(box.w/Math.max(Math.abs(x),0.001),box.h/Math.max(Math.abs(y),0.001),1);
+        return [box.x+x*scale,box.y+y*scale].join(' ');
+      };
+      const line=element(overlay,'g',{'data-vpc-aggregate':kind,'data-directionality':direction,'data-count':count,'data-from':a,'data-to':b});
+      const path=element(line,'path',{d:'M '+port(p)+' Q '+mid.x+' '+mid.y+' '+port(q),fill:'none',stroke:'#334155','stroke-width':2});
+      if (direction === 'directed') {
+        const marker=byId(a).closest('svg').querySelector('marker[id$="arrow"]');
+        if (marker) path.setAttribute('marker-end','url(#'+marker.id+')');
+      }
+      const name = id => index.targets.get(id)?.address || index.title(byId(id));
+      element(line,'title',{},name(a)+(direction === 'undirected' ? ' ↔ ' : ' → ')+name(b)+' · '+kind+' × '+count);
+      element(line,'text',{x:mid.x,y:mid.y-4,'text-anchor':'middle','font-size':14,fill:'#0f172a',stroke:'white','stroke-width':4,'paint-order':'stroke'},kind+' × '+count);
+    }
+  }
+  menu.addEventListener('change',refreshButton);
+  toggle.addEventListener('click',() => {
+    coordinator.clear();
+    if (closed.has(menu.value)) closed.delete(menu.value); else closed.add(menu.value);
+    redraw(); refreshButton(); renderResults();
+  });
+  refreshButton();
+  return redraw;
+}
+
   const byId = id => {
     const el = document.getElementById(id);
-    return el?.closest('[data-html-filtered]') ? null : el;
+    return el?.closest('[data-html-filtered], [data-vpc-hidden]') ? null : el;
   };
   generationInformation(byId);
   const viewport = byId('viewport');
@@ -1701,6 +1869,7 @@ function impact(context, index, selection, coordinator) {
   const details = byId('selection');
   const context = { byId, viewport, svg, search, results, details };
   const index = metadata(svg, byId);
+  for (const path of index.edges) path.removeAttribute('tabindex');
   const { resources, label, title, components } = index;
   const view = navigation(svg, viewport, byId);
   overview(context, view);
@@ -1726,7 +1895,9 @@ function impact(context, index, selection, coordinator) {
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
-  actionFiltering(context, index, view, coordinator, renderResults);
+  adapters.register(relationshipPath(context, index, coordinator));
+  const redrawVpcs = vpcFolding(context, index, coordinator, renderResults);
+  actionFiltering(context, index, view, coordinator, () => { redrawVpcs?.(); renderResults(); });
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {

@@ -3,7 +3,7 @@
 __PLANORAMA_VIEWER_MODULES__
   const byId = id => {
     const el = document.getElementById(id);
-    return el?.closest('[data-html-filtered]') ? null : el;
+    return el?.closest('[data-html-filtered], [data-vpc-hidden]') ? null : el;
   };
   generationInformation(byId);
   const viewport = byId('viewport');
@@ -13,6 +13,7 @@ __PLANORAMA_VIEWER_MODULES__
   const details = byId('selection');
   const context = { byId, viewport, svg, search, results, details };
   const index = metadata(svg, byId);
+  for (const path of index.edges) path.removeAttribute('tabindex');
   const { resources, label, title, components } = index;
   const view = navigation(svg, viewport, byId);
   overview(context, view);
@@ -38,7 +39,9 @@ __PLANORAMA_VIEWER_MODULES__
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
-  actionFiltering(context, index, view, coordinator, renderResults);
+  adapters.register(relationshipPath(context, index, coordinator));
+  const redrawVpcs = vpcFolding(context, index, coordinator, renderResults);
+  actionFiltering(context, index, view, coordinator, () => { redrawVpcs?.(); renderResults(); });
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {

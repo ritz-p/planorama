@@ -104,7 +104,7 @@ pub(crate) enum Content {
     ValueFree,
 }
 
-fn escape(value: &str) -> String {
+pub(crate) fn escape(value: &str) -> String {
     let mut escaped = String::with_capacity(value.len());
     for character in value.chars() {
         match character {
@@ -402,7 +402,7 @@ fn render_with_index(
         .iter()
         .any(|edge| edge.kind != EdgeKind::Dependency);
     let mut svg = format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description" data-legend-mode="{legend_mode}">
+        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="group" aria-labelledby="title" aria-describedby="description" data-legend-mode="{legend_mode}">
 <title id="title">Terraform plan</title>
 <desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs>{markers}{icon_definitions}{occlusion_definitions}</defs>
@@ -554,7 +554,7 @@ fn render_with_index(
         );
         let mask = occlusion.attribute(index);
         let indexed = relationship_index.edge_attributes(index);
-        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation}{indexed} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
+        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation}{indexed} role="img" tabindex="0" data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         let members: Vec<_> = graph
@@ -578,7 +578,7 @@ fn render_with_index(
             .unwrap_or_default();
         writeln!(
             svg,
-            r##"<circle data-junction-edges="{members}" cx="{}" cy="{}" r="3" fill="#94a3b8"{mask}/>"##,
+            r##"<circle aria-hidden="true" data-junction-edges="{members}" cx="{}" cy="{}" r="3" fill="#94a3b8"{mask}/>"##,
             point.x, point.y
         )
         .unwrap();
@@ -643,7 +643,7 @@ fn render_with_index(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}{move_details}</title>"#,
+            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}" role="group" tabindex="0"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}{move_details}</title>"#,
         )
         .unwrap();
         if layout.containers.contains(&i) {

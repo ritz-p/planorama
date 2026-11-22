@@ -107,6 +107,31 @@ The workflow retains logs, JSON comparisons, SVGs and presentation reports for
 14 days. If execution fails or remains incomplete, report the SHA and reason;
 do not merge/release unresolved work or poll indefinitely.
 
+### Reducing a local layout fixture
+
+Use the release binary to inspect `findings` in a layout diagnostics report. Select
+the zero-based index of a crossing, independent overlap or parallel proximity.
+For example, finding 5 identifies an overlapping edge pair in the AgentCore gateway fixture.
+
+```sh
+cargo build --release --locked --bin planorama
+node scripts/minimize-layout-fixture.cjs target/release/planorama \
+  tests/fixtures/agentcore-gateway-plan.json 5 /tmp/reduced-plan.json
+```
+
+The reducer removes groups of root resources and their dependents together. It
+checks retained resource identities, providers, scopes and relationship evidence
+against the original architecture export. The same edge pair must reproduce at
+least its original measurement in complete diagnostics. A final replay precedes
+writing the new local file, which contains the retained input values.
+
+Supported inputs are flat, single-state, managed-create fixtures with matching
+configuration and change records, explicit providers, local expression references,
+and lossless integer literals. Other shapes require a different reduction unit.
+The optional last argument bounds deletion trials (default 64, maximum 128).
+Each renderer invocation has a 30-second timeout. Use the reported counts and
+compare the two input resource lists to inspect the reduction.
+
 ## Terraform compatibility (#525)
 
 [Compatibility checks](terraform-compatibility.md) validate committed fixtures on

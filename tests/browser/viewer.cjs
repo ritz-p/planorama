@@ -49,6 +49,87 @@ class ViewerTests {
             return ['x','y','width','height'].every(k => Math.abs(Number(r.getAttribute(k)) - b[k]) < .001);
         `), 'overview frame follows viewBox');
     }
+    test_vpc_folding_aggregates_and_restores_original_relationships() {
+        const plan = JSON.parse(readFileSync(join(ROOT,'tests/fixtures/association-plan.json')));
+        const resources = plan.configuration.root_module.resources;
+        const changes = plan.resource_changes;
+        for (const name of ['left','right']) {
+            const address = 'aws_vpc.'+name;
+            resources.push({address,provider_config_key:'aws'});
+            changes.push({address,type:'aws_vpc',change:{actions:['create'],after:{id:'vpc-'+name}}});
+        }
+        const refs = address => ({references:[address+'.id']});
+        const subnet = structuredClone(changes[0]), association = structuredClone(changes[2]);
+        subnet.address = 'aws_subnet.second'; subnet.change.after.id = 'subnet-second';
+        association.address = 'aws_route_table_association.second'; association.change.after.subnet_id = 'subnet-second';
+        changes.push(subnet,association);
+        const other = structuredClone(resources[2]);
+        other.address = association.address; other.expressions.subnet_id = refs(subnet.address);
+        resources.push({address:subnet.address,provider_config_key:'aws',expressions:{vpc_id:refs('aws_vpc.left')}},other);
+        resources[0].expressions = {vpc_id:refs('aws_vpc.left')};
+        resources[1].expressions = {vpc_id:refs('aws_vpc.right'), extra:refs(subnet.address)};
+        this.load('-', {input_plan:plan});
+        const original = this.driver.execute_script("return document.querySelector('#viewport > svg').innerHTML");
+        const toggle = () => this.find('#vpc-toggle').send_keys(Keys.ENTER);
+        const selectVpc = name => this.driver.execute_script("const s=document.querySelector('#vpc-destination');s.value=[...s.options].find(o=>o.text.endsWith(arguments[0])).value;s.dispatchEvent(new Event('change'))",name);
+        const groups = () => this.driver.execute_script("return [...document.querySelectorAll('[data-vpc-aggregate]')].map(g=>[g.dataset.vpcAggregate,g.dataset.directionality,Number(g.dataset.count)])");
+        for (let cycle=0;cycle<2;cycle++) {
+            selectVpc('left'); toggle();
+            this.assertTrue(groups().some(([k,d,n])=>k==='association' && d==='undirected' && n===2));
+            this.assertTrue(groups().some(([k,d])=>k==='dependency' && d==='directed'));
+            selectVpc('right'); toggle();
+            this.assertEqual(groups().filter(([k])=>k==='association'),[['association','undirected',2]]);
+            toggle(); selectVpc('left'); toggle();
+            this.assertEqual(this.driver.execute_script("return document.querySelector('#viewport > svg').innerHTML"), original);
+        }
+    }
+    test_folded_vpc_respects_filtered_connector_endpoints() {
+        this.load('tests/fixtures/apprunner-plan.json');
+        this.find('#logical-filters summary').click();
+        const filter = this.find('#logical-filter-controls fieldset[data-resource-type="aws_apprunner_vpc_connector"] input[data-action="create"]');
+        const toggle = this.find('#vpc-toggle');
+        const links = () => this.driver.execute_script("return [...document.querySelectorAll('[data-vpc-aggregate=dependency]')].filter(g=>g.querySelector('title').textContent.includes('aws_apprunner_service.')).map(g=>Number(g.dataset.count))");
+        filter.click();
+        toggle.click();
+        this.assertEqual(links(), []);
+        filter.click();
+        this.assertEqual(links().sort(), [1,1]);
+        filter.click();
+        this.assertEqual(links(), []);
+    }
+    test_standalone_svg_names_and_keyboard_focus() {
+        const output = join(this.temp, 'accessible.svg');
+        execFileSync(BINARY, ['tests/fixtures/association-plan.json', '-o', output], {cwd: ROOT});
+        this.driver.get(pathToFileURL(output).href);
+        this.assertEqual(this.find('svg').accessible_name, 'Terraform plan');
+        const card = this.find('g[data-terraform-address][tabindex]');
+        this.assertIn(card.get_attribute('data-terraform-address').split('.').pop(), card.accessible_name);
+        const path = this.find('path[data-edge-kind][tabindex]');
+        this.assertTrue(path.accessible_name);
+        this.driver.execute_script('arguments[0].focus()', path);
+        this.assertTrue(this.driver.execute_script('return document.activeElement === arguments[0]', path));
+        path.send_keys('\uE004');
+        this.assertFalse(this.driver.execute_script('return document.activeElement === arguments[0]', path));
+    }
+    test_verified_path_between_selections() {
+        const names = ['a', 'b', 'c'].map(name => 'terraform_data.' + name);
+        this.load('-', {input_plan: {format_version: '1.2',
+          resource_changes: names.map(address => ({address, type:'terraform_data'})),
+          configuration: {root_module: {resources: names.map((address, i) => ({address,
+            expressions: i ? {input: {references: [names[i - 1] + '.output']}} : {}}))}}}});
+        this.choose(names[0]);
+        this.find('#path-start').send_keys(Keys.ENTER);
+        this.choose(names[2]);
+        this.find('#path-find').send_keys(Keys.ENTER);
+        this.assertEqual(this.driver.execute_script("return document.querySelectorAll('#path-steps li').length"), 2);
+        this.assertIn('dependency', this.find('#path-steps').text);
+        this.find('#path-clear').click();
+        this.assertEqual(this.driver.execute_script("return document.querySelectorAll('[data-path-step]').length"), 0);
+        this.find('#path-start').click();
+        this.choose(names[0]);
+        this.find('#path-find').click();
+        this.assertIn('No verified path', this.find('#path-status').text);
+    }
     test_overview_navigation_history_and_exports() {
         this.load('--state', 'one=tests/fixtures/viewer-plan.json', '--state', 'two=tests/fixtures/viewer-plan.json', '--html-diagnostics');
         this.overview_frame();

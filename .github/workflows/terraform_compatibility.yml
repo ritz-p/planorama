@@ -23,6 +23,8 @@ on:
       - tests/support/verify_provider_plan.sh
       - tests/support/sts_fixture.cjs
       - tests/fixtures/cloudflare-captured/**
+      - scripts/cloudflare-matrix.cjs
+      - tests/fixtures/cloudflare-matrix/**
       - scripts/cloudflare-capture.cjs
       - tests/support/cloudflare-capture.test.cjs
   workflow_dispatch:
@@ -41,6 +43,7 @@ jobs:
       - run: node scripts/terraform-compatibility.cjs check
       - run: node --test tests/ci/terraform-compatibility.test.cjs
       - run: node --test tests/ci/compatibility-provider.test.cjs
+      - run: node scripts/cloudflare-matrix.cjs check
       - run: node scripts/cloudflare-capture.cjs check
       - run: node --test tests/support/cloudflare-capture.test.cjs
   capture:
@@ -52,6 +55,14 @@ jobs:
         with:
           persist-credentials: false
       - run: docker compose up -d --build dev
+      - run: docker compose exec -T dev node scripts/cloudflare-matrix.cjs prepare
+      - name: Recapture the Cloudflare version matrix offline
+        run: >-
+          docker run --rm --network none
+          --mount type=bind,source="$PWD",target=/workspace
+          planorama-dev node scripts/cloudflare-matrix.cjs capture
+      - run: docker compose exec -T dev node scripts/cloudflare-matrix.cjs check
+      - run: git diff --exit-code -- tests/fixtures/cloudflare-matrix
       - run: docker compose exec -T dev node scripts/terraform-compatibility.cjs prepare
       - run: >-
           docker run --rm --network none

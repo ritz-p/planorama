@@ -8,7 +8,7 @@ function diagramExport(context) {
     const box = clone.getAttribute('viewBox').trim().split(/[ ,]+/).map(Number);
     if (box.length !== 4 || !box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0) throw new Error('Invalid export viewport');
     clone.setAttribute('width', box[2]); clone.setAttribute('height', box[3]);
-    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], script, foreignObject')) el.remove();
+    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], [data-vpc-hidden], script, foreignObject')) el.remove();
     const ids = new Set();
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
       if (el.id) {
@@ -16,7 +16,7 @@ function diagramExport(context) {
         ids.add(el.id);
       }
       for (const attr of [...el.attributes]) {
-        if (/^on/i.test(attr.name) || /^data-(viewer|impact)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
+        if (/^on/i.test(attr.name) || /^data-(viewer|impact|path)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
       }
     }
     for (const el of [clone, ...clone.querySelectorAll('*')]) {

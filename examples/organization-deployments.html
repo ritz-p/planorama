@@ -71,6 +71,9 @@ p { line-height: 1.5; }
 #viewport[data-selection] path[data-edge-kind]:not([data-viewer-edge]) { opacity: .25; }
 #viewport path[data-viewer-edge] { filter: drop-shadow(0 0 2px #64748b); }
 @media (max-width: 700px) { main { grid-template-columns: 1fr; grid-template-rows: 40% 60%; } aside { border-bottom: 1px solid #cbd5e1; } #results { max-height: 15vh; } }
+#viewport g[data-path-step] { outline: 3px dashed #5b21b6; outline-offset: 3px; }
+#viewport[data-selection] path[data-path-step] { opacity: 1; stroke-width: 5; filter: drop-shadow(0 0 2px #5b21b6); }
+[data-vpc-hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -84,6 +87,7 @@ p { line-height: 1.5; }
 <p id="overview-status"></p>
 </details>
 <nav aria-label="Diagram sections"><label for="section-destination">Diagram section</label><select id="section-destination"></select><button id="section-go" type="button">Go to section</button><p id="section-status" role="status"></p></nav>
+<section id="vpc-controls" hidden><label for="vpc-destination">VPC</label><select id="vpc-destination"></select><button id="vpc-toggle" type="button" aria-controls="viewport">Collapse VPC</button></section>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
 <label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
@@ -109,6 +113,15 @@ p { line-height: 1.5; }
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
 <p id="history-status" role="status">No selection history</p>
+<section aria-label="Relationship path">
+<h2>Trace a relationship path</h2>
+<button id="path-start" type="button">Use selection as start</button>
+<span id="path-origin"></span>
+<button id="path-find" type="button">Trace to selection</button>
+<button id="path-clear" type="button">Clear path</button>
+<p>Follows recorded relationship directions in the visible diagram. A path does not establish network reachability.</p>
+<output id="path-status"></output><ol id="path-steps"></ol>
+</section>
 <section id="impact" aria-label="Potentially related resources">
 <h2>Explore change relationships</h2>
 <label for="impact-depth">Maximum hops</label>
@@ -140,7 +153,7 @@ p { line-height: 1.5; }
 </section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<svg xmlns="http://www.w3.org/2000/svg" width="2678" height="1410" viewBox="0 0 2678 1410" role="img" aria-labelledby="title description" data-legend-mode="omitted">
+<svg xmlns="http://www.w3.org/2000/svg" width="2678" height="1410" viewBox="0 0 2678 1410" role="group" aria-labelledby="title" aria-describedby="description" data-legend-mode="omitted">
 <title id="title">Terraform plan</title>
 <desc id="description">6 resources, 4 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="2678" height="1134" style="mask-type:luminance"><rect width="2678" height="1134" fill="white"/>
@@ -180,11 +193,11 @@ p { line-height: 1.5; }
 <g data-deployment-scope="true" data-scope-provider="AWS" data-account="111111111111" data-region="eu-west-1"><rect x="60" y="200" width="760" height="272" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="76" y="225" font-size="15" font-weight="700" fill="#334155">AWS eu-west-1</text></g>
 <g data-deployment-scope="true" data-scope-provider="AWS Organizations" data-global="true"><rect x="40" y="552" width="2578" height="462" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="577" font-size="15" font-weight="700" fill="#334155">AWS Organizations Global</text></g>
 <g data-container="resource-6177735f7670632e776f726b6c6f6164-current"><title>module.root.aws_vpc.workload</title><rect x="80" y="240" width="720" height="212" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<path d="M 558 678 L 570 678 Q 578 678 578 670 L 578 653 Q 578 645 586 645 L 598 645 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_organizations_organization.main → module.root.aws_organizations_organizational_unit.engineering</title></path>
-<path d="M 918 764 L 918 804 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_organizations_organizational_unit.engineering → module.root.aws_organizations_account.sandbox</title></path>
-<path d="M 1238 678 L 1250 678 Q 1258 678 1258 670 L 1258 664 Q 1258 656 1266 656 L 1278 656 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_organizations_organizational_unit.engineering → module.root.aws_organizations_organizational_unit.platform</title></path>
-<path d="M 1918 700 L 1936 700 Q 1938 700 1938 698 L 1938 698 Q 1938 696 1940 696 L 1958 696 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_organizations_organizational_unit.platform → module.root.aws_organizations_account.production</title></path>
-<g id="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" data-qualified-address="module.root.aws_organizations_account.production" data-terraform-address="aws_organizations_account.production"><title>module.root.aws_organizations_account.production — unchanged</title>
+<path d="M 558 678 L 570 678 Q 578 678 578 670 L 578 653 Q 578 645 586 645 L 598 645 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_organizations_organization.main → module.root.aws_organizations_organizational_unit.engineering</title></path>
+<path d="M 918 764 L 918 804 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_organizations_organizational_unit.engineering → module.root.aws_organizations_account.sandbox</title></path>
+<path d="M 1238 678 L 1250 678 Q 1258 678 1258 670 L 1258 664 Q 1258 656 1266 656 L 1278 656 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_organizations_organizational_unit.engineering → module.root.aws_organizations_organizational_unit.platform</title></path>
+<path d="M 1918 700 L 1936 700 Q 1938 700 1938 698 L 1938 698 Q 1938 696 1940 696 L 1958 696 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>module.root.aws_organizations_organizational_unit.platform → module.root.aws_organizations_account.production</title></path>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" data-qualified-address="module.root.aws_organizations_account.production" data-terraform-address="aws_organizations_account.production" role="group" tabindex="0"><title>module.root.aws_organizations_account.production — unchanged</title>
 <rect x="1958" y="592" width="640" height="208" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="1970" y="620" font-size="11" fill="#64748b" xml:space="preserve">aws_organizations_account · unchanged</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="2383" y="600" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="2393" y="622" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="1970" y="653" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_account.production</text>
@@ -195,7 +208,7 @@ Verified AWS Account deployment scope: AWS Account 111111111111; verified deploy
 </a></g>
 <text x="1970" y="788" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" data-qualified-address="module.root.aws_organizations_account.sandbox" data-terraform-address="aws_organizations_account.sandbox"><title>module.root.aws_organizations_account.sandbox — unchanged</title>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" data-qualified-address="module.root.aws_organizations_account.sandbox" data-terraform-address="aws_organizations_account.sandbox" role="group" tabindex="0"><title>module.root.aws_organizations_account.sandbox — unchanged</title>
 <rect x="598" y="804" width="640" height="190" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="610" y="832" font-size="11" fill="#64748b" xml:space="preserve">aws_organizations_account · unchanged</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="1023" y="812" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1033" y="834" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="610" y="865" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_account.sandbox</text>
@@ -206,14 +219,14 @@ Organization parent: module.root.aws_organizations_organizational_unit.engineeri
 </a></g>
 <text x="610" y="982" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-qualified-address="module.root.aws_organizations_organization.main" data-terraform-address="aws_organizations_organization.main"><title>module.root.aws_organizations_organization.main — unchanged</title>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-qualified-address="module.root.aws_organizations_organization.main" data-terraform-address="aws_organizations_organization.main" role="group" tabindex="0"><title>module.root.aws_organizations_organization.main — unchanged</title>
 <rect x="60" y="617" width="498" height="122" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="645" font-size="11" fill="#64748b" xml:space="preserve">aws_organizations_organization · </text>
 <text data-resource-type-heading="true" x="72" y="663" font-size="11" fill="#64748b" xml:space="preserve">unchanged</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="343" y="625" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="353" y="647" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="72" y="688" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_organization.main</text>
 <text x="72" y="727" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-qualified-address="module.root.aws_organizations_organizational_unit.engineering" data-terraform-address="aws_organizations_organizational_unit.engineering"><title>module.root.aws_organizations_organizational_unit.engineering — unchanged</title>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-qualified-address="module.root.aws_organizations_organizational_unit.engineering" data-terraform-address="aws_organizations_organizational_unit.engineering" role="group" tabindex="0"><title>module.root.aws_organizations_organizational_unit.engineering — unchanged</title>
 <rect x="598" y="592" width="640" height="172" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="610" y="620" font-size="11" fill="#64748b" xml:space="preserve">aws_organizations_organizational_unit · unchanged</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="1023" y="600" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1033" y="622" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="610" y="653" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_organizational_unit.engineering</text>
@@ -222,7 +235,7 @@ Organization parent: module.root.aws_organizations_organizational_unit.engineeri
 </a></g>
 <text x="610" y="752" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-qualified-address="module.root.aws_organizations_organizational_unit.platform" data-terraform-address="aws_organizations_organizational_unit.platform"><title>module.root.aws_organizations_organizational_unit.platform — unchanged</title>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-qualified-address="module.root.aws_organizations_organizational_unit.platform" data-terraform-address="aws_organizations_organizational_unit.platform" role="group" tabindex="0"><title>module.root.aws_organizations_organizational_unit.platform — unchanged</title>
 <rect x="1278" y="592" width="640" height="172" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="1290" y="620" font-size="11" fill="#64748b" xml:space="preserve">aws_organizations_organizational_unit · unchanged</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="1703" y="600" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1713" y="622" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="1290" y="653" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_organizational_unit.platform</text>
@@ -231,7 +244,7 @@ Organization parent: module.root.aws_organizations_organizational_unit.engineeri
 </a></g>
 <text x="1290" y="752" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e776f726b6c6f6164-current" data-architecture-id="terraform:6177735f7670632e776f726b6c6f6164-current" data-qualified-address="module.root.aws_vpc.workload" data-terraform-address="aws_vpc.workload" data-presentation-header="80 240 720 172"><title>module.root.aws_vpc.workload — create</title>
+<g id="resource-6177735f7670632e776f726b6c6f6164-current" data-architecture-id="terraform:6177735f7670632e776f726b6c6f6164-current" data-qualified-address="module.root.aws_vpc.workload" data-terraform-address="aws_vpc.workload" role="group" tabindex="0" data-presentation-header="80 240 720 172"><title>module.root.aws_vpc.workload — create</title>
 <text data-resource-type-heading="true" x="92" y="268" font-size="11" fill="#047857" xml:space="preserve">create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="739" y="248" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="749" y="270" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="92" y="301" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.workload</text>
 <g data-resource-references="true"><title>Organizations member Account: module.root.aws_organizations_account.production; verified deployment-scope correspondence, not a Terraform dependency</title><text x="92" y="342" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" data-reference-attribute="deployment_scope"><title>Organizations member Account: module.root.aws_organizations_account.production; verified deployment-scope correspondence, not a Terraform dependency</title><text x="92" y="360" font-size="11" fill="#334155" xml:space="preserve">Organizations member Account: module.root.aws_organizations_account.</text>
@@ -240,13 +253,13 @@ Organization parent: module.root.aws_organizations_organizational_unit.engineeri
 <text x="92" y="400" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" aria-hidden="true">
-<circle data-endpoint="source" cx="558" cy="678" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="558" cy="678" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" aria-hidden="true">
-<circle data-endpoint="source" cx="918" cy="764" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="918" cy="764" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" aria-hidden="true">
-<circle data-endpoint="source" cx="1238" cy="678" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="1238" cy="678" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" aria-hidden="true">
-<circle data-endpoint="source" cx="1918" cy="700" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="1918" cy="700" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>
@@ -355,7 +368,7 @@ function diagramExport(context) {
     const box = clone.getAttribute('viewBox').trim().split(/[ ,]+/).map(Number);
     if (box.length !== 4 || !box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0) throw new Error('Invalid export viewport');
     clone.setAttribute('width', box[2]); clone.setAttribute('height', box[3]);
-    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], script, foreignObject')) el.remove();
+    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], [data-vpc-hidden], script, foreignObject')) el.remove();
     const ids = new Set();
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
       if (el.id) {
@@ -363,7 +376,7 @@ function diagramExport(context) {
         ids.add(el.id);
       }
       for (const attr of [...el.attributes]) {
-        if (/^on/i.test(attr.name) || /^data-(viewer|impact)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
+        if (/^on/i.test(attr.name) || /^data-(viewer|impact|path)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
       }
     }
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
@@ -1197,7 +1210,7 @@ function actionFiltering(context, index, view, coordinator, renderResults) {
     svg.setAttribute('height', rootHeight + delta);
     view.resize(rootHeight + delta);
     for (const link of links) {
-      if (!byId(link.target)) {
+      if (document.getElementById(link.target)?.closest('[data-html-filtered]')) {
         link.el.removeAttribute('href'); link.el.setAttribute('aria-disabled', 'true');
         if (!link.title) {
           link.title = document.createElementNS(svg.namespaceURI, 'title');
@@ -1532,9 +1545,230 @@ function impact(context, index, selection, coordinator) {
   return { reset };
 }
 
+function shortestRelationshipPath(graph, start, end) {
+  const queue = [start], distance = new Map([[start, 0]]), ways = new Map([[start, 1]]);
+  const previous = new Map();
+  let scanned = 0, limited = graph.truncated;
+  search: for (let cursor = 0; cursor < queue.length; cursor++) {
+    const here = queue[cursor], depth = distance.get(here);
+    if (distance.has(end) && depth >= distance.get(end)) break;
+    for (const edge of graph.adjacent.get(here) || []) {
+      if (++scanned > 4000) { limited = true; break search; }
+      if (!['dependency', 'association', 'connection', 'subscription', 'eventsource', 'eventtarget'].includes(edge.kind)
+          || !edge.provenance.length || !edge.provenance.every(p => ['reference', 'resource', 'remote-state'].includes(p.kind))) continue;
+      if (edge.direction !== 'undirected' && !(edge.direction === 'directed' && edge.from === here)) continue;
+      const next = edge.from === here ? edge.to : edge.from;
+      if (!graph.nodes.has(next)) continue;
+      if (distance.has(next)) {
+        if (distance.get(next) === depth + 1) ways.set(next, Math.min(2, ways.get(next) + ways.get(here)));
+        continue;
+      }
+      if (queue.length >= 500 || depth >= 12) { limited = true; continue; }
+      distance.set(next, depth + 1); ways.set(next, ways.get(here));
+      previous.set(next, {here, next, edge}); queue.push(next);
+    }
+  }
+  const steps = [];
+  if (distance.has(end)) {
+    for (let current = end; current !== start;) {
+      const step = previous.get(current);
+      steps.unshift(step); current = step.here;
+    }
+  }
+  return {steps, multiple: ways.get(end) > 1, limited};
+}
+
+function relationshipPath(context, index, coordinator) {
+  const {byId, svg} = context;
+  const status = byId('path-status'), origin = byId('path-origin'), steps = byId('path-steps');
+  let start;
+  function reset() {
+    for (const el of svg.querySelectorAll('[data-path-step]')) el.removeAttribute('data-path-step');
+    steps.replaceChildren(); status.textContent = '';
+  }
+  byId('path-start').addEventListener('click', () => {
+    reset();
+    const resource = index.targets.get(coordinator.selected);
+    if (!resource) { status.textContent = 'Select a resource first.'; return; }
+    start = resource.id;
+    origin.textContent = 'From ' + index.label(resource);
+  });
+  byId('path-clear').addEventListener('click', () => {
+    reset(); start = null; origin.textContent = '';
+  });
+  byId('path-find').addEventListener('click', () => {
+    reset();
+    const graph = impactGraph(index, svg);
+    const from = graph.domKeys.get(start), to = graph.domKeys.get(coordinator.selected);
+    if (!from || !to || from === to) {
+      status.textContent = 'Set a visible starting resource, then select a different destination.'; return;
+    }
+    const result = shortestRelationshipPath(graph, from, to);
+    const limit = result.limited ? ' Search limit reached.' : '';
+    if (!result.steps.length) { status.textContent = 'No verified path found in the searched relationships.' + limit; return; }
+    status.textContent = (result.multiple ? 'Multiple shortest paths found. Showing one.' : 'Showing one recorded relationship path.') + limit;
+    const marked = new Set();
+    for (const {here, next, edge} of result.steps) {
+      const a = graph.nodes.get(here), b = graph.nodes.get(next);
+      byId(a.id).setAttribute('data-path-step', 'true'); byId(b.id).setAttribute('data-path-step', 'true');
+      const row = document.createElement('li');
+      row.textContent = index.label(a) + (edge.direction === 'directed' ? ' → ' : ' ↔ ') + index.label(b) + ' · ' + edge.kind;
+      const proofs = new Set(edge.provenance.filter(p => p.kind === 'resource').map(index.sourceIdentity));
+      for (const el of index.edges.slice(0, 10000)) {
+        if (el.dataset.edgeKind !== edge.kind || graph.domKeys.get(el.dataset.source) !== edge.from
+          || graph.domKeys.get(el.dataset.target) !== edge.to) continue;
+        const ids = (el.dataset.relationshipIds || '').split(' ').filter(Boolean);
+        if (proofs.size && !ids.some(id => [...(index.relationshipEntries.get(id)?.querySelectorAll('[data-source-identity]') || [])]
+          .some(r => proofs.has(r.dataset.sourceIdentity)))) continue;
+        if (marked.has(el)) continue;
+        marked.add(el); el.setAttribute('data-path-step', 'true');
+        const numbers = ids.map(id => index.relationshipEntries.get(id)?.dataset.relationshipEntry).filter(Boolean);
+        if (numbers.length) row.append(' · #' + numbers.join(', #'));
+      }
+      steps.append(row);
+    }
+  });
+  return {reset};
+}
+
+function vpcFolding(context, index, coordinator, renderResults) {
+  const {svg, byId} = context;
+  const menu = byId('vpc-destination'), toggle = byId('vpc-toggle');
+  const frames = [...svg.querySelectorAll('[data-container], [data-route-table], [data-member-cluster]')];
+  const vpcs = frames.map(el => index.targets.get(el.dataset.container)).filter(r => r?.type === 'aws_vpc');
+  if (!vpcs.length) return;
+  byId('vpc-controls').hidden = false;
+  for (const r of vpcs) menu.add(new Option(r.state ? r.state + ': ' + r.address : r.address, r.id));
+  const closed = new Set();
+  const native = new Map(index.resources.map(r => [JSON.stringify([r.state, r.identity]), r.id]));
+  for (const el of index.components) native.set(JSON.stringify([el.closest('[data-state-id]')?.dataset.stateId || '', el.dataset.architectureId]), el.id);
+  const relations = [];
+  for (const data of svg.querySelectorAll('metadata[id$="architecture-relationships"]')) {
+    const state = data.closest('[data-state-id]')?.dataset.stateId || '';
+    for (const r of JSON.parse(data.textContent)) {
+      const from = native.get(JSON.stringify([state, r.from])), to = native.get(JSON.stringify([state, r.to]));
+      if (from && to) relations.push({from, to, kind:r.kind, direction:r.directionality});
+    }
+  }
+  for (const path of index.edges.filter(el => el.dataset.crossState)) {
+    relations.push({from:path.dataset.source, to:path.dataset.target, kind:'dependency', direction:'directed'});
+  }
+  function element(parent, name, attributes, text) {
+    const el = document.createElementNS(svg.namespaceURI, name);
+    for (const [key,value] of Object.entries(attributes)) el.setAttribute(key,value);
+    if (text !== undefined) el.textContent = text;
+    parent.append(el);
+    return el;
+  }
+  function refreshButton() {
+    toggle.textContent = closed.has(menu.value) ? 'Expand VPC' : 'Collapse VPC';
+    toggle.setAttribute('aria-expanded', String(!closed.has(menu.value)));
+  }
+  function redraw() {
+    for (const el of svg.querySelectorAll('[data-vpc-hidden]')) el.removeAttribute('data-vpc-hidden');
+    for (const el of svg.querySelectorAll('[data-vpc-overlay]')) el.remove();
+    if (!closed.size) return;
+    const representative = new Map();
+    for (const r of index.resources) {
+      let id = r.id;
+      const seen = new Set();
+      while (!closed.has(id) && !seen.has(id)) {
+        seen.add(id);
+        id = index.targets.get(id)?.context?.[0];
+        if (!id) break;
+      }
+      if (closed.has(id)) representative.set(r.id,id);
+    }
+    const hide = el => el?.setAttribute('data-vpc-hidden','');
+    for (const [id,owner] of representative) {
+      const el = document.getElementById(id);
+      if (id !== owner) { hide(el); continue; }
+      const [x,y] = el.dataset.presentationHeader.split(' ').map(Number);
+      for (const child of el.children) if (child.localName !== 'title') hide(child);
+      const card = element(el,'g',{'data-vpc-overlay':''});
+      const name = index.targets.get(id).address;
+      const label = element(card,'text',{x:x+12,y:y+28,'font-size':15,fill:'#134e4a'},name);
+      const width = Math.max(140,label.getComputedTextLength()+24);
+      const rect = element(card,'rect',{x,y,width,height:44,rx:8,fill:'#ecfdf5',stroke:'#047857','stroke-width':2});
+      card.prepend(rect);
+    }
+    for (const frame of frames) if (representative.has(frame.dataset.container || frame.dataset.routeTable || frame.dataset.memberCluster)) hide(frame);
+    for (const mask of svg.querySelectorAll('[data-occluder]')) {
+      if (representative.has(mask.dataset.occluder)) hide(mask);
+    }
+    const affected = new Set();
+    for (const edge of svg.querySelectorAll('[data-source][data-target]')) {
+      if (representative.has(edge.dataset.source) || representative.has(edge.dataset.target)) {
+        hide(edge);
+        for (const id of (edge.dataset.relationshipIds || '').split(' ').filter(Boolean)) affected.add(id);
+        if (edge.dataset.crossState && edge.nextElementSibling?.localName === 'circle') hide(edge.nextElementSibling);
+      }
+    }
+    for (const marker of svg.querySelectorAll('[data-relationship-marker]')) {
+      if (affected.has(marker.querySelector('a')?.getAttribute('href')?.slice(1))) hide(marker);
+    }
+    for (const id of affected) hide(document.getElementById(id));
+    for (const dot of svg.querySelectorAll('[data-junction-edges]')) {
+      const prefix = dot.closest('[data-state-id]')?.id.replace(/state$/, '') || '';
+      if (JSON.parse(dot.dataset.junctionEdges).some(pair => pair.some(id => representative.has(prefix+id)))) hide(dot);
+    }
+    const filtered = id => document.getElementById(id)?.closest('[data-html-filtered]');
+    const groups = new Map();
+    for (const {from,to,kind,direction} of relations) {
+      if (!representative.has(from) && !representative.has(to)) continue;
+      if (filtered(from) || filtered(to)) continue;
+      let a = representative.get(from) || from, b = representative.get(to) || to;
+      if (a === b || !byId(a) || !byId(b)) continue;
+      if (direction === 'undirected' && a > b) [a,b] = [b,a];
+      const key = JSON.stringify([a,b,kind,direction]);
+      const group = groups.get(key) || {a,b,kind,direction,count:0};
+      group.count++;
+      groups.set(key,group);
+    }
+    const overlay = element(svg,'g',{'data-vpc-overlay':''});
+    const rootMatrix = svg.getScreenCTM().inverse();
+    const center = id => {
+      const el = byId(id), box = el.getBBox();
+      const p = new DOMPoint(box.x+box.width/2, box.y+box.height/2).matrixTransform(rootMatrix.multiply(el.getScreenCTM()));
+      return {x:p.x,y:p.y,w:box.width/2,h:box.height/2};
+    };
+    const counts = new Map();
+    for (const {a,b,kind,direction,count} of groups.values()) {
+      const p = center(a), q = center(b), dx=q.x-p.x, dy=q.y-p.y;
+      const length=Math.hypot(dx,dy) || 1;
+      const pair=JSON.stringify([a,b].sort()), n=counts.get(pair) || 0;
+      counts.set(pair,n+1);
+      const offset=(a < b ? 1 : -1)*Math.ceil(n/2)*(n%2 ? 52 : -52);
+      const mid={x:(p.x+q.x)/2-dy/length*offset,y:(p.y+q.y)/2+dx/length*offset};
+      const port = box => {
+        const x=mid.x-box.x, y=mid.y-box.y;
+        const scale=Math.min(box.w/Math.max(Math.abs(x),0.001),box.h/Math.max(Math.abs(y),0.001),1);
+        return [box.x+x*scale,box.y+y*scale].join(' ');
+      };
+      const line=element(overlay,'g',{'data-vpc-aggregate':kind,'data-directionality':direction,'data-count':count,'data-from':a,'data-to':b});
+      const path=element(line,'path',{d:'M '+port(p)+' Q '+mid.x+' '+mid.y+' '+port(q),fill:'none',stroke:'#334155','stroke-width':2});
+      if (direction === 'directed') {
+        const marker=byId(a).closest('svg').querySelector('marker[id$="arrow"]');
+        if (marker) path.setAttribute('marker-end','url(#'+marker.id+')');
+      }
+      const name = id => index.targets.get(id)?.address || index.title(byId(id));
+      element(line,'title',{},name(a)+(direction === 'undirected' ? ' ↔ ' : ' → ')+name(b)+' · '+kind+' × '+count);
+      element(line,'text',{x:mid.x,y:mid.y-4,'text-anchor':'middle','font-size':14,fill:'#0f172a',stroke:'white','stroke-width':4,'paint-order':'stroke'},kind+' × '+count);
+    }
+  }
+  menu.addEventListener('change',refreshButton);
+  toggle.addEventListener('click',() => {
+    coordinator.clear();
+    if (closed.has(menu.value)) closed.delete(menu.value); else closed.add(menu.value);
+    redraw(); refreshButton(); renderResults();
+  });
+  refreshButton();
+  return redraw;
+}
+
   const byId = id => {
     const el = document.getElementById(id);
-    return el?.closest('[data-html-filtered]') ? null : el;
+    return el?.closest('[data-html-filtered], [data-vpc-hidden]') ? null : el;
   };
   generationInformation(byId);
   const viewport = byId('viewport');
@@ -1544,6 +1778,7 @@ function impact(context, index, selection, coordinator) {
   const details = byId('selection');
   const context = { byId, viewport, svg, search, results, details };
   const index = metadata(svg, byId);
+  for (const path of index.edges) path.removeAttribute('tabindex');
   const { resources, label, title, components } = index;
   const view = navigation(svg, viewport, byId);
   overview(context, view);
@@ -1569,7 +1804,9 @@ function impact(context, index, selection, coordinator) {
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
-  actionFiltering(context, index, view, coordinator, renderResults);
+  adapters.register(relationshipPath(context, index, coordinator));
+  const redrawVpcs = vpcFolding(context, index, coordinator, renderResults);
+  actionFiltering(context, index, view, coordinator, () => { redrawVpcs?.(); renderResults(); });
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {

@@ -8,7 +8,7 @@ pub(super) fn circle(point: Point, end: &str, stroke: &str) -> String {
 
 pub(super) fn attachment_circle(point: Point, attributes: &str, stroke: &str) -> String {
     format!(
-        r##"<circle {attributes} cx="{}" cy="{}" r="3.5" fill="#ffffff" stroke="{stroke}" stroke-width="1.5"/>"##,
+        r##"<circle {attributes} aria-hidden="true" cx="{}" cy="{}" r="3.5" fill="#ffffff" stroke="{stroke}" stroke-width="1.5"/>"##,
         point.x, point.y
     )
 }

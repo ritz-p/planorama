@@ -18,6 +18,7 @@
 <p id="overview-status"></p>
 </details>
 <nav aria-label="Diagram sections"><label for="section-destination">Diagram section</label><select id="section-destination"></select><button id="section-go" type="button">Go to section</button><p id="section-status" role="status"></p></nav>
+<section id="vpc-controls" hidden><label for="vpc-destination">VPC</label><select id="vpc-destination"></select><button id="vpc-toggle" type="button" aria-controls="viewport">Collapse VPC</button></section>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
 <label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
@@ -43,6 +44,15 @@
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
 <p id="history-status" role="status">No selection history</p>
+<section aria-label="Relationship path">
+<h2>Trace a relationship path</h2>
+<button id="path-start" type="button">Use selection as start</button>
+<span id="path-origin"></span>
+<button id="path-find" type="button">Trace to selection</button>
+<button id="path-clear" type="button">Clear path</button>
+<p>Follows recorded relationship directions in the visible diagram. A path does not establish network reachability.</p>
+<output id="path-status"></output><ol id="path-steps"></ol>
+</section>
 <section id="impact" aria-label="Potentially related resources">
 <h2>Explore change relationships</h2>
 <label for="impact-depth">Maximum hops</label>

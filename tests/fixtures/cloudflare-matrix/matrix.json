@@ -1,0 +1,10 @@
+{
+  "platform": "linux_amd64",
+  "terraform": ["1.9.8", "1.12.2"],
+  "provider": {
+    "5.27.0": "ae47a9f29594d57e634cc0b5b96a18da5a364f43cbd735622ce5fe808728065f",
+    "5.28.1": "2ae200482bf592cd703981c4d4fe87a52c0dfae81a70261295f59b1bb0d01a6c"
+  },
+  "case": "managed-create",
+  "source": "tests/fixtures/cloudflare-captured/main.tf"
+}

@@ -297,6 +297,10 @@ fn viewer_script() -> &'static str {
                     include_str!("html/impact-graph.js"),
                     "\n",
                     include_str!("html/impact.js"),
+                    "\n",
+                    include_str!("html/relationship-path.js"),
+                    "\n",
+                    include_str!("html/vpc-folding.js"),
                 ),
             )],
         )

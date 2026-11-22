@@ -83,6 +83,29 @@ lean -DwarningAsError=true --run tests/experiments/shortcuts/Selection.lean test
 cargo test --locked --lib routing_shared::shortcuts::tests::selection
 ```
 
+`tests/experiments/architecture/` の証明には同じ Lean 4.19.0 を使用します。参照モデルは state 内の managed/current な包含候補に限定し、構文解析・属性検証・スコープ判定の結果を入力として受け取ります。明示的な remote-state mapping は別の契約です。経路短縮モデルは簡約済み候補を検査し、ポート・障害物・境界・コストは Rust が判定する前提です。
+
+```sh
+lean -DwarningAsError=true --run tests/experiments/architecture/Reference.lean tests/experiments/architecture/reference-cases.txt
+cargo test --locked --test cli containment_matches_reference_proof_cases
+lean -DwarningAsError=true tests/experiments/architecture/Shortcut.lean
+cargo test --locked --lib routing_shared::shortcuts::tests
+lean -DwarningAsError=true tests/experiments/architecture/Ports.lean
+cargo test --locked --lib unrelated_wide_labels_do_not_expand_a_small_terminal_or_slot
+cargo test --locked --lib refined_flat_bundle_keeps_opposite_role_port
+lean -DwarningAsError=true tests/experiments/architecture/Containment.lean
+cargo test --locked --lib hierarchy_obstacles_and_direct_container_endpoints
+cargo test --locked --lib deferred_regression_large_fixture_limits_each_edges_bends_and_valid_route_stretch -- --ignored
+lean -DwarningAsError=true --run tests/experiments/architecture/LayoutSelection.lean tests/experiments/architecture/packing-cases.txt
+cargo test --locked --lib containers::placement::selection_tests
+```
+
+配置候補のモデルは `pack_with_affinity` が列挙した候補順、各候補の形状スコア、
+関係コストと affinity 偏差の和を入力にします。整数演算が Rust の型の範囲に
+収まることを前提に、最もコンパクトな候補を基準として
+形状の許容範囲を判定し、範囲内でコストと形状が同点なら先頭の候補を選びます。
+候補生成、コストの計測精度、描画後の品質は証明の対象外です。
+
 入力・表示設定変更による配置の変動を測定する任意の開発コマンドは
 [Layout stability](docs/layout-stability.md) を参照してください。
 

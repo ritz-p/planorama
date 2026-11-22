@@ -84,7 +84,7 @@ pub(super) fn render(
             } else {
                 "route"
             };
-            write!(svg, r#"<g id="{}" data-architecture-id="{}" data-terraform-address="{}" data-qualified-address="{}" data-embedded-{kind}="true"{}"#,
+            write!(svg, r#"<g id="{}" data-architecture-id="{}" role="group" tabindex="0" data-terraform-address="{}" data-qualified-address="{}" data-embedded-{kind}="true"{}"#,
                 super::identity::resource(node), super::escape(node.entity.id.as_str()), super::escape(&node.address),
                 super::escape(&node.resource_address().qualified()), super::operations::attributes(&node.metadata)).unwrap();
             if let Some(owner) = &node.member_owner {

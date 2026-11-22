@@ -2,8 +2,8 @@ use super::support::run_with_args;
 const INPUT: &[u8] = include_bytes!("../fixtures/anonymization-plan.json");
 
 #[test]
-fn anonymized_svg_and_html_remove_identifiers_from_all_exported_bytes() {
-    for format in ["svg", "html"] {
+fn anonymized_exports_remove_identifiers_from_all_exported_bytes() {
+    for format in ["svg", "html", "json"] {
         let ordinary = run_with_args(INPUT, &["--format", format]);
         assert!(ordinary.status.success());
         assert!(String::from_utf8_lossy(&ordinary.stdout).contains("private_table_sentinel"));

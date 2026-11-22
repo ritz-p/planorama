@@ -12,6 +12,7 @@ Terraform language feature or provider release.
 | Saved-plan provider evidence | Exact pairs in the [archive and account contract](provider-evidence.md) | Independently verified archives and authentication schemas |
 | Cloudflare schema and synthetic JSON | Terraform Core 1.9.8 / Cloudflare Provider 5.28.1 | [Pinned schema, synthetic fixtures and Core attribute-shape probe](cloudflare.md#reproduction-and-evidence); not captured Cloudflare deployments or saved-plan authentication evidence |
 | Cloudflare Provider-generated plan JSON | Terraform Core 1.9.8 / Cloudflare Provider 5.28.1 | [Create, update, requested replacement and data-source captures](cloudflare.md#provider-generated-plan-captures); artificial seed state and loopback HTTP data, no live API, apply, refresh or authentication verification |
+| Cloudflare managed create matrix | Core 1.9.8 and 1.12.2 × Provider 5.27.0 and 5.28.1 | [Seven managed resources, four create plans](cloudflare.md#managed-create-compatibility-matrix); empty state and offline planning |
 
 Fixed Core archives and checksums are pinned in
 [`matrix.json`](../tests/fixtures/compatibility/matrix.json), which also selects

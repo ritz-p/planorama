@@ -71,6 +71,9 @@ p { line-height: 1.5; }
 #viewport[data-selection] path[data-edge-kind]:not([data-viewer-edge]) { opacity: .25; }
 #viewport path[data-viewer-edge] { filter: drop-shadow(0 0 2px #64748b); }
 @media (max-width: 700px) { main { grid-template-columns: 1fr; grid-template-rows: 40% 60%; } aside { border-bottom: 1px solid #cbd5e1; } #results { max-height: 15vh; } }
+#viewport g[data-path-step] { outline: 3px dashed #5b21b6; outline-offset: 3px; }
+#viewport[data-selection] path[data-path-step] { opacity: 1; stroke-width: 5; filter: drop-shadow(0 0 2px #5b21b6); }
+[data-vpc-hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -84,6 +87,7 @@ p { line-height: 1.5; }
 <p id="overview-status"></p>
 </details>
 <nav aria-label="Diagram sections"><label for="section-destination">Diagram section</label><select id="section-destination"></select><button id="section-go" type="button">Go to section</button><p id="section-status" role="status"></p></nav>
+<section id="vpc-controls" hidden><label for="vpc-destination">VPC</label><select id="vpc-destination"></select><button id="vpc-toggle" type="button" aria-controls="viewport">Collapse VPC</button></section>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
 <label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
@@ -109,6 +113,15 @@ p { line-height: 1.5; }
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
 <p id="history-status" role="status">No selection history</p>
+<section aria-label="Relationship path">
+<h2>Trace a relationship path</h2>
+<button id="path-start" type="button">Use selection as start</button>
+<span id="path-origin"></span>
+<button id="path-find" type="button">Trace to selection</button>
+<button id="path-clear" type="button">Clear path</button>
+<p>Follows recorded relationship directions in the visible diagram. A path does not establish network reachability.</p>
+<output id="path-status"></output><ol id="path-steps"></ol>
+</section>
 <section id="impact" aria-label="Potentially related resources">
 <h2>Explore change relationships</h2>
 <label for="impact-depth">Maximum hops</label>
@@ -140,7 +153,7 @@ p { line-height: 1.5; }
 </section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="1584" viewBox="0 0 1380 1584" role="img" aria-labelledby="title description" data-legend-mode="omitted">
+<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="1584" viewBox="0 0 1380 1584" role="group" aria-labelledby="title" aria-describedby="description" data-legend-mode="omitted">
 <title id="title">Terraform plan</title>
 <desc id="description">8 resources (4 spatial cards, 4 logical resources in 3 group cards) · 4 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
@@ -164,7 +177,7 @@ p { line-height: 1.5; }
 <text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Controller — manages or configures services, workloa</text>
 <text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">ds or related resources; does not prove runtime control, tr</text>
 <text data-role-explanation="true" x="16" y="106" font-size="12" fill="#475569" xml:space="preserve">affic or relationships.</text>
-<g data-action-section="create"><rect x="8" y="126" width="488" height="220" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="158" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Task Definition" x="255" y="138" width="229" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="265" y="160" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Task Definition</text><g id="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-architecture-id="terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_ecs_task_definition.app" data-qualified-address="module.root.aws_ecs_task_definition.app" data-mode="managed" transform="translate(0 182)" data-role="controller"><title>module.root.aws_ecs_task_definition.app — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_ecs_task_definition.app</text>
+<g data-action-section="create"><rect x="8" y="126" width="488" height="220" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="158" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Task Definition" x="255" y="138" width="229" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="265" y="160" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Task Definition</text><g id="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-architecture-id="terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_ecs_task_definition.app" data-qualified-address="module.root.aws_ecs_task_definition.app" data-mode="managed" transform="translate(0 182)" data-role="controller"><title>module.root.aws_ecs_task_definition.app — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_ecs_task_definition.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
 <text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">controller</text>
 <g data-resource-references="true"><title>Execution role: module.root.aws_iam_role.app [execution_role_arn; direct attribute reference]
@@ -181,7 +194,7 @@ Task role: unresolved [task_role_arn; unresolved attribute reference]</title><te
 <text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">llections or federation configuration; do</text>
 <text data-role-explanation="true" x="16" y="106" font-size="12" fill="#475569" xml:space="preserve">es not prove authentication, role assumpt</text>
 <text data-role-explanation="true" x="16" y="126" font-size="12" fill="#475569" xml:space="preserve">ion or effective permissions.</text>
-<g data-action-section="read"><rect x="8" y="146" width="344" height="148" rx="8" fill="none" stroke="#7e22ce" stroke-width="2"/><title>Read (1)</title><text data-action-heading="true" x="20" y="178" font-size="13" font-weight="700" fill="#7e22ce" xml:space="preserve">Read (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="iam" data-service-full-name="AWS Identity and Access Management" data-display-name="IAM Role" x="232" y="158" width="108" height="32" rx="4" fill="#fee2e2"/><text data-service-name="true" x="242" y="180" font-size="18" font-weight="700" fill="#7f1d1d" xml:space="preserve">IAM Role</text><g id="resource-646174612e6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:646174612e6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="data.aws_iam_role.app" data-qualified-address="module.root.data.aws_iam_role.app" data-mode="data" transform="translate(0 202)" data-role="identity" data-external="true"><title>module.root.data.aws_iam_role.app — read</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.data.aws_iam_role.app</text>
+<g data-action-section="read"><rect x="8" y="146" width="344" height="148" rx="8" fill="none" stroke="#7e22ce" stroke-width="2"/><title>Read (1)</title><text data-action-heading="true" x="20" y="178" font-size="13" font-weight="700" fill="#7e22ce" xml:space="preserve">Read (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="iam" data-service-full-name="AWS Identity and Access Management" data-display-name="IAM Role" x="232" y="158" width="108" height="32" rx="4" fill="#fee2e2"/><text data-service-name="true" x="242" y="180" font-size="18" font-weight="700" fill="#7f1d1d" xml:space="preserve">IAM Role</text><g id="resource-646174612e6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:646174612e6177735f69616d5f726f6c652e617070-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="data.aws_iam_role.app" data-qualified-address="module.root.data.aws_iam_role.app" data-mode="data" transform="translate(0 202)" data-role="identity" data-external="true"><title>module.root.data.aws_iam_role.app — read</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.data.aws_iam_role.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
 <text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">identity</text>
 <line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#7e22ce" stroke-width="2" stroke-dasharray="6 4"/></g>
@@ -194,12 +207,12 @@ Task role: unresolved [task_role_arn; unresolved attribute reference]</title><te
 <text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">llections or federation configuration; do</text>
 <text data-role-explanation="true" x="16" y="106" font-size="12" fill="#475569" xml:space="preserve">es not prove authentication, role assumpt</text>
 <text data-role-explanation="true" x="16" y="126" font-size="12" fill="#475569" xml:space="preserve">ion or effective permissions.</text>
-<g data-action-section="create"><rect x="8" y="146" width="344" height="148" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="178" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="iam" data-service-full-name="AWS Identity and Access Management" data-display-name="IAM Role" x="232" y="158" width="108" height="32" rx="4" fill="#fee2e2"/><text data-service-name="true" x="242" y="180" font-size="18" font-weight="700" fill="#7f1d1d" xml:space="preserve">IAM Role</text><g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app" data-mode="managed" transform="translate(0 202)" data-role="identity"><title>module.root.aws_iam_role.app — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_iam_role.app</text>
+<g data-action-section="create"><rect x="8" y="146" width="344" height="148" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="178" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="iam" data-service-full-name="AWS Identity and Access Management" data-display-name="IAM Role" x="232" y="158" width="108" height="32" rx="4" fill="#fee2e2"/><text data-service-name="true" x="242" y="180" font-size="18" font-weight="700" fill="#7f1d1d" xml:space="preserve">IAM Role</text><g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app" data-mode="managed" transform="translate(0 202)" data-role="identity"><title>module.root.aws_iam_role.app — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_iam_role.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
 <text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">identity</text>
 <line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#047857" stroke-width="2"/></g>
 </g>
-<g data-action-section="unchanged"><rect x="8" y="306" width="344" height="148" rx="8" fill="none" stroke="#64748b" stroke-width="2"/><title>Unchanged (1)</title><text data-action-heading="true" x="20" y="338" font-size="13" font-weight="700" fill="#64748b" xml:space="preserve">Unchanged (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="iam" data-service-full-name="AWS Identity and Access Management" data-display-name="IAM Role" x="232" y="318" width="108" height="32" rx="4" fill="#fee2e2"/><text data-service-name="true" x="242" y="340" font-size="18" font-weight="700" fill="#7f1d1d" xml:space="preserve">IAM Role</text><g id="resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.worker.aws_iam_role.app" data-qualified-address="module.worker.aws_iam_role.app" data-mode="managed" transform="translate(0 362)" data-role="identity"><title>module.worker.aws_iam_role.app — unchanged</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.worker.aws_iam_role.app</text>
+<g data-action-section="unchanged"><rect x="8" y="306" width="344" height="148" rx="8" fill="none" stroke="#64748b" stroke-width="2"/><title>Unchanged (1)</title><text data-action-heading="true" x="20" y="338" font-size="13" font-weight="700" fill="#64748b" xml:space="preserve">Unchanged (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="iam" data-service-full-name="AWS Identity and Access Management" data-display-name="IAM Role" x="232" y="318" width="108" height="32" rx="4" fill="#fee2e2"/><text data-service-name="true" x="242" y="340" font-size="18" font-weight="700" fill="#7f1d1d" xml:space="preserve">IAM Role</text><g id="resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current" role="group" tabindex="0" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.worker.aws_iam_role.app" data-qualified-address="module.worker.aws_iam_role.app" data-mode="managed" transform="translate(0 362)" data-role="identity"><title>module.worker.aws_iam_role.app — unchanged</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.worker.aws_iam_role.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
 <text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">identity</text>
 <line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#64748b" stroke-width="2"/></g>
@@ -227,17 +240,17 @@ Task role: unresolved [task_role_arn; unresolved attribute reference]</title><te
 </g>
 <g data-architecture="true" transform="translate(0 906)">
 <rect x="35" y="160" width="1310" height="454" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
-<path d="M 380 264 L 532 264 Q 540 264 540 272 L 540 295 Q 540 303 548 303 L 700 303 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6563735f636c75737465722e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_ecs_cluster.app → module.root.aws_ecs_service.app</title></path>
+<path d="M 380 264 L 532 264 Q 540 264 540 272 L 540 295 Q 540 303 548 303 L 700 303 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6563735f636c75737465722e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_ecs_cluster.app → module.root.aws_ecs_service.app</title></path>
 <g data-edge-kind="dependency" data-source="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current"><title>module.root.aws_ecs_task_definition.app → module.root.aws_ecs_service.app</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f69616d5f726f6c652e617070-current" data-target="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current"><title>module.root.aws_iam_role.app → module.root.aws_ecs_task_definition.app</title></g>
-<path d="M 380 502 L 420 502 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6c622e617070-current" data-target="resource-6177735f6c625f6c697374656e65722e68747470-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_lb.app → module.root.aws_lb_listener.http</title></path>
-<g id="resource-6177735f6563735f636c75737465722e617070-current" data-architecture-id="terraform:6177735f6563735f636c75737465722e617070-current" data-qualified-address="module.root.aws_ecs_cluster.app" data-terraform-address="aws_ecs_cluster.app"><title>module.root.aws_ecs_cluster.app — unchanged</title>
+<path d="M 380 502 L 420 502 " data-edge-kind="dependency" role="img" tabindex="0" data-directionality="directed" data-source="resource-6177735f6c622e617070-current" data-target="resource-6177735f6c625f6c697374656e65722e68747470-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_lb.app → module.root.aws_lb_listener.http</title></path>
+<g id="resource-6177735f6563735f636c75737465722e617070-current" data-architecture-id="terraform:6177735f6563735f636c75737465722e617070-current" data-qualified-address="module.root.aws_ecs_cluster.app" data-terraform-address="aws_ecs_cluster.app" role="group" tabindex="0"><title>module.root.aws_ecs_cluster.app — unchanged</title>
 <rect x="60" y="208" width="320" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="236" font-size="11" fill="#64748b" xml:space="preserve">unchanged</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Cluster" x="231" y="216" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="241" y="238" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Cluster</text><text x="72" y="269" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_cluster.app</text>
 <text x="72" y="308" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
-<g id="resource-6177735f6563735f736572766963652e617070-current" data-architecture-id="terraform:6177735f6563735f736572766963652e617070-current" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app"><title>module.root.aws_ecs_service.app — update</title>
+<g id="resource-6177735f6563735f736572766963652e617070-current" data-architecture-id="terraform:6177735f6563735f736572766963652e617070-current" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app" role="group" tabindex="0"><title>module.root.aws_ecs_service.app — update</title>
 <rect x="700" y="208" width="600" height="190" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="712" y="236" font-size="11" fill="#1d4ed8" xml:space="preserve">update</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Service" x="1151" y="216" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="1161" y="238" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Service</text><text x="712" y="269" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_service.app</text>
@@ -249,20 +262,20 @@ Task definition: module.root.aws_ecs_task_definition.app [task_definition; direc
 </a></g>
 <text x="712" y="386" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
-<g id="resource-6177735f6c622e617070-current" data-architecture-id="terraform:6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb.app — create</title>
+<g id="resource-6177735f6c622e617070-current" data-architecture-id="terraform:6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app" role="group" tabindex="0" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb.app — create</title>
 <rect x="60" y="446" width="320" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="72" y="474" font-size="11" fill="#047857" xml:space="preserve">create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Elastic Load Balancing" data-display-name="Load Balancer" x="209" y="454" width="163" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="219" y="476" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Load Balancer</text><text x="72" y="507" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.app</text>
 </g>
-<g id="resource-6177735f6c625f6c697374656e65722e68747470-current" data-architecture-id="terraform:6177735f6c625f6c697374656e65722e68747470-current" data-qualified-address="module.root.aws_lb_listener.http" data-terraform-address="aws_lb_listener.http" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb_listener.http — update</title>
+<g id="resource-6177735f6c625f6c697374656e65722e68747470-current" data-architecture-id="terraform:6177735f6c625f6c697374656e65722e68747470-current" data-qualified-address="module.root.aws_lb_listener.http" data-terraform-address="aws_lb_listener.http" role="group" tabindex="0" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb_listener.http — update</title>
 <rect x="420" y="446" width="336" height="112" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text data-resource-type-heading="true" x="432" y="474" font-size="11" fill="#1d4ed8" xml:space="preserve">update</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Elastic Load Balancing" data-display-name="Load Balancer Listener" x="486" y="454" width="262" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="496" y="476" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Load Balancer Listener</text><text x="432" y="507" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb_listener.http</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f6563735f636c75737465722e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="264" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="380" cy="264" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6c622e617070-current" data-target="resource-6177735f6c625f6c697374656e65722e68747470-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="502" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" aria-hidden="true" cx="380" cy="502" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>
@@ -271,7 +284,7 @@ Task definition: module.root.aws_ecs_task_definition.app [task_definition; direc
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json">[{"action":"unchanged","address":"aws_ecs_cluster.app","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6563735f636c75737465722e617070-current","identity":"terraform:6177735f6563735f636c75737465722e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_ecs_cluster.app","scope":null,"state":"","type":"aws_ecs_cluster"},{"action":"update","address":"aws_ecs_service.app","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6563735f736572766963652e617070-current","identity":"terraform:6177735f6563735f736572766963652e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_ecs_service.app","scope":null,"state":"","type":"aws_ecs_service"},{"action":"create","address":"aws_ecs_task_definition.app","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","identity":"terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_ecs_task_definition.app","scope":null,"state":"","type":"aws_ecs_task_definition"},{"action":"create","address":"aws_iam_role.app","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f69616d5f726f6c652e617070-current","identity":"terraform:6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_iam_role.app","scope":{"account":null,"global":true,"provider":"AWS","region":null},"state":"","type":"aws_iam_role"},{"action":"create","address":"aws_lb.app","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6c622e617070-current","identity":"terraform:6177735f6c622e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_lb.app","scope":null,"state":"","type":"aws_lb"},{"action":"update","address":"aws_lb_listener.http","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6177735f6c625f6c697374656e65722e68747470-current","identity":"terraform:6177735f6c625f6c697374656e65722e68747470-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_lb_listener.http","scope":null,"state":"","type":"aws_lb_listener"},{"action":"read","address":"data.aws_iam_role.app","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-646174612e6177735f69616d5f726f6c652e617070-current","identity":"terraform:646174612e6177735f69616d5f726f6c652e617070-current","mode":"data","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.data.aws_iam_role.app","scope":{"account":null,"global":true,"provider":"AWS","region":null},"state":"","type":"aws_iam_role"},{"action":"unchanged","address":"module.worker.aws_iam_role.app","changed_paths":{"available":false,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"cloudflare_scope":null,"context":[],"deposed":null,"id":"resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","identity":"terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"module.worker","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.worker.aws_iam_role.app","scope":{"account":null,"global":true,"provider":"AWS","region":null},"state":"","type":"aws_iam_role"}]</script>
-<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":"b756b16a087daf585e8e1d191fb156564c988999-dirty","version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"cloudflare_accounts":[],"cloudflare_groups":false,"cloudflare_zones":[],"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"omitted","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
+<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":"7e82ae8e61d62ff4f65b6e90f74c83efa37e8562-dirty","version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"cloudflare_accounts":[],"cloudflare_groups":false,"cloudflare_zones":[],"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"omitted","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
 <script id="viewer-provider-data" type="application/json">[]</script>
 
 
@@ -371,7 +384,7 @@ function diagramExport(context) {
     const box = clone.getAttribute('viewBox').trim().split(/[ ,]+/).map(Number);
     if (box.length !== 4 || !box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0) throw new Error('Invalid export viewport');
     clone.setAttribute('width', box[2]); clone.setAttribute('height', box[3]);
-    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], script, foreignObject')) el.remove();
+    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], [data-vpc-hidden], script, foreignObject')) el.remove();
     const ids = new Set();
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
       if (el.id) {
@@ -379,7 +392,7 @@ function diagramExport(context) {
         ids.add(el.id);
       }
       for (const attr of [...el.attributes]) {
-        if (/^on/i.test(attr.name) || /^data-(viewer|impact)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
+        if (/^on/i.test(attr.name) || /^data-(viewer|impact|path)-/.test(attr.name) || ['tabindex', 'role', 'aria-pressed'].includes(attr.name)) el.removeAttributeNode(attr);
       }
     }
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
@@ -1213,7 +1226,7 @@ function actionFiltering(context, index, view, coordinator, renderResults) {
     svg.setAttribute('height', rootHeight + delta);
     view.resize(rootHeight + delta);
     for (const link of links) {
-      if (!byId(link.target)) {
+      if (document.getElementById(link.target)?.closest('[data-html-filtered]')) {
         link.el.removeAttribute('href'); link.el.setAttribute('aria-disabled', 'true');
         if (!link.title) {
           link.title = document.createElementNS(svg.namespaceURI, 'title');
@@ -1548,9 +1561,230 @@ function impact(context, index, selection, coordinator) {
   return { reset };
 }
 
+function shortestRelationshipPath(graph, start, end) {
+  const queue = [start], distance = new Map([[start, 0]]), ways = new Map([[start, 1]]);
+  const previous = new Map();
+  let scanned = 0, limited = graph.truncated;
+  search: for (let cursor = 0; cursor < queue.length; cursor++) {
+    const here = queue[cursor], depth = distance.get(here);
+    if (distance.has(end) && depth >= distance.get(end)) break;
+    for (const edge of graph.adjacent.get(here) || []) {
+      if (++scanned > 4000) { limited = true; break search; }
+      if (!['dependency', 'association', 'connection', 'subscription', 'eventsource', 'eventtarget'].includes(edge.kind)
+          || !edge.provenance.length || !edge.provenance.every(p => ['reference', 'resource', 'remote-state'].includes(p.kind))) continue;
+      if (edge.direction !== 'undirected' && !(edge.direction === 'directed' && edge.from === here)) continue;
+      const next = edge.from === here ? edge.to : edge.from;
+      if (!graph.nodes.has(next)) continue;
+      if (distance.has(next)) {
+        if (distance.get(next) === depth + 1) ways.set(next, Math.min(2, ways.get(next) + ways.get(here)));
+        continue;
+      }
+      if (queue.length >= 500 || depth >= 12) { limited = true; continue; }
+      distance.set(next, depth + 1); ways.set(next, ways.get(here));
+      previous.set(next, {here, next, edge}); queue.push(next);
+    }
+  }
+  const steps = [];
+  if (distance.has(end)) {
+    for (let current = end; current !== start;) {
+      const step = previous.get(current);
+      steps.unshift(step); current = step.here;
+    }
+  }
+  return {steps, multiple: ways.get(end) > 1, limited};
+}
+
+function relationshipPath(context, index, coordinator) {
+  const {byId, svg} = context;
+  const status = byId('path-status'), origin = byId('path-origin'), steps = byId('path-steps');
+  let start;
+  function reset() {
+    for (const el of svg.querySelectorAll('[data-path-step]')) el.removeAttribute('data-path-step');
+    steps.replaceChildren(); status.textContent = '';
+  }
+  byId('path-start').addEventListener('click', () => {
+    reset();
+    const resource = index.targets.get(coordinator.selected);
+    if (!resource) { status.textContent = 'Select a resource first.'; return; }
+    start = resource.id;
+    origin.textContent = 'From ' + index.label(resource);
+  });
+  byId('path-clear').addEventListener('click', () => {
+    reset(); start = null; origin.textContent = '';
+  });
+  byId('path-find').addEventListener('click', () => {
+    reset();
+    const graph = impactGraph(index, svg);
+    const from = graph.domKeys.get(start), to = graph.domKeys.get(coordinator.selected);
+    if (!from || !to || from === to) {
+      status.textContent = 'Set a visible starting resource, then select a different destination.'; return;
+    }
+    const result = shortestRelationshipPath(graph, from, to);
+    const limit = result.limited ? ' Search limit reached.' : '';
+    if (!result.steps.length) { status.textContent = 'No verified path found in the searched relationships.' + limit; return; }
+    status.textContent = (result.multiple ? 'Multiple shortest paths found. Showing one.' : 'Showing one recorded relationship path.') + limit;
+    const marked = new Set();
+    for (const {here, next, edge} of result.steps) {
+      const a = graph.nodes.get(here), b = graph.nodes.get(next);
+      byId(a.id).setAttribute('data-path-step', 'true'); byId(b.id).setAttribute('data-path-step', 'true');
+      const row = document.createElement('li');
+      row.textContent = index.label(a) + (edge.direction === 'directed' ? ' → ' : ' ↔ ') + index.label(b) + ' · ' + edge.kind;
+      const proofs = new Set(edge.provenance.filter(p => p.kind === 'resource').map(index.sourceIdentity));
+      for (const el of index.edges.slice(0, 10000)) {
+        if (el.dataset.edgeKind !== edge.kind || graph.domKeys.get(el.dataset.source) !== edge.from
+          || graph.domKeys.get(el.dataset.target) !== edge.to) continue;
+        const ids = (el.dataset.relationshipIds || '').split(' ').filter(Boolean);
+        if (proofs.size && !ids.some(id => [...(index.relationshipEntries.get(id)?.querySelectorAll('[data-source-identity]') || [])]
+          .some(r => proofs.has(r.dataset.sourceIdentity)))) continue;
+        if (marked.has(el)) continue;
+        marked.add(el); el.setAttribute('data-path-step', 'true');
+        const numbers = ids.map(id => index.relationshipEntries.get(id)?.dataset.relationshipEntry).filter(Boolean);
+        if (numbers.length) row.append(' · #' + numbers.join(', #'));
+      }
+      steps.append(row);
+    }
+  });
+  return {reset};
+}
+
+function vpcFolding(context, index, coordinator, renderResults) {
+  const {svg, byId} = context;
+  const menu = byId('vpc-destination'), toggle = byId('vpc-toggle');
+  const frames = [...svg.querySelectorAll('[data-container], [data-route-table], [data-member-cluster]')];
+  const vpcs = frames.map(el => index.targets.get(el.dataset.container)).filter(r => r?.type === 'aws_vpc');
+  if (!vpcs.length) return;
+  byId('vpc-controls').hidden = false;
+  for (const r of vpcs) menu.add(new Option(r.state ? r.state + ': ' + r.address : r.address, r.id));
+  const closed = new Set();
+  const native = new Map(index.resources.map(r => [JSON.stringify([r.state, r.identity]), r.id]));
+  for (const el of index.components) native.set(JSON.stringify([el.closest('[data-state-id]')?.dataset.stateId || '', el.dataset.architectureId]), el.id);
+  const relations = [];
+  for (const data of svg.querySelectorAll('metadata[id$="architecture-relationships"]')) {
+    const state = data.closest('[data-state-id]')?.dataset.stateId || '';
+    for (const r of JSON.parse(data.textContent)) {
+      const from = native.get(JSON.stringify([state, r.from])), to = native.get(JSON.stringify([state, r.to]));
+      if (from && to) relations.push({from, to, kind:r.kind, direction:r.directionality});
+    }
+  }
+  for (const path of index.edges.filter(el => el.dataset.crossState)) {
+    relations.push({from:path.dataset.source, to:path.dataset.target, kind:'dependency', direction:'directed'});
+  }
+  function element(parent, name, attributes, text) {
+    const el = document.createElementNS(svg.namespaceURI, name);
+    for (const [key,value] of Object.entries(attributes)) el.setAttribute(key,value);
+    if (text !== undefined) el.textContent = text;
+    parent.append(el);
+    return el;
+  }
+  function refreshButton() {
+    toggle.textContent = closed.has(menu.value) ? 'Expand VPC' : 'Collapse VPC';
+    toggle.setAttribute('aria-expanded', String(!closed.has(menu.value)));
+  }
+  function redraw() {
+    for (const el of svg.querySelectorAll('[data-vpc-hidden]')) el.removeAttribute('data-vpc-hidden');
+    for (const el of svg.querySelectorAll('[data-vpc-overlay]')) el.remove();
+    if (!closed.size) return;
+    const representative = new Map();
+    for (const r of index.resources) {
+      let id = r.id;
+      const seen = new Set();
+      while (!closed.has(id) && !seen.has(id)) {
+        seen.add(id);
+        id = index.targets.get(id)?.context?.[0];
+        if (!id) break;
+      }
+      if (closed.has(id)) representative.set(r.id,id);
+    }
+    const hide = el => el?.setAttribute('data-vpc-hidden','');
+    for (const [id,owner] of representative) {
+      const el = document.getElementById(id);
+      if (id !== owner) { hide(el); continue; }
+      const [x,y] = el.dataset.presentationHeader.split(' ').map(Number);
+      for (const child of el.children) if (child.localName !== 'title') hide(child);
+      const card = element(el,'g',{'data-vpc-overlay':''});
+      const name = index.targets.get(id).address;
+      const label = element(card,'text',{x:x+12,y:y+28,'font-size':15,fill:'#134e4a'},name);
+      const width = Math.max(140,label.getComputedTextLength()+24);
+      const rect = element(card,'rect',{x,y,width,height:44,rx:8,fill:'#ecfdf5',stroke:'#047857','stroke-width':2});
+      card.prepend(rect);
+    }
+    for (const frame of frames) if (representative.has(frame.dataset.container || frame.dataset.routeTable || frame.dataset.memberCluster)) hide(frame);
+    for (const mask of svg.querySelectorAll('[data-occluder]')) {
+      if (representative.has(mask.dataset.occluder)) hide(mask);
+    }
+    const affected = new Set();
+    for (const edge of svg.querySelectorAll('[data-source][data-target]')) {
+      if (representative.has(edge.dataset.source) || representative.has(edge.dataset.target)) {
+        hide(edge);
+        for (const id of (edge.dataset.relationshipIds || '').split(' ').filter(Boolean)) affected.add(id);
+        if (edge.dataset.crossState && edge.nextElementSibling?.localName === 'circle') hide(edge.nextElementSibling);
+      }
+    }
+    for (const marker of svg.querySelectorAll('[data-relationship-marker]')) {
+      if (affected.has(marker.querySelector('a')?.getAttribute('href')?.slice(1))) hide(marker);
+    }
+    for (const id of affected) hide(document.getElementById(id));
+    for (const dot of svg.querySelectorAll('[data-junction-edges]')) {
+      const prefix = dot.closest('[data-state-id]')?.id.replace(/state$/, '') || '';
+      if (JSON.parse(dot.dataset.junctionEdges).some(pair => pair.some(id => representative.has(prefix+id)))) hide(dot);
+    }
+    const filtered = id => document.getElementById(id)?.closest('[data-html-filtered]');
+    const groups = new Map();
+    for (const {from,to,kind,direction} of relations) {
+      if (!representative.has(from) && !representative.has(to)) continue;
+      if (filtered(from) || filtered(to)) continue;
+      let a = representative.get(from) || from, b = representative.get(to) || to;
+      if (a === b || !byId(a) || !byId(b)) continue;
+      if (direction === 'undirected' && a > b) [a,b] = [b,a];
+      const key = JSON.stringify([a,b,kind,direction]);
+      const group = groups.get(key) || {a,b,kind,direction,count:0};
+      group.count++;
+      groups.set(key,group);
+    }
+    const overlay = element(svg,'g',{'data-vpc-overlay':''});
+    const rootMatrix = svg.getScreenCTM().inverse();
+    const center = id => {
+      const el = byId(id), box = el.getBBox();
+      const p = new DOMPoint(box.x+box.width/2, box.y+box.height/2).matrixTransform(rootMatrix.multiply(el.getScreenCTM()));
+      return {x:p.x,y:p.y,w:box.width/2,h:box.height/2};
+    };
+    const counts = new Map();
+    for (const {a,b,kind,direction,count} of groups.values()) {
+      const p = center(a), q = center(b), dx=q.x-p.x, dy=q.y-p.y;
+      const length=Math.hypot(dx,dy) || 1;
+      const pair=JSON.stringify([a,b].sort()), n=counts.get(pair) || 0;
+      counts.set(pair,n+1);
+      const offset=(a < b ? 1 : -1)*Math.ceil(n/2)*(n%2 ? 52 : -52);
+      const mid={x:(p.x+q.x)/2-dy/length*offset,y:(p.y+q.y)/2+dx/length*offset};
+      const port = box => {
+        const x=mid.x-box.x, y=mid.y-box.y;
+        const scale=Math.min(box.w/Math.max(Math.abs(x),0.001),box.h/Math.max(Math.abs(y),0.001),1);
+        return [box.x+x*scale,box.y+y*scale].join(' ');
+      };
+      const line=element(overlay,'g',{'data-vpc-aggregate':kind,'data-directionality':direction,'data-count':count,'data-from':a,'data-to':b});
+      const path=element(line,'path',{d:'M '+port(p)+' Q '+mid.x+' '+mid.y+' '+port(q),fill:'none',stroke:'#334155','stroke-width':2});
+      if (direction === 'directed') {
+        const marker=byId(a).closest('svg').querySelector('marker[id$="arrow"]');
+        if (marker) path.setAttribute('marker-end','url(#'+marker.id+')');
+      }
+      const name = id => index.targets.get(id)?.address || index.title(byId(id));
+      element(line,'title',{},name(a)+(direction === 'undirected' ? ' ↔ ' : ' → ')+name(b)+' · '+kind+' × '+count);
+      element(line,'text',{x:mid.x,y:mid.y-4,'text-anchor':'middle','font-size':14,fill:'#0f172a',stroke:'white','stroke-width':4,'paint-order':'stroke'},kind+' × '+count);
+    }
+  }
+  menu.addEventListener('change',refreshButton);
+  toggle.addEventListener('click',() => {
+    coordinator.clear();
+    if (closed.has(menu.value)) closed.delete(menu.value); else closed.add(menu.value);
+    redraw(); refreshButton(); renderResults();
+  });
+  refreshButton();
+  return redraw;
+}
+
   const byId = id => {
     const el = document.getElementById(id);
-    return el?.closest('[data-html-filtered]') ? null : el;
+    return el?.closest('[data-html-filtered], [data-vpc-hidden]') ? null : el;
   };
   generationInformation(byId);
   const viewport = byId('viewport');
@@ -1560,6 +1794,7 @@ function impact(context, index, selection, coordinator) {
   const details = byId('selection');
   const context = { byId, viewport, svg, search, results, details };
   const index = metadata(svg, byId);
+  for (const path of index.edges) path.removeAttribute('tabindex');
   const { resources, label, title, components } = index;
   const view = navigation(svg, viewport, byId);
   overview(context, view);
@@ -1585,7 +1820,9 @@ function impact(context, index, selection, coordinator) {
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
-  actionFiltering(context, index, view, coordinator, renderResults);
+  adapters.register(relationshipPath(context, index, coordinator));
+  const redrawVpcs = vpcFolding(context, index, coordinator, renderResults);
+  actionFiltering(context, index, view, coordinator, () => { redrawVpcs?.(); renderResults(); });
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {
