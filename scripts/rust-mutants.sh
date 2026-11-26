@@ -3,8 +3,8 @@ set -eu
 cd "$(dirname "$0")/.."
 pilot=${1-reference}
 case "$#:$pilot" in
-    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:cached-data|1:memory-headroom|1:json-budget|1:anonymous-metadata) ;;
-    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|cached-data|memory-headroom|json-budget|anonymous-metadata]' >&2; exit 1 ;;
+    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:cached-data|1:memory-headroom|1:json-budget|1:named-limits|1:anonymous-metadata) ;;
+    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|cached-data|memory-headroom|json-budget|named-limits|anonymous-metadata]' >&2; exit 1 ;;
 esac
 if [ "$(cargo mutants --version)" != 'cargo-mutants 25.3.1' ]; then
     echo 'Install cargo-mutants 25.3.1 before running the pilot.' >&2
@@ -69,6 +69,12 @@ case "$pilot" in
         filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
         set -- "$@" -C=--lib -f src/generation/budget.rs -F "$filter"
         ;;
+    named-limits)
+        expected=1
+        output=$output/$pilot
+        filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
+        set -- "$@" -C=--lib -f src/named_inputs.rs -F "$filter"
+        ;;
     anonymous-metadata)
         expected=1
         output=$output/$pilot
@@ -107,6 +113,7 @@ case "$pilot" in
     cached-data) set -- "$@" --exact plan::collections::tests::cached_data_ids_are_used_but_explicit_after_null_does_not_fall_back plan::collections::tests::arn_proof_uses_planned_nested_values_but_never_overrides_explicit_unknown_or_null_changes ;;
     memory-headroom) set -- "$@" --exact generation::memory::tests::memory_preflight_keeps_headroom_and_never_wraps ;;
     json-budget) set -- "$@" --exact generation::budget::tests::structural_limits_are_checked_without_building_a_json_tree named_inputs::tests::named_jobs_enforce_aggregate_bytes_structure_and_nodes ;;
+    named-limits) set -- "$@" --exact named_inputs::tests::named_validation_rejects_names_and_aggregate_size_before_parsing named_inputs::tests::named_jobs_enforce_aggregate_bytes_structure_and_nodes ;;
     anonymous-metadata) set -- "$@" --exact anonymization::anonymized_exports_remove_identifiers_from_all_exported_bytes anonymization::selection_and_legend_settings_do_not_reintroduce_original_names ;;
     diff) set -- "$@" diff_ ;;
     input-file) set -- "$@" --exact states::hard_linked_output_cannot_truncate_single_or_named_inputs ;;

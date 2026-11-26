@@ -375,6 +375,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh cached-data` | Invert the data-resource check for prior-state fallback. Compare cached ID evidence with explicit nulls and masked ARN values. | `output/rust-mutants/cached-data` |
 | `sh scripts/rust-mutants.sh memory-headroom` | Invert the memory limit comparison. Check exact fit, one-byte excess and checked addition overflow using host-side arithmetic. | `output/rust-mutants/memory-headroom` |
 | `sh scripts/rust-mutants.sh json-budget` | Require both structural limits to be exceeded. Check nesting depth, element count, malformed JSON and the shared budget for named inputs. | `output/rust-mutants/json-budget` |
+| `sh scripts/rust-mutants.sh named-limits` | Reject exactly 64 named inputs. Check input count, combined byte budget and duplicate state names. | `output/rust-mutants/named-limits` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.

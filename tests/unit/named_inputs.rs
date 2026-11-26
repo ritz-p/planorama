@@ -49,6 +49,30 @@ fn named_inventory_preserves_states_modes_history_and_module_counts() {
 #[test]
 fn named_validation_rejects_names_and_aggregate_size_before_parsing() {
     assert_eq!(inspect_named_inputs(&[]).unwrap_err(), Error::EmptyInputs);
+
+    let json = r#"{"format_version":"1.2","resource_changes":[]}"#;
+    let states: Vec<_> = (0..65)
+        .map(|i| NamedInput {
+            state: format!("state-{i}"),
+            json: json.into(),
+        })
+        .collect();
+    for (count, expected) in [(63, None), (64, None), (65, Some(Error::EmptyInputs))] {
+        assert_eq!(
+            inspect_named_inputs(&states[..count]).err(),
+            expected,
+            "{count} states"
+        );
+    }
+    let total_bytes = 2 * json.len();
+    assert_eq!(
+        validate(&states[..2], total_bytes, Error::InputTooLarge),
+        Ok(())
+    );
+    assert_eq!(
+        validate(&states[..2], total_bytes - 1, Error::InputTooLarge),
+        Err(Error::InputTooLarge)
+    );
     for name in ["", "name:bad", " name", "日本語", &"a".repeat(65)] {
         let mut inputs = inputs();
         inputs[0].state = name.into();

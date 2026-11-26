@@ -46,6 +46,11 @@ const pilots = {
     functionName: "<impl DeserializeSeed<'de> for Seed<'_>>::deserialize",
     changes: [['self.depth >= 64 || self.remaining.get() == 0', '||', '&&']],
   },
+  'named-limits': {
+    source: 'src/named_inputs.rs',
+    functionName: 'validate',
+    changes: [['inputs.len() > 64', '>', '>=']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
