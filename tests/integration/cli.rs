@@ -354,6 +354,23 @@ fn semantic_diff_preserves_explicit_moves_and_compares_containment() {
             .iter()
             .any(|e| e["kind"] == "containment")
     );
+    let mut ambiguous: Value =
+        serde_json::from_str(&snapshot("aws_vpc.renamed", true, true)).unwrap();
+    ambiguous["resource_changes"].as_array_mut().unwrap().push(
+        json!({"address":"aws_vpc.other","type":"aws_vpc","previous_address":"aws_vpc.sentinel"}),
+    );
+    std::fs::write(&after, ambiguous.to_string()).unwrap();
+    let diff = run(&[]);
+    assert_eq!(
+        diff["resources"]["unknown"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|resource| resource["address"].as_str().unwrap())
+            .collect::<std::collections::BTreeSet<_>>(),
+        ["aws_vpc.sentinel", "aws_vpc.renamed", "aws_vpc.other"].into()
+    );
+    assert_eq!(diff["relationships"], json!({"added":[],"removed":[]}));
     std::fs::write(&after, r#"{"format_version":"1.2","resource_changes":[]}"#).unwrap();
     assert_eq!(
         run(&[])["resources"]["removed"].as_array().unwrap().len(),
