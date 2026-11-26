@@ -43,7 +43,7 @@ pub(super) fn export<'a>(
             );
         }
         for edge in &graph.relationships {
-            let kind = super::relationship_kind(edge.kind);
+            let kind = crate::diff::relationship_kind(edge.kind);
             let evidence: BTreeSet<_> = edge
                 .provenance
                 .iter()

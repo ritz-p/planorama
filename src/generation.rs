@@ -153,6 +153,8 @@ pub struct Generated {
 }
 
 pub const MAX_INPUT_BYTES: usize = 32 * 1024 * 1024;
+pub(crate) const MAX_BROWSER_NODES: usize = 256;
+pub(crate) const MAX_BROWSER_EDGES: usize = 1024;
 pub const MAX_BROWSER_INPUT_BYTES: usize = 2 * 1024 * 1024;
 pub const MAX_BROWSER_OUTPUT_BYTES: usize = 4 * 1024 * 1024;
 pub(crate) const MAX_BROWSER_OPTIONS_BYTES: usize = 64 * 1024;
@@ -199,8 +201,8 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
         crate::work::checkpoint().await;
     }
     let raw = parse_input_with_value_matches(json, options.cloudflare_value_matches)?;
-    crate::work::check_limit(raw.nodes.len(), 256).await;
-    crate::work::check_limit(raw.edges.len(), 1024).await;
+    crate::work::check_limit(raw.nodes.len(), MAX_BROWSER_NODES).await;
+    crate::work::check_limit(raw.edges.len(), MAX_BROWSER_EDGES).await;
     crate::work::checkpoint().await;
     progress::report("selection");
     let diagnostics = semantic::diagnostics::collect(&raw)
@@ -212,8 +214,8 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
     let graph = project(&raw, &filter).map_err(|_| Error::SelectionFailed)?;
     drop(raw);
     crate::work::checkpoint().await;
-    crate::work::check_limit(graph.nodes.len(), 256).await;
-    crate::work::check_limit(graph.edges.len(), 1024).await;
+    crate::work::check_limit(graph.nodes.len(), MAX_BROWSER_NODES).await;
+    crate::work::check_limit(graph.edges.len(), MAX_BROWSER_EDGES).await;
     progress::report("placement");
     let layout = Layout::new_step(&graph).await;
     crate::work::checkpoint().await;

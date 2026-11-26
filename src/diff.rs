@@ -1,4 +1,8 @@
+#[cfg(not(target_arch = "wasm32"))]
+#[path = "cli/diff/diagrams.rs"]
 mod diagrams;
+#[cfg(not(target_arch = "wasm32"))]
+#[path = "cli/diff/markdown.rs"]
 mod markdown;
 
 use crate::model::{
@@ -113,6 +117,7 @@ impl SnapshotError {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn snapshot(
     files: &[(StateId, String)],
     mappings: &[Mapping],
@@ -129,9 +134,17 @@ fn snapshot(
         })
         .collect::<Result<Vec<_>, String>>()?;
     let plans = crate::plan::parse_inputs_with(inputs, |_, json| crate::plan::parse(json))?;
-    crate::semantic::cross_state::validate_mappings(&plans, mappings)
+    snapshot_plans(&plans, mappings, diagrams)
+}
+
+fn snapshot_plans(
+    plans: &crate::model::MultiPlan,
+    mappings: &[Mapping],
+    diagrams: bool,
+) -> Result<Snapshot, SnapshotError> {
+    crate::semantic::cross_state::validate_mappings(plans, mappings)
         .map_err(SnapshotError::Mapping)?;
-    let resolved = crate::semantic::cross_state::resolve(&plans, mappings);
+    let resolved = crate::semantic::cross_state::resolve(plans, mappings);
     if let Some(diagnostic) = resolved.diagnostics.first() {
         return Err(SnapshotError::Unresolved(diagnostic.reason));
     }
@@ -236,7 +249,7 @@ fn snapshot(
             );
         }
         for edge in &graph.relationships {
-            let kind = super::relationship_kind(edge.kind);
+            let kind = relationship_kind(edge.kind);
             snapshot.edges.insert(
                 Link {
                     from: ids
@@ -290,6 +303,33 @@ struct Comparison {
 type Names<'a> = Option<BTreeMap<&'a Key, usize>>;
 
 impl Comparison {
+    fn pseudonyms<'a>(
+        &self,
+        before: &'a Snapshot,
+        after: &'a Snapshot,
+    ) -> BTreeMap<&'a Key, usize> {
+        let mut ids: BTreeMap<_, _> = before
+            .nodes
+            .keys()
+            .enumerate()
+            .map(|(i, key)| (key, i + 1))
+            .collect();
+        for (old, new) in &self.mapping {
+            if let Some((key, _)) = after.nodes.get_key_value(new) {
+                ids.insert(key, ids[old]);
+            }
+        }
+        let mut next = before.nodes.len() + 1;
+        for key in after.nodes.keys() {
+            ids.entry(key).or_insert_with(|| {
+                let id = next;
+                next += 1;
+                id
+            });
+        }
+        ids
+    }
+
     fn json(&self, names: &Names<'_>) -> serde_json::Value {
         use serde_json::json;
         let show = |k: &Key| match names {
@@ -411,13 +451,15 @@ fn compare(before: &Snapshot, after: &Snapshot) -> Comparison {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(PartialEq)]
 enum ReportFormat {
     Json,
     Markdown,
 }
 
-pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> {
+#[cfg(not(target_arch = "wasm32"))]
+pub(crate) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> {
     let mut files = Vec::new();
     let (mut before, mut after) = (Vec::new(), Vec::new());
     let mut mappings = Vec::new();
@@ -475,7 +517,7 @@ pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
     }
     let output = output.unwrap_or_else(|| PathBuf::from("-"));
     for (_, path) in before.iter().chain(&after) {
-        super::states::protect_input(path, &output)?;
+        crate::cli::states::protect_input(path, &output)?;
     }
     let before = snapshot(&before, &mappings, svg_dir.is_some());
     let after = snapshot(&after, &mappings, svg_dir.is_some());
@@ -487,17 +529,7 @@ pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
                 return diagrams::write(&dir, &before, &after, &diff.mapping, anonymous)
                     .map_err(|e| e.to_string());
             }
-            let names = anonymous.then(|| {
-                before
-                    .nodes
-                    .keys()
-                    .chain(after.nodes.keys())
-                    .collect::<BTreeSet<_>>()
-                    .into_iter()
-                    .enumerate()
-                    .map(|(i, key)| (key, i + 1))
-                    .collect()
-            });
+            let names = anonymous.then(|| diff.pseudonyms(&before, &after));
             if markdown {
                 markdown::render(&diff, &names, &before, &after).into_bytes()
             } else {
@@ -525,4 +557,64 @@ pub(super) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
         std::fs::write(output, bytes)
     }
     .map_err(|e| e.to_string())
+}
+
+pub(crate) fn relationship_kind(kind: crate::model::EdgeKind) -> &'static str {
+    use crate::model::EdgeKind;
+    match kind {
+        EdgeKind::Dependency => "dependency",
+        EdgeKind::Connection => "connection",
+        EdgeKind::Containment => "containment",
+        EdgeKind::Association => "association",
+        EdgeKind::EventSource => "event-source",
+        EdgeKind::EventTarget => "event-target",
+        EdgeKind::Subscription => "subscription",
+    }
+}
+
+pub fn compare_plans(
+    before: &str,
+    after: &str,
+    anonymize: bool,
+) -> Result<serde_json::Value, crate::Error> {
+    use crate::generation::{MAX_BROWSER_EDGES, MAX_BROWSER_INPUT_BYTES, MAX_BROWSER_NODES};
+    if before.len().max(after.len()) > MAX_BROWSER_INPUT_BYTES {
+        return Err(crate::Error::ResourceLimit);
+    }
+    #[cfg(target_arch = "wasm32")]
+    crate::generation::memory::check_inspection(
+        (before.len() as u64 + after.len() as u64) * 64 + 16 * 1024 * 1024,
+    )?;
+    let remaining = std::cell::Cell::new(32_768);
+    for json in [before, after] {
+        crate::generation::budget::validate_remaining(json, &remaining)?;
+    }
+    let snapshot = |json: &str| {
+        let plan = crate::generation::parse_input(json)?;
+        if plan.nodes.len() > MAX_BROWSER_NODES || plan.edges.len() > MAX_BROWSER_EDGES {
+            return Err(crate::Error::ResourceLimit);
+        }
+        let plans = crate::model::MultiPlan {
+            states: [(
+                StateId::new("default").map_err(|_| crate::Error::GenerationFailed)?,
+                plan,
+            )]
+            .into(),
+        };
+        let snapshot =
+            snapshot_plans(&plans, &[], false).map_err(|_| crate::Error::GenerationFailed)?;
+        if snapshot.nodes.len() > MAX_BROWSER_NODES || snapshot.edges.len() > MAX_BROWSER_EDGES {
+            return Err(crate::Error::ResourceLimit);
+        }
+        Ok(snapshot)
+    };
+    let before = snapshot(before)?;
+    let after = snapshot(after)?;
+    let diff = compare(&before, &after);
+    let names = anonymize.then(|| diff.pseudonyms(&before, &after));
+    let result = diff.json(&names);
+    if result.to_string().len() > crate::generation::MAX_BROWSER_OUTPUT_BYTES {
+        return Err(crate::Error::ResourceLimit);
+    }
+    Ok(result)
 }

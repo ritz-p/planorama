@@ -36,6 +36,7 @@ measure anonymization-parity node tests/browser/wasm-anonymization.cjs
 measure anonymization-audit node tests/browser/anonymization.cjs
 measure dms-parity node tests/browser/wasm-dms-node.cjs
 measure browser-memory node tests/browser/memory.cjs output/browser/pkg
+measure browser-diff node tests/browser/diff.cjs output/browser/pkg
 measure browser-summary node tests/browser/input-summary.cjs output/browser/pkg
 measure browser-tests node tests/browser/wasm.cjs
 if [ "$WASM_CI_SUITE" = full ]; then
@@ -43,6 +44,7 @@ if [ "$WASM_CI_SUITE" = full ]; then
     measure standalone-cli cargo test --locked --no-default-features --test cli help_
 fi
 measure standalone-memory node tests/browser/memory.cjs
+measure standalone-diff node tests/browser/diff.cjs
 measure standalone-summary node tests/browser/input-summary.cjs
 measure standalone-tests node tests/browser/wasm-engine.cjs
 sccache --show-stats > "$report/sccache.txt"
