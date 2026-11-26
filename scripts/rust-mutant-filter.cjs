@@ -51,6 +51,11 @@ const pilots = {
     functionName: 'validate',
     changes: [['inputs.len() > 64', '>', '>=']],
   },
+  'pseudonym-collision': {
+    source: 'src/view/anonymize.rs',
+    functionName: 'Projection::name',
+    changes: [['name == value || self.reserved.contains(&name)', '||', '&&']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',

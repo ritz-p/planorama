@@ -61,7 +61,6 @@ fn anonymous_projection_keeps_topology_and_resolves_references() {
         )
         .unwrap();
         assert_eq!(ordinary.nodes.len(), private.nodes.len());
-        assert_eq!(ordinary.relationships.len(), private.relationships.len());
         assert_eq!(ordinary.components.len(), private.components.len());
         assert_eq!(
             ordinary
@@ -87,10 +86,28 @@ fn anonymous_projection_keeps_topology_and_resolves_references() {
                 b.references.iter().map(|r| r.targets.len()).sum::<usize>()
             );
         }
-        for relation in &private.relationships {
-            assert!(private.entities().any(|e| e.id == relation.from));
-            assert!(private.entities().any(|e| e.id == relation.to));
-        }
+        let pseudonyms: BTreeMap<_, _> = ordinary
+            .entities()
+            .zip(private.entities())
+            .map(|(original, anonymous)| (&original.id, &anonymous.id))
+            .collect();
+        assert_eq!(
+            pseudonyms.values().collect::<BTreeSet<_>>().len(),
+            pseudonyms.len()
+        );
+        let mut expected: Vec<_> = ordinary
+            .relationships
+            .iter()
+            .map(|r| (pseudonyms[&r.from], pseudonyms[&r.to], r.kind))
+            .collect();
+        let mut actual: Vec<_> = private
+            .relationships
+            .iter()
+            .map(|r| (&r.from, &r.to, r.kind))
+            .collect();
+        expected.sort_unstable();
+        actual.sort_unstable();
+        assert_eq!(actual, expected);
     }
 }
 
