@@ -56,6 +56,11 @@ const pilots = {
     functionName: 'Projection::name',
     changes: [['name == value || self.reserved.contains(&name)', '||', '&&']],
   },
+  'module-instance': {
+    source: 'src/model/modules.rs',
+    functionName: 'Address::contains',
+    changes: [['name == n && (index.is_none() || index == i)', '&&', '||']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
