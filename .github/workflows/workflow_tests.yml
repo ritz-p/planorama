@@ -8,9 +8,10 @@ on:
   pull_request:
     paths:
       - .github/**
-      - tests/ci/**
-      - scripts/layout-quality.cjs
-      - tests/layout-quality/**
+      - tests/**
+      - src/**/*.rs
+      - examples/**/*.rs
+      - scripts/**
   workflow_dispatch:
     inputs:
       pull_request:

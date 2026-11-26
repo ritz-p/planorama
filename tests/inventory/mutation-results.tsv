@@ -1,0 +1,7 @@
+behavior	mutation	suite	result	revision	evidence
+Terraform reference identity	src/plan/address.rs: matches_instance (&& → ||)	#1378 before properties: 211 selected library tests	killed	unrecorded	https://github.com/ritz-p/planorama/pull/1378
+Cloudflare provider binding	src/provider/cloudflare/proof.rs: known_configuration_matches → true	#1378 before properties: 211 selected library tests	killed	unrecorded	https://github.com/ritz-p/planorama/pull/1378
+AWS certificate scope	src/provider/aws/elbv2_tls.rs: compatible → true	#1378 before properties: 211 selected library tests	survived	unrecorded	https://github.com/ritz-p/planorama/pull/1378
+Terraform reference identity	src/plan/address.rs: matches_instance (&& → ||)	#1378 after properties: 214 selected library tests	killed	unrecorded	https://github.com/ritz-p/planorama/pull/1378
+Cloudflare provider binding	src/provider/cloudflare/proof.rs: known_configuration_matches → true	#1378 after properties: 214 selected library tests	killed	unrecorded	https://github.com/ritz-p/planorama/pull/1378
+AWS certificate scope	src/provider/aws/elbv2_tls.rs: compatible → true	#1378 after properties: 214 selected library tests	killed	unrecorded	https://github.com/ritz-p/planorama/pull/1378

@@ -33,3 +33,9 @@
 - [Layout quality](docs/ci.md#layout-quality-comparison-390) は最終 push のコミットで完了・結果を確認する。リリース時も公開予定 SHA と checkout SHA を照合し、同じ SHA の成功結果がなければ手動実行する。未依頼の tag 作成・公開はしない。
 - 品質失敗は fixture ごとの差分と SVG を確認する。意図した変更の理由を PR に記載できる場合だけ baseline/budget を更新し、他の改善で退行を相殺しない。通常 Tests・SVG 更新・Routing regressions の代わりにせず、条件付きチェックを全 PR 必須にしない。
 - 検証が実行不能・未完了・失敗なら対象 SHA・状態・理由を報告し、未解決でマージ・リリースしない。無期限ポーリングはしない。
+
+## テスト台帳
+
+- テストの追加・削除・改名・移動、入力条件・操作・期待結果の意味を変える変更では、同じ PR で `tests/inventory/<種別>.tsv` の該当行を更新する。登録名・パス・パラメータはテストや matrix の登録元と揃え、生成管理の値は生成元を直す。挙動・入力・期待結果は TSV が正本。
+- リポジトリ直下で `node scripts/test-inventory.cjs check` を実行する。Rust の登録・module・Cargo target・ignore の変更時は `node scripts/test-inventory.cjs check --cargo` でも照合する。`node scripts/test-inventory.cjs html` で `output/test-inventory/index.html` を再生成する。
+- 実測した変異は `tests/inventory/mutation-results.tsv` に実行したテスト群と revision 単位で記録する。未評価を生存として数えず、テスト群の検出を個々のテスト行に割り当てない。[台帳の形式・登録一覧・変異の取込](docs/ci.md#test-inventory)

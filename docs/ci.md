@@ -373,3 +373,66 @@ build failures and timeouts separately. Expand the pilot only if a new,
 non-equivalent survivor identifies a distinct assertion gap within the budget.
 Stop expanding when the results duplicate existing regressions or only produce
 equivalent, unbuildable or timed-out mutants.
+
+## Test inventory
+
+The tab-separated files under `tests/inventory/` are the maintained catalog.
+Each row describes an area, behavior, input or operation, expected observation,
+repository-relative source, case identifier and runner selector. Edit these
+rows when an assertion or fixture changes the contract. Keep input conditions
+and observable results specific enough to compare assertions across layers.
+
+From the repository root, in the development environment:
+
+```sh
+node scripts/test-inventory.cjs list
+node scripts/test-inventory.cjs check
+node scripts/test-inventory.cjs check --cargo
+node scripts/test-inventory.cjs html
+```
+
+`list` prints registered keys for adding or renaming rows. The fast check reads
+Rust declarations, collects Node test registrations without invoking their test
+callbacks, enumerates viewer methods, and reads Wasm and fixture case tables.
+`check --cargo` also compiles the locked, all-feature Cargo test targets and
+compares each executable's libtest discovery output (including source, qualified
+name and ignore status). No test body runs in this step. The pinned toolchain's
+JSON discovery switch is enabled only when listing the compiled executable.
+Use `list --cargo` for exact Rust selectors. In the TSV the first selector segment
+is the Cargo target; the remainder is the libtest name.
+
+Open `output/test-inventory/index.html` locally. The page embeds the TSV data,
+can filter by type, area or terms across behavior, input, observation and case,
+and links to local sources. Rebuild it after editing the TSVs. Scope and counting:
+
+- Unit, integration, property and ignored benchmark registrations have one row per
+  Rust test. An ignored row may still run in a dedicated job. Tables inside one
+  function share the runner selector; follow the function or named fixture to its
+  individual inputs. Seeded property trials share the parameterized property.
+- Node's named registrations include expanded case names. Browser entries cover
+  viewer methods and browser checks. Wasm matrices include fixture, scenario
+  and format where independently selected, including SVG-only cases. A script
+  may also have assertions outside its matrix. Entries include directly runnable
+  suites as well as suites selected by the PR or full CI workflow.
+- Compatibility, layout, emulator, CI and tooling checks have their own tables.
+  Lean proofs, drivers, input generators and support libraries do not count as
+  executable test registrations. Rust consumers of shared Lean case data are
+  included. The Lean commands are in [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+Mutation outcomes are suite-level measurements in `mutation-results.tsv`. A
+missing measurement for a behavior and revision means **not evaluated**. A
+survivor requires a mutant that built and passed the selected tests. The six
+historical rows come from the pre/post-property runs in [PR #1378](https://github.com/ritz-p/planorama/pull/1378);
+the report identifies the two test selections but does not record the tested
+commit SHAs. Their revision is explicitly marked `unrecorded`.
+
+For a new cargo-mutants 25.3.1 run, record the clean tested SHA and the actual
+test selection at execution time. Convert its machine-readable report to TSV
+rows with the following command. Review the behavior labels, then append the
+rows to `tests/inventory/mutation-results.tsv`. Keep the report and logs in the
+run artifact. A baseline failure provides no mutant detection evidence.
+
+```sh
+node scripts/test-inventory/mutation-report.cjs \
+  output/rust-mutants/mutants.out/outcomes.json "$tested_sha" "$test_selection" "$artifact_reference"
+```
