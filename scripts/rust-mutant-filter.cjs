@@ -61,6 +61,11 @@ const pilots = {
     functionName: 'Address::contains',
     changes: [['name == n && (index.is_none() || index == i)', '&&', '||']],
   },
+  'focus-depth': {
+    source: 'src/view/filter.rs',
+    functionName: 'apply',
+    changes: [['!selected.contains(*k)', '!', null]],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
@@ -82,7 +87,7 @@ const patterns = changes.map(([expression, operator, replacement]) => {
     throw Error('Expected one matching predicate in ' + source + ': ' + expression);
   }
   const column = lines[line].indexOf(expression) + expression.indexOf(operator) + 1;
-  return escape(source + ':' + (line + 1) + ':' + column + ': replace ' +
-    operator + ' with ' + replacement + ' in ' + functionName);
+  const change = replacement === null ? 'delete ' + operator : 'replace ' + operator + ' with ' + replacement;
+  return escape(source + ':' + (line + 1) + ':' + column + ': ' + change + ' in ' + functionName);
 });
 console.log('^(?:' + patterns.join('|') + ')$');

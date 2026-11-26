@@ -1,5 +1,6 @@
 use super::{cli, support};
 use serde_json::json;
+use std::collections::BTreeSet;
 
 #[test]
 fn modules_cli_union_is_deterministic_in_svg_and_html() {
@@ -76,6 +77,24 @@ fn focus_preserves_ancestors_without_unrelated_nodes_and_is_deterministic() {
     let mut plan: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/containment-plan.json")).unwrap();
     plan["resource_changes"].as_array_mut().unwrap().push(json!({"address":"aws_instance.unrelated","type":"aws_instance","change":{"actions":["no-op"]}}));
+    let chain = ["terraform_data.near", "terraform_data.far"];
+    for (address, reference) in [
+        (chain[0], "aws_instance.app.id"),
+        (chain[1], "terraform_data.near.id"),
+    ] {
+        plan["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({
+                "address": address, "type": "terraform_data", "change": {"actions": ["no-op"]}
+            }));
+        plan["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({
+                "address": address, "expressions": {"input": {"references": [reference]}}
+            }));
+    }
     let input = plan.to_string();
     let args = ["--focus", "aws_instance.app", "--focus-depth", "0"];
     let output = support::run_with_args(input.as_bytes(), &args);
@@ -89,6 +108,34 @@ fn focus_preserves_ancestors_without_unrelated_nodes_and_is_deterministic() {
         svg.as_bytes(),
         support::run_with_args(input.as_bytes(), &args).stdout
     );
+    let context = ["aws_instance.app", "aws_subnet.private", "aws_vpc.main"];
+    for depth in 0..=2 {
+        let result = support::run_with_args(
+            input.as_bytes(),
+            &[
+                "--focus",
+                "aws_instance.app",
+                "--focus-depth",
+                &depth.to_string(),
+                "--format",
+                "json",
+            ],
+        );
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        let doc: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+        let addresses: BTreeSet<_> = doc["resources"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| r["address"].as_str().unwrap())
+            .collect();
+        let expected: BTreeSet<_> = context.iter().chain(&chain[..depth]).copied().collect();
+        assert_eq!(addresses, expected, "focus depth {depth}");
+    }
     let full = support::run(input.as_bytes());
     assert!(
         String::from_utf8(full.stdout)
