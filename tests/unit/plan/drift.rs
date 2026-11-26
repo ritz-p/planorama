@@ -55,24 +55,24 @@ fn drift_only_provider_binding_preserves_alias_and_scope_without_reusing_deposed
 
 #[test]
 fn drift_does_not_overwrite_any_planned_action_or_expose_values() {
-    for actions in [
-        json!(["create"]),
-        json!(["update"]),
-        json!(["delete"]),
-        json!(["delete", "create"]),
-        json!(["no-op"]),
+    for (actions, expected) in [
+        (json!(["create"]), Action::Create),
+        (json!(["update"]), Action::Update),
+        (json!(["delete"]), Action::Delete),
+        (json!(["delete", "create"]), Action::Replace),
+        (json!(["create", "delete"]), Action::Replace),
+        (json!(["no-op"]), Action::Unchanged),
     ] {
         let input = json!({"format_version":"1.2","resource_changes":[{"address":"terraform_data.main","type":"terraform_data","change":{"actions":actions}}],
             "resource_drift":[{"address":"terraform_data.main","type":"terraform_data","change":{"actions":["update"],"before":{"secret":"TOP_SECRET"},"after":{"secret":"TOP_SECRET"}}}]});
         let raw = plan::parse(&input.to_string()).unwrap();
-        assert_eq!(raw.nodes[0].action, super::super::parse_action(&actions));
+        assert_eq!(raw.nodes[0].action, expected, "{actions}");
         assert_eq!(raw.nodes[0].metadata.drift, [Action::Update].into());
         assert!(raw.drift[0].matched);
         assert!(!format!("{raw:?}").contains("TOP_SECRET"));
-        assert_eq!(
-            semantic::transform(&raw).nodes[0].metadata.drift,
-            [Action::Update].into()
-        );
+        let graph = semantic::transform(&raw);
+        assert_eq!(graph.nodes[0].action, expected, "{actions}");
+        assert_eq!(graph.nodes[0].metadata.drift, [Action::Update].into());
     }
 }
 
