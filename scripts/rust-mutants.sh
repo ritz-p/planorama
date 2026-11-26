@@ -3,8 +3,8 @@ set -eu
 cd "$(dirname "$0")/.."
 pilot=${1-reference}
 case "$#:$pilot" in
-    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path) ;;
-    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path]' >&2; exit 1 ;;
+    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:anonymous-metadata) ;;
+    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|anonymous-metadata]' >&2; exit 1 ;;
 esac
 if [ "$(cargo mutants --version)" != 'cargo-mutants 25.3.1' ]; then
     echo 'Install cargo-mutants 25.3.1 before running the pilot.' >&2
@@ -26,6 +26,11 @@ case "$pilot" in
         output=$output/diff
         filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
         set -- "$@" -C=--test=cli -f src/diff.rs -F "$filter"
+        ;;
+    anonymous-metadata)
+        expected=1
+        output=$output/$pilot
+        set -- "$@" -C=--test=cli -f src/view/anonymize.rs -F 'replace Projection::metadata with \(\)$'
         ;;
     sensitive-path)
         expected=1
@@ -53,6 +58,7 @@ set -- "$@" -o "$output" -- --
 case "$pilot" in
     reference) set -- "$@" plan:: provider::cloudflare:: provider::aws::elbv2_tls:: reference_properties ;;
     sensitive-path) set -- "$@" --exact plan::changed_paths::tests::unavailable_sensitive_and_empty_are_not_conflated plan::operations::tests::sensitive_replacement_paths_are_omitted_before_retaining_keys ;;
+    anonymous-metadata) set -- "$@" --exact anonymization::anonymized_exports_remove_identifiers_from_all_exported_bytes anonymization::selection_and_legend_settings_do_not_reintroduce_original_names ;;
     diff) set -- "$@" diff_ ;;
     input-file) set -- "$@" --exact states::hard_linked_output_cannot_truncate_single_or_named_inputs ;;
 esac
