@@ -221,3 +221,26 @@ A GitHub Actions step can append the Markdown report only for confirmed changes:
       *) exit "$code" ;;
     esac
 ```
+
+## Named-state dependency overview
+
+Generate a compact SVG with one node per loaded state, including isolated states:
+
+```sh
+planorama --state-overview \
+  --state app=tests/fixtures/multi/consumer.json \
+  --state network=tests/fixtures/multi/producer.json \
+  --state dns=tests/fixtures/multi/single-region.json \
+  --remote-state app:data.terraform_remote_state.network=network -o overview.svg
+```
+
+The arrow points from the consumer to the provider. Its count is the number of
+distinct (consumer resource, remote-state data source, output name) references
+for that pair. Repeated expressions and multiple resources backing one output
+count once. In the example, app → network has count 2 and dns is isolated.
+
+Missing mappings and outputs without verified source evidence appear below the
+graph, grouped by consumer state and reason. See the [generated example](../examples/state-overview.svg). Omitting the mapping above shows
+two unresolved references. State or output names alone do not establish a link.
+Use `--anonymize` for numbered state labels. The default file is
+`state-overview.svg`; `-o -` writes SVG to stdout.

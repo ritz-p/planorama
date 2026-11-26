@@ -7,6 +7,7 @@ examples/checks.svg
 examples/components.svg
 examples/containment.svg
 examples/cross-state.svg
+examples/state-overview.svg
 examples/data-icons.svg
 examples/service-names.svg
 examples/data.svg
