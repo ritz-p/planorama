@@ -6,7 +6,11 @@ fn anonymized_exports_remove_identifiers_from_all_exported_bytes() {
     for format in ["svg", "html", "json"] {
         let ordinary = run_with_args(INPUT, &["--format", format]);
         assert!(ordinary.status.success());
-        assert!(String::from_utf8_lossy(&ordinary.stdout).contains("private_table_sentinel"));
+        let ordinary_text = String::from_utf8(ordinary.stdout).unwrap();
+        assert!(ordinary_text.contains("private_table_sentinel"));
+        if format != "json" {
+            assert!(ordinary_text.contains("private_tag_sentinel"), "{format}");
+        }
         let output = run_with_args(INPUT, &["--anonymize", "--format", format]);
         assert!(
             output.status.success(),
@@ -15,6 +19,7 @@ fn anonymized_exports_remove_identifiers_from_all_exported_bytes() {
         );
         let text = String::from_utf8(output.stdout).unwrap();
         for secret in [
+            "private_tag_sentinel",
             "sentinel",
             "198.51.100.0/24",
             "2001:db8:abcd::/48",
