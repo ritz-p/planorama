@@ -303,6 +303,23 @@ struct Comparison {
 type Names<'a> = Option<BTreeMap<&'a Key, usize>>;
 
 impl Comparison {
+    #[cfg(not(target_arch = "wasm32"))]
+    fn exit_code(&self) -> u8 {
+        if !self.unknown.is_empty() {
+            return 1;
+        }
+        if self.added.is_empty()
+            && self.removed.is_empty()
+            && self.changed.is_empty()
+            && self.added_links.is_empty()
+            && self.removed_links.is_empty()
+        {
+            0
+        } else {
+            2
+        }
+    }
+
     fn pseudonyms<'a>(
         &self,
         before: &'a Snapshot,
@@ -459,7 +476,7 @@ enum ReportFormat {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-pub(crate) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> {
+pub(crate) fn run(mut args: impl Iterator<Item = String>) -> Result<u8, String> {
     let mut files = Vec::new();
     let (mut before, mut after) = (Vec::new(), Vec::new());
     let mut mappings = Vec::new();
@@ -467,6 +484,7 @@ pub(crate) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
     let mut svg_dir = None;
     let mut format = None;
     let mut anonymous = false;
+    let mut detailed = false;
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--before-state" | "--after-state" => {
@@ -483,6 +501,7 @@ pub(crate) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
                 &args.next().ok_or("missing remote-state mapping")?,
             )?),
             "--anonymize" => anonymous = true,
+            "--detailed-exitcode" => detailed = true,
             "--format" => {
                 format = Some(match args.next().as_deref() {
                     Some("json") => ReportFormat::Json,
@@ -522,11 +541,16 @@ pub(crate) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
     let before = snapshot(&before, &mappings, svg_dir.is_some());
     let after = snapshot(&after, &mappings, svg_dir.is_some());
     let markdown = format == Some(ReportFormat::Markdown);
+    let mut code = 0;
     let bytes = match (before, after) {
         (Ok(before), Ok(after)) => {
             let diff = compare(&before, &after);
+            if detailed {
+                code = diff.exit_code();
+            }
             if let Some(dir) = svg_dir {
                 return diagrams::write(&dir, &before, &after, &diff.mapping, anonymous)
+                    .map(|()| code)
                     .map_err(|e| e.to_string());
             }
             let names = anonymous.then(|| diff.pseudonyms(&before, &after));
@@ -537,6 +561,7 @@ pub(crate) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
             }
         }
         (before, after) if markdown => {
+            code = u8::from(detailed);
             let mut message = String::from("# Architecture diff\n\n## Comparison unavailable\n\n");
             for (side, result) in [("Before", before), ("After", after)] {
                 match result {
@@ -556,6 +581,7 @@ pub(crate) fn run(mut args: impl Iterator<Item = String>) -> Result<(), String> 
     } else {
         std::fs::write(output, bytes)
     }
+    .map(|()| code)
     .map_err(|e| e.to_string())
 }
 
