@@ -377,6 +377,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh json-budget` | Require both structural limits to be exceeded. Check nesting depth, element count, malformed JSON and the shared budget for named inputs. | `output/rust-mutants/json-budget` |
 | `sh scripts/rust-mutants.sh named-limits` | Reject exactly 64 named inputs. Check input count, combined byte budget and duplicate state names. | `output/rust-mutants/named-limits` |
 | `sh scripts/rust-mutants.sh pseudonym-collision` | Weaken the reserved-name check. Inspect anonymous identifiers and verify that relationship endpoints resolve in the projected graph. | `output/rust-mutants/pseudonym-collision` |
+| `sh scripts/rust-mutants.sh module-instance` | Weaken module name and instance-key matching. Compare unkeyed selections, specific instances and their descendants. | `output/rust-mutants/module-instance` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
