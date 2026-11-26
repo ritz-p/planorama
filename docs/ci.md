@@ -371,6 +371,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh remote-output` | Weaken the completeness check for remote-state output provenance. Compare cross-state edges and unresolved-output diagnostics for explicit mappings. | `output/rust-mutants/remote-output` |
 | `sh scripts/rust-mutants.sh service-scope` | Require both a global role and a matching region. Check service links for matching and mismatched provider scopes. | `output/rust-mutants/service-scope` |
 | `sh scripts/rust-mutants.sh saved-provider` | Weaken the exclusion of deposed objects from saved-plan provider evidence. Compare the verified accounts of current and historical objects. | `output/rust-mutants/saved-provider` |
+| `sh scripts/rust-mutants.sh drift-identity` | Match drift by address or deposed key. Check current and historical drift, planned actions, input order and unmatched diagnostics. | `output/rust-mutants/drift-identity` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
