@@ -369,6 +369,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh sensitive-path` | Require both sensitivity masks on an object key and check the serialized change and replacement paths. | `output/rust-mutants/sensitive-path` |
 | `sh scripts/rust-mutants.sh anonymous-metadata` | Skip anonymization of change metadata. The CLI tests inspect all exported bytes in SVG, HTML and JSON and exercise filtered HTML. | `output/rust-mutants/anonymous-metadata` |
 | `sh scripts/rust-mutants.sh remote-output` | Weaken the completeness check for remote-state output provenance. Compare cross-state edges and unresolved-output diagnostics for explicit mappings. | `output/rust-mutants/remote-output` |
+| `sh scripts/rust-mutants.sh service-scope` | Require both a global role and a matching region. Check service links for matching and mismatched provider scopes. | `output/rust-mutants/service-scope` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
