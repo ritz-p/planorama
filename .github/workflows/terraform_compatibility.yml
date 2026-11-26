@@ -20,6 +20,7 @@ on:
       - tests/integration/provider_plan.rs
       - tests/fixtures/provider-plan/**
       - tests/support/provider_plan.cjs
+      - tests/support/provider-plan-pairs.cjs
       - tests/support/verify_provider_plan.sh
       - tests/support/sts_fixture.cjs
       - tests/fixtures/cloudflare-captured/**

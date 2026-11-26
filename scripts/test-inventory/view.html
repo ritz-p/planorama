@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Planorama test inventory</title>
+<style>
+:root{color-scheme:light dark;font:16px/1.5 system-ui,sans-serif}body{margin:2rem auto;padding:0 1rem;max-width:96rem}h1,h2{line-height:1.15}label{display:inline-grid;gap:.25rem}form,nav{display:flex;align-items:end;gap:1rem;flex-wrap:wrap}select,input,button{font:inherit;padding:.35rem .6rem}input{min-width:16rem}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{text-align:left;vertical-align:top;padding:.5rem;border-bottom:1px solid #8993}th{white-space:nowrap}td{overflow-wrap:anywhere}a{color:LinkText}small{display:block}nav{margin:1rem 0}
+</style>
+<h1>Planorama test inventory</h1>
+<form id="filters"><label>Test type<select id="kind"></select></label><label>Area<select id="area"></select></label><label>Behavior, input or case<input id="search" type="search"></label></form>
+<nav aria-label="Results"><button id="prev">Previous</button><button id="next">Next</button><output id="count" aria-live="polite"></output></nav>
+<div class="scroll"><table><thead><tr><th>Type / area</th><th>Behavior</th><th>Input or operation</th><th>Expected observation</th><th>Source / case</th></tr></thead><tbody id="results"></tbody></table></div>
+<h2>Mutation measurements</h2>
+<p>Results apply to the selected suite at the recorded revision. An absent measurement means the behavior has not been evaluated for that revision.</p>
+<div class="scroll"><table><thead><tr><th>Behavior</th><th>Mutation</th><th>Test suite</th><th>Result</th><th>Revision</th><th>Evidence</th></tr></thead><tbody id="measurements"></tbody></table></div>
+<script type="application/json" id="data">INVENTORY_DATA</script>
+<script>
+'use strict';
+const {rows, mutations} = JSON.parse(document.querySelector('#data').textContent);
+const el = id => document.getElementById(id);
+for (const column of ['kind','area']) {
+  el(column).add(new Option('All',''));
+  for (const value of [...new Set(rows.map(row=>row[column]))].sort()) el(column).add(new Option(value,value));
+}
+function cell(row, value) { const td = row.insertCell(); td.textContent = value; return td; }
+const limit = 60;
+let page = 0;
+function show() {
+  const terms = el('search').value.toLowerCase().trim().split(/\s+/);
+  const selected = rows.filter(r => (!el('kind').value || r.kind === el('kind').value) && (!el('area').value || r.area === el('area').value)
+    && terms.every(term=>[r.behavior,r.area,r.input,r.expected,r.source,r.case,r.runner].join(' ').toLowerCase().includes(term)));
+  const start = page * limit;
+  el('count').textContent = selected.length ? (start+1)+'–'+Math.min(start+limit,selected.length)+' of '+selected.length : '0 results';
+  el('prev').disabled = page === 0;
+  el('next').disabled = start + limit >= selected.length;
+  el('results').replaceChildren();
+  for (const r of selected.slice(start,start+limit)) {
+    const row = el('results').insertRow();
+    for (const value of [r.kind+' / '+r.area,r.behavior,r.input,r.expected]) cell(row,value);
+    const td = cell(row,'');
+    const a = document.createElement('a'); a.href = '../../'+r.source.split('/').map(encodeURIComponent).join('/'); a.textContent = r.source;
+    const name = document.createElement('small'); name.textContent = r.case;
+    td.append(a,name); if (r.runner !== r.case) {const run=document.createElement('small'); run.textContent=r.runner; td.append(run);}
+  }
+}
+el('filters').oninput=()=>{page=0;show()};
+el('filters').onsubmit=e=>e.preventDefault();
+el('prev').onclick=()=>{page--;show()};
+el('next').onclick=()=>{page++;show()};
+for (const m of mutations) { const tr=el('measurements').insertRow(); for (const v of Object.values(m)) cell(tr,v); }
+show();
+</script>
+</html>
