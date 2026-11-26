@@ -125,6 +125,22 @@ fn conflicting_or_ambiguous_addresses_are_not_associated() {
         let mut changed = input.clone();
         changed["checks"][0]["address"][field] = value.into();
         let raw = crate::plan::parse(&changed.to_string()).unwrap();
+        let failed = raw
+            .checks
+            .iter()
+            .find(|c| c.status.as_deref() == Some("fail"))
+            .unwrap();
+        let mut instances: Vec<_> = failed
+            .instances
+            .iter()
+            .map(|i| (i.status.as_deref(), i.resource.as_deref()))
+            .collect();
+        instances.sort_unstable();
+        assert_eq!(
+            instances,
+            [(Some("fail"), None), (Some("pass"), None)],
+            "{field}"
+        );
         assert!(
             raw.checks
                 .iter()
