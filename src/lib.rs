@@ -64,6 +64,11 @@ pub use svg::AddressFormat;
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn run_cli() -> Result<(), String> {
+    cli::run().map(|_| ())
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn run_cli_with_status() -> Result<u8, String> {
     cli::run()
 }
 

@@ -480,3 +480,62 @@ fn named_diff_rejects_incomplete_remote_state_evidence() {
         assert!(!error.contains("PRIVATE_SENTINEL"));
     }
 }
+
+#[test]
+fn detailed_diff_exit_codes() {
+    use serde_json::json;
+    let dir = tempfile::tempdir().unwrap();
+    let a = dir.path().join("before");
+    let b = dir.path().join("after");
+    let one = json!({"address":"aws_instance.a","type":"aws_instance"});
+    let plan = |nodes| json!({"format_version":"1.2","resource_changes":nodes}).to_string();
+    std::fs::write(&a, plan(vec![one.clone()])).unwrap();
+    let run = |flags: &[&str]| {
+        cli()
+            .arg("diff")
+            .arg(&a)
+            .arg(&b)
+            .args(flags)
+            .output()
+            .unwrap()
+            .status
+            .code()
+    };
+    let mut moved = one.clone();
+    moved["address"] = json!("aws_instance.b");
+    moved["previous_address"] = json!("aws_instance.a");
+    let extra = json!({"address":"aws_instance.c","type":"aws_instance"});
+    for (nodes, code) in [
+        (vec![one.clone()], 0),
+        (vec![moved.clone()], 2),
+        (vec![one.clone(), moved.clone()], 1),
+        (vec![one, moved, extra], 1),
+    ] {
+        std::fs::write(&b, plan(nodes)).unwrap();
+        assert_eq!(run(&["--detailed-exitcode"]), Some(code));
+        assert_eq!(run(&[]), Some(0));
+    }
+    std::fs::write(&b, "{").unwrap();
+    assert_eq!(run(&["--detailed-exitcode"]), Some(1));
+    for (flags, code) in [(vec![], 0), (vec!["--detailed-exitcode"], 1)] {
+        let result = cli()
+            .args([
+                "diff",
+                "--format",
+                "markdown",
+                "--before-state",
+                "app=tests/fixtures/multi/consumer.json",
+                "--after-state",
+                "app=tests/fixtures/multi/consumer.json",
+            ])
+            .args(flags)
+            .output()
+            .unwrap();
+        assert_eq!(result.status.code(), Some(code));
+        assert!(
+            String::from_utf8(result.stdout)
+                .unwrap()
+                .contains("Comparison unavailable")
+        );
+    }
+}

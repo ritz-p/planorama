@@ -201,3 +201,23 @@ parent or endpoint change when exactly one removal and one addition of the
 same kind and direction have a uniquely matched endpoint in common. Ambiguous
 resource matches and unavailable remote-state comparisons have separate
 messages. Use `--anonymize` to replace identifiers throughout the report.
+
+With `--detailed-exitcode`, exit 0 means the snapshots match, 2 means there is
+a confirmed change, and 1 means the comparison is incomplete or execution
+failed. Unknown identities take precedence over confirmed changes. Unresolved
+remote-state evidence also returns 1, including when Markdown can describe the
+problem. Without this option, a successfully written report returns 0.
+
+A GitHub Actions step can append the Markdown report only for confirmed changes:
+
+```yaml
+- shell: bash
+  run: |
+    code=0
+    planorama diff before.json after.json --detailed-exitcode --format markdown -o changes.md || code=$?
+    case "$code" in
+      0) ;;
+      2) cat changes.md >> "$GITHUB_STEP_SUMMARY" ;;
+      *) exit "$code" ;;
+    esac
+```
