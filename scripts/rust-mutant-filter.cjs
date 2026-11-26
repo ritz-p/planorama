@@ -66,6 +66,11 @@ const pilots = {
     functionName: 'apply',
     changes: [['!selected.contains(*k)', '!', null]],
   },
+  'changed-context': {
+    source: 'src/view/filter.rs',
+    functionName: 'apply',
+    changes: [['&& placement_available(&all.states[&child.0], child.1, |source|', '&&', '||']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
