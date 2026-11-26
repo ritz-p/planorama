@@ -41,6 +41,11 @@ const pilots = {
     functionName: 'fits',
     changes: [['bytes <= limit', '<=', '>']],
   },
+  'json-budget': {
+    source: 'src/generation/budget.rs',
+    functionName: "<impl DeserializeSeed<'de> for Seed<'_>>::deserialize",
+    changes: [['self.depth >= 64 || self.remaining.get() == 0', '||', '&&']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
