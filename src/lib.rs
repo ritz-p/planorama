@@ -41,6 +41,8 @@ fn build_revision() -> Option<&'static str> {
 #[cfg(test)]
 #[path = "../tests/unit/artwork_free.rs"]
 mod artwork_free;
+mod diff;
+pub use diff::compare_plans;
 mod generation;
 mod named_inputs;
 pub use named_inputs::{NamedInput, RemoteStateMapping, generate_named, inspect_named_inputs};

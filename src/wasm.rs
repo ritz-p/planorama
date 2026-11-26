@@ -204,3 +204,9 @@ impl Generation {
         self.inner.cancel();
     }
 }
+
+#[wasm_bindgen]
+pub fn compare_plans(before: &str, after: &str, anonymize: bool) -> Result<String, JsValue> {
+    let result = crate::compare_plans(before, after, anonymize).map_err(error)?;
+    serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
+}

@@ -346,3 +346,20 @@ memory, without guaranteeing immediate OS reclamation. Measurements report linea
 memory capacity, not browser RSS or JavaScript heap.
 
 検証コマンド・coverage・計測条件は [開発者向け検証](browser-development.md#verification) を参照してください。
+
+## Architecture comparison
+
+`wasm_bindgen.compare_plans(beforeJson, afterJson, anonymize)` returns the same
+schema-version-1 JSON report as `planorama diff BEFORE AFTER`. Each side is one
+Plan. Rust callers use `planorama::compare_plans` and receive a JSON value.
+Resources distinguish added, removed, changed and unknown identity matches;
+relationships include containment. Remote-state evidence that cannot be resolved
+makes comparison unavailable rather than reporting no changes.
+
+Anonymization runs after matching and assigns comparison-local numeric identities
+across both snapshots, including relationship endpoints. Attributes are omitted;
+errors use static messages. Browser comparison accepts at most 2 MiB per input,
+32,768 JSON values/keys across both inputs, depth 64, 256 nodes and 1,024
+references per side, and 4 MiB of output. Limits throw `resource_limit`; imported
+memory checks use the existing memory error codes. Run synchronous comparisons
+in a disposable Worker; terminate that Worker to cancel.

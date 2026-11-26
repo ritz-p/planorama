@@ -3,13 +3,13 @@ use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 mod coverage_report;
-mod diff;
+use crate::diff;
 mod files;
 mod layout_diagnostics;
 mod modules;
 mod provider_plan;
 mod settings;
-mod states;
+pub(crate) mod states;
 
 mod architecture_json;
 
@@ -537,17 +537,4 @@ pub(crate) fn run() -> Result<(), String> {
     }
     drop(output_timing);
     timing.finish()
-}
-
-fn relationship_kind(kind: crate::model::EdgeKind) -> &'static str {
-    use crate::model::EdgeKind;
-    match kind {
-        EdgeKind::Dependency => "dependency",
-        EdgeKind::Connection => "connection",
-        EdgeKind::Containment => "containment",
-        EdgeKind::Association => "association",
-        EdgeKind::EventSource => "event-source",
-        EdgeKind::EventTarget => "event-target",
-        EdgeKind::Subscription => "subscription",
-    }
 }

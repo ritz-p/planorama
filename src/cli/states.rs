@@ -193,7 +193,7 @@ pub(super) fn run(
     Ok(())
 }
 
-pub(super) fn protect_input(input: &str, output: &Path) -> Result<(), String> {
+pub(crate) fn protect_input(input: &str, output: &Path) -> Result<(), String> {
     if input == "-" {
         return Ok(());
     }
