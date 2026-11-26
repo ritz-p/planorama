@@ -16,6 +16,11 @@ const pilots = {
     functionName: 'resolve_step',
     changes: [['!output.complete || output.sources.is_empty()', '||', '&&']],
   },
+  'service-scope': {
+    source: 'src/provider/aws/eventbridge.rs',
+    functionName: 'bindings',
+    changes: [['role || consumer_region == endpoint_region', '||', '&&']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
