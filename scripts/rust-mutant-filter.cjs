@@ -11,6 +11,11 @@ const pilots = {
       ['!uncertain.contains(&e.from) && !uncertain.contains(&e.to)', '&&', '||'],
     ],
   },
+  'remote-output': {
+    source: 'src/semantic/cross_state.rs',
+    functionName: 'resolve_step',
+    changes: [['!output.complete || output.sources.is_empty()', '||', '&&']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
