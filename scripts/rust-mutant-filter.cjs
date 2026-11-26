@@ -11,6 +11,11 @@ const pilots = {
       ['!uncertain.contains(&e.from) && !uncertain.contains(&e.to)', '&&', '||'],
     ],
   },
+  'sensitive-path': {
+    source: 'src/plan/changed_paths.rs',
+    functionName: 'Collector::walk',
+    changes: [['sensitive(&before_sensitive[key]) || sensitive(&after_sensitive[key])', '||', '&&']],
+  },
   'input-file': {
     source: 'src/cli/files.rs',
     functionName: 'reject_same_file',
