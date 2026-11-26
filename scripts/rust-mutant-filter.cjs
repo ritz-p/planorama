@@ -31,6 +31,11 @@ const pilots = {
     functionName: 'collect',
     changes: [['node.address == address && node.deposed_key == deposed_key', '&&', '||']],
   },
+  'cached-data': {
+    source: 'src/plan/collections.rs',
+    functionName: 'annotate',
+    changes: [['(node.mode == crate::model::EntityMode::Data)', '==', '!=']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',

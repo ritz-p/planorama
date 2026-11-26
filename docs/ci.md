@@ -372,6 +372,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh service-scope` | Require both a global role and a matching region. Check service links for matching and mismatched provider scopes. | `output/rust-mutants/service-scope` |
 | `sh scripts/rust-mutants.sh saved-provider` | Weaken the exclusion of deposed objects from saved-plan provider evidence. Compare the verified accounts of current and historical objects. | `output/rust-mutants/saved-provider` |
 | `sh scripts/rust-mutants.sh drift-identity` | Match drift by address or deposed key. Check current and historical drift, planned actions, input order and unmatched diagnostics. | `output/rust-mutants/drift-identity` |
+| `sh scripts/rust-mutants.sh cached-data` | Invert the data-resource check for prior-state fallback. Compare cached ID evidence with explicit nulls and masked ARN values. | `output/rust-mutants/cached-data` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
