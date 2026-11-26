@@ -3,8 +3,8 @@ set -eu
 cd "$(dirname "$0")/.."
 pilot=${1-reference}
 case "$#:$pilot" in
-    0:reference|1:reference|1:diff) ;;
-    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff]' >&2; exit 1 ;;
+    0:reference|1:reference|1:diff|1:input-file) ;;
+    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file]' >&2; exit 1 ;;
 esac
 if [ "$(cargo mutants --version)" != 'cargo-mutants 25.3.1' ]; then
     echo 'Install cargo-mutants 25.3.1 before running the pilot.' >&2
@@ -27,6 +27,11 @@ case "$pilot" in
         filter=$(node scripts/diff-mutant-filter.cjs)
         set -- "$@" -C=--test=cli -f src/diff.rs -F "$filter"
         ;;
+    input-file)
+        expected=1
+        output=$output/$pilot
+        set -- "$@" -C=--test=cli -f src/cli/files.rs -F 'replace == with != in reject_same_file$'
+        ;;
 esac
 
 selection=$(cargo mutants "$@" --list)
@@ -41,6 +46,7 @@ set -- "$@" -o "$output" -- --
 case "$pilot" in
     reference) set -- "$@" plan:: provider::cloudflare:: provider::aws::elbv2_tls:: reference_properties ;;
     diff) set -- "$@" diff_ ;;
+    input-file) set -- "$@" --exact states::hard_linked_output_cannot_truncate_single_or_named_inputs ;;
 esac
 status=0
 timeout -k 10s 20m cargo mutants "$@" || status=$?
