@@ -24,13 +24,14 @@ case "$pilot" in
     diff)
         expected=4
         output=$output/diff
-        filter=$(node scripts/diff-mutant-filter.cjs)
+        filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
         set -- "$@" -C=--test=cli -f src/diff.rs -F "$filter"
         ;;
     input-file)
         expected=1
         output=$output/$pilot
-        set -- "$@" -C=--test=cli -f src/cli/files.rs -F 'replace == with != in reject_same_file$'
+        filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
+        set -- "$@" -C=--test=cli -f src/cli/files.rs -F "$filter"
         ;;
 esac
 
