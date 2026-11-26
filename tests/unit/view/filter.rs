@@ -5,18 +5,13 @@ fn cache_context_is_retained_only_for_selected_placement_evidence() {
     for group_selected in [false, true] {
         let mut input: serde_json::Value =
             serde_json::from_str(include_str!("../../fixtures/elasticache-plan.json")).unwrap();
-        for (index, change) in input["resource_changes"]
-            .as_array_mut()
-            .unwrap()
-            .iter_mut()
-            .enumerate()
-        {
+        let cache = "aws_elasticache_replication_group.main";
+        let group = "aws_elasticache_subnet_group.main";
+        for change in input["resource_changes"].as_array_mut().unwrap() {
+            let address = change["address"].as_str().unwrap();
+            let changed = address == cache || (group_selected && address == group);
             change["change"]["actions"] =
-                serde_json::json!([if index == 4 || (index == 3 && group_selected) {
-                    "update"
-                } else {
-                    "no-op"
-                }]);
+                serde_json::json!([if changed { "update" } else { "no-op" }]);
         }
         let graph = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
         let filtered = single(
@@ -27,11 +22,12 @@ fn cache_context_is_retained_only_for_selected_placement_evidence() {
             },
         )
         .unwrap();
-        assert_eq!(filtered.nodes.len(), if group_selected { 3 } else { 1 });
-        assert_eq!(
-            filtered.nodes.iter().any(|n| n.resource_type == "aws_vpc"),
-            group_selected
-        );
+        let mut expected = BTreeSet::from([cache]);
+        if group_selected {
+            expected.extend([group, "aws_vpc.main"]);
+        }
+        let addresses: BTreeSet<_> = filtered.nodes.iter().map(|n| n.address.as_str()).collect();
+        assert_eq!(addresses, expected);
         assert_eq!(
             filtered
                 .edges
