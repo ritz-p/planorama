@@ -211,6 +211,9 @@ fn verified_static_snapshot_resolves_exact_module_binding_only() {
             .account
             .is_none()
     );
+    let mut deposed = plan.nodes[0].clone();
+    deposed.deposed_key = Some("old".into());
+    plan.nodes.push(deposed);
     Evidence::validate(&snapshot(STATIC), &json, json.as_bytes())
         .unwrap()
         .apply(&mut plan.nodes);
@@ -218,6 +221,8 @@ fn verified_static_snapshot_resolves_exact_module_binding_only() {
     assert_eq!(binding.account.as_ref().unwrap().as_str(), "123456789012");
     assert_eq!(binding.key, "aws.prod");
     assert_eq!(binding.region.as_ref().unwrap().0, "us-east-1");
+    let historical_binding = plan.nodes[1].provider_configuration.as_ref().unwrap();
+    assert!(historical_binding.account.is_none());
     assert!(!format!("{plan:?}").contains("arn:aws:"));
 }
 
