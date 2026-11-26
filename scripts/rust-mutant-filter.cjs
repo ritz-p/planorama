@@ -21,6 +21,11 @@ const pilots = {
     functionName: 'bindings',
     changes: [['role || consumer_region == endpoint_region', '||', '&&']],
   },
+  'saved-provider': {
+    source: 'src/plan/evidence.rs',
+    functionName: 'Evidence::apply',
+    changes: [['node.deposed_key.is_some() || !node.provider.is_aws()', '||', '&&']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
