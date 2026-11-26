@@ -80,6 +80,23 @@ fn scope_denominators_and_current_deposed_data_identity_are_distinct() {
     assert_eq!(coverage.input.unknown_account, 3);
     assert_eq!(coverage.input.region_applicable, 2);
     assert_eq!(coverage.input.unknown_region, 2);
+    for (focus, applicable) in [("aws_iam_role.global", 1), ("terraform_data.local", 0)] {
+        let filtered = view::single(
+            &graph,
+            &view::Options {
+                focus: Some(focus.into()),
+                depth: Some(0),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let counts = &filtered.coverage.selected;
+        assert_eq!(filtered.coverage.input, coverage.input);
+        assert_eq!(counts.resources, 1, "{focus}");
+        assert_eq!(counts.account_applicable, applicable, "{focus}");
+        assert_eq!(counts.unknown_account, applicable, "{focus}");
+        assert_eq!(counts.region_applicable, 0, "{focus}");
+    }
     let instances: Vec<_> = coverage
         .resources
         .keys()
