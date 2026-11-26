@@ -531,3 +531,65 @@ fn named_svg_keeps_accessible_descriptions_local_to_each_state() {
     }
     assert!(!svg.contains("terraform_remote_state.network"));
 }
+
+#[test]
+fn state_overview_counts_verified_references_and_preserves_isolated_states() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut app: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(fixture("multi/consumer.json")).unwrap())
+            .unwrap();
+    app["configuration"]["root_module"]["resources"][0]["expressions"]["subnet_id"]["references"] =
+        serde_json::json!([
+            "data.terraform_remote_state.network.outputs.subnet",
+            "data.terraform_remote_state.network.outputs.subnet",
+            "data.terraform_remote_state.network.outputs.missing"
+        ]);
+    let app_file = dir.path().join("app.json");
+    std::fs::write(&app_file, app.to_string()).unwrap();
+    let inputs = [
+        format!("app={}", app_file.display()),
+        format!("dns={}", fixture("multi/single-region.json")),
+        format!("network={}", fixture("multi/producer.json")),
+    ];
+    let render = |reverse: bool, anonymous: bool, mapped: bool| {
+        let mut args = vec!["--state-overview", "-o", "-"];
+        if anonymous {
+            args.push("--anonymize");
+        }
+        if mapped {
+            args.extend([
+                "--remote-state",
+                "app:data.terraform_remote_state.network=network",
+            ]);
+        }
+        let mut inputs: Vec<_> = inputs.iter().collect();
+        if reverse {
+            inputs.reverse();
+        }
+        for input in inputs {
+            args.extend(["--state", input]);
+        }
+        let result = cli().args(args).output().unwrap();
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        String::from_utf8(result.stdout).unwrap()
+    };
+    let svg = render(false, false, true);
+    roxmltree::Document::parse(&svg).unwrap();
+    assert_eq!(svg, render(true, false, true));
+    assert!(svg.contains(">dns</text>"));
+    assert!(svg.contains(">app → network: 2</title>"));
+    assert!(svg.contains("producer output is missing: 1"));
+    assert_eq!(svg.matches("marker-end=").count(), 1);
+    let unmapped = render(false, false, false);
+    assert!(unmapped.contains("unmapped remote state: 3"));
+    assert!(!unmapped.contains("marker-end="));
+    let anonymous = render(false, true, true);
+    for private in ["app", "dns", "network", "aws_", "terraform_remote_state"] {
+        assert!(!anonymous.contains(private));
+    }
+    assert_eq!(anonymous, render(true, true, true));
+}

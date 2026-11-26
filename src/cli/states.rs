@@ -19,32 +19,7 @@ pub(super) fn run(
 ) -> Result<(), String> {
     let (inputs, provider_plan) = inputs;
     let (diagnostics, layout_diagnostics, coverage_report) = diagnostics;
-    if inputs.values().filter(|path| path.as_str() == "-").count() > 1 {
-        return Err("stdin may be used by only one state".into());
-    }
-    for (id, path) in &inputs {
-        protect_input(path, output).map_err(|e| format!("state {:?}: {e}", id.as_str()))?;
-    }
-    let inputs = inputs
-        .into_iter()
-        .map(|(state_id, path)| {
-            let _timing = crate::timing::span("input_io", &[]);
-            let mut plan_json = String::new();
-            if path == "-" {
-                io::stdin().read_to_string(&mut plan_json).map_err(|e| {
-                    format!("state {:?}: cannot read stdin: {e}", state_id.as_str())
-                })?;
-            } else {
-                plan_json = std::fs::read_to_string(&path).map_err(|e| {
-                    format!("state {:?}: cannot read {path}: {e}", state_id.as_str())
-                })?;
-            }
-            Ok(PlanInput {
-                state_id,
-                plan_json,
-            })
-        })
-        .collect::<Result<Vec<_>, String>>()?;
+    let inputs = read_inputs(inputs, output)?;
     let plans = plan::parse_inputs_with(inputs, |id, json| {
         let evidence = provider_plan.load(Some(id), json)?;
         plan::parse_with_provider_bindings(json, filter.cloudflare_value_matches, |nodes| {
@@ -221,4 +196,51 @@ pub(crate) fn protect_input(input: &str, output: &Path) -> Result<(), String> {
         return Err("input and output must be different files".into());
     }
     Ok(())
+}
+
+fn read_inputs(inputs: BTreeMap<StateId, String>, output: &Path) -> Result<Vec<PlanInput>, String> {
+    if inputs.values().filter(|path| path.as_str() == "-").count() > 1 {
+        return Err("stdin may be used by only one state".into());
+    }
+    for (id, path) in &inputs {
+        protect_input(path, output).map_err(|e| format!("state {:?}: {e}", id.as_str()))?;
+    }
+    inputs
+        .into_iter()
+        .map(|(state_id, path)| {
+            let _timing = crate::timing::span("input_io", &[]);
+            let mut plan_json = String::new();
+            if path == "-" {
+                io::stdin().read_to_string(&mut plan_json).map_err(|e| {
+                    format!("state {:?}: cannot read stdin: {e}", state_id.as_str())
+                })?;
+            } else {
+                plan_json = std::fs::read_to_string(&path).map_err(|e| {
+                    format!("state {:?}: cannot read {path}: {e}", state_id.as_str())
+                })?;
+            }
+            Ok(PlanInput {
+                state_id,
+                plan_json,
+            })
+        })
+        .collect()
+}
+
+pub(super) fn overview(
+    inputs: BTreeMap<StateId, String>,
+    output: &Path,
+    mappings: &[crate::model::cross_state::Mapping],
+    anonymous: bool,
+) -> Result<(), String> {
+    let inputs = read_inputs(inputs, output)?;
+    let plans = plan::parse_inputs_with(inputs, |_, json| plan::parse(json))?;
+    let resolved = semantic::cross_state::resolve(&plans, mappings);
+    let image = super::state_overview::render(&plans, &resolved, anonymous);
+    if output == Path::new("-") {
+        io::stdout().lock().write_all(image.as_bytes())
+    } else {
+        std::fs::write(output, image)
+    }
+    .map_err(|e| format!("cannot write state overview: {e}"))
 }

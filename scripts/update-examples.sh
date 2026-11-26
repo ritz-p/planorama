@@ -67,6 +67,9 @@ while IFS= read -r output || [ -n "$output" ]; do
         examples/multi-plan.svg)
             "$binary" --state network=tests/fixtures/multi/network.json --state application=tests/fixtures/multi/application.json -o "$output"
             ;;
+        examples/state-overview.svg)
+            "$binary" --state-overview --state network=tests/fixtures/multi/producer.json --state app=tests/fixtures/multi/consumer.json --state dns=tests/fixtures/multi/single-region.json --remote-state app:data.terraform_remote_state.network=network -o "$output"
+            ;;
         examples/cross-state.svg)
             "$binary" --state producer=tests/fixtures/multi/producer.json --state consumer=tests/fixtures/multi/consumer.json --remote-state consumer:data.terraform_remote_state.network=producer -o "$output"
             ;;
