@@ -121,14 +121,22 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
 
 #[test]
 fn cross_state_resolution_never_substitutes_equal_output_values_for_provenance() {
-    for literal in [false, true] {
+    let subnet = "aws_subnet.app.id";
+    for (expression, complete) in [
+        (serde_json::json!({"references": [subnet]}), true),
+        (
+            serde_json::json!({"constant_value": "PRIVATE_SAME_VALUE"}),
+            false,
+        ),
+        (
+            serde_json::json!({"references": [subnet, "aws_subnet.missing.id"]}),
+            false,
+        ),
+    ] {
         let mut producer: serde_json::Value =
             serde_json::from_str(include_str!("../fixtures/multi/producer.json")).unwrap();
         producer["output_changes"] = serde_json::json!({"subnet":{"actions":["update"],"before":"PRIVATE_SAME_VALUE","after":"PRIVATE_SAME_VALUE"}});
-        if literal {
-            producer["configuration"]["root_module"]["outputs"]["subnet"]["expression"] =
-                serde_json::json!({"constant_value":"PRIVATE_SAME_VALUE"});
-        }
+        producer["configuration"]["root_module"]["outputs"]["subnet"]["expression"] = expression;
         let mut child = cli()
             .args([
                 "--state",
@@ -158,14 +166,14 @@ fn cross_state_resolution_never_substitutes_equal_output_values_for_provenance()
         let diagnostics = String::from_utf8(output.stderr).unwrap();
         assert_eq!(
             svg.matches("data-cross-state=\"true\"").count(),
-            if literal { 2 } else { 3 }
+            if complete { 3 } else { 2 }
         );
         assert_eq!(
             diagnostics.contains("producer output provenance is unresolved"),
-            literal
+            !complete
         );
         assert!(!svg.contains("PRIVATE_SAME_VALUE") && !diagnostics.contains("PRIVATE_SAME_VALUE"));
-        assert_eq!(svg.contains("data-output-action=\"update\""), !literal);
+        assert_eq!(svg.contains("data-output-action=\"update\""), complete);
     }
 }
 
