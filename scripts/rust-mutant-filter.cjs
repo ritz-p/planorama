@@ -36,6 +36,11 @@ const pilots = {
     functionName: 'annotate',
     changes: [['(node.mode == crate::model::EntityMode::Data)', '==', '!=']],
   },
+  'memory-headroom': {
+    source: 'src/generation/memory.rs',
+    functionName: 'fits',
+    changes: [['bytes <= limit', '<=', '>']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
