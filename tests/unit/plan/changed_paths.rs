@@ -29,17 +29,21 @@ fn unavailable_sensitive_and_empty_are_not_conflated() {
     assert!(!collect(&json!({"after":{}})).available);
     let empty = collect(&json!({"before":{},"after":{}}));
     assert!(empty.available && empty.paths.is_empty() && !empty.sensitive_omitted);
-    let result = collect(&json!({"before":{"map":{"SECRET_KEY":1},"safe":1},
-        "after":{"map":{"SECRET_KEY":2},"safe":2},
-        "before_sensitive":{"map":{"SECRET_KEY":true}},"replace_paths":[["map","SECRET_KEY"]]}));
-    assert_eq!(result.paths, ["$[\"safe\"]"]);
-    assert!(result.sensitive_omitted);
-    assert!(result.replacement_paths.is_empty());
-    assert!(
-        !serde_json::to_string(&result)
-            .unwrap()
-            .contains("SECRET_KEY")
-    );
+    for mask in ["before_sensitive", "after_sensitive"] {
+        let mut change = json!({
+            "before": {"PRIVATE_MAP": {"SECRET_KEY": 1, "label": "old"}, "safe": 1},
+            "after": {"PRIVATE_MAP": {"SECRET_KEY": 2, "label": "new"}, "safe": 2},
+            "replace_paths": [["PRIVATE_MAP", "SECRET_KEY"], ["safe"]]
+        });
+        change[mask] = json!({"PRIVATE_MAP": {"SECRET_KEY": true}});
+        let result = collect(&change);
+        let serialized = serde_json::to_string(&result).unwrap();
+        assert!(!serialized.contains("PRIVATE_MAP"), "{mask}: {serialized}");
+        assert!(!serialized.contains("SECRET_KEY"), "{mask}: {serialized}");
+        assert_eq!(result.paths, [r#"$["safe"]"#]);
+        assert_eq!(result.replacement_paths, [r#"$["safe"]"#]);
+        assert!(result.sensitive_omitted);
+    }
     assert_eq!(
         collect(&json!({"before":null,"after":{"new":1}})).paths,
         ["$[\"new\"]"]
