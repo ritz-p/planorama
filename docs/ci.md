@@ -359,17 +359,18 @@ minimized case as a regression when it exposes a distinct product bug.
 ## Targeted Rust mutation tests
 
 Install `cargo-mutants` 25.3.1 with `cargo install --locked cargo-mutants --version 25.3.1`.
-Run either pilot manually from the repository root:
+Run a pilot manually from the repository root:
 
 | Command | Selection and observations | Output directory |
 | --- | --- | --- |
 | `sh scripts/rust-mutants.sh reference` (default) | Three instance-key, Cloudflare provider-binding and AWS certificate predicates. Runs the selected library tests. | `output/rust-mutants` |
 | `sh scripts/rust-mutants.sh diff` | Four mutations in resource matching. Invert unique predecessor count, provider equality and mode equality individually, then change the ambiguous-endpoint filter from AND to OR. Runs `cargo test --locked --all-features --test cli -- diff_`; the integration tests invoke the rebuilt Planorama binary. | `output/rust-mutants/diff` |
+| `sh scripts/rust-mutants.sh input-file` | Invert file-handle equality. The CLI test checks that single and named inputs keep their original bytes when output aliases the input, and that a separate file accepts output. | `output/rust-mutants/input-file` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
 The mutation run has a 20-minute limit, seven minutes per build and 90 seconds
-per test phase. Both pilots are independent of normal PR jobs.
+per test phase. The pilots are independent of normal PR jobs.
 
 Inspect `mutants.out/outcomes.json` and the logs under the selected output directory.
 For a survivor, confirm the selected tests exercise the affected path and that
