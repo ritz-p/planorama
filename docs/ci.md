@@ -379,6 +379,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh pseudonym-collision` | Weaken the reserved-name check. Inspect anonymous identifiers and verify that relationship endpoints resolve in the projected graph. | `output/rust-mutants/pseudonym-collision` |
 | `sh scripts/rust-mutants.sh module-instance` | Weaken module name and instance-key matching. Compare unkeyed selections, specific instances and their descendants. | `output/rust-mutants/module-instance` |
 | `sh scripts/rust-mutants.sh focus-depth` | Remove the unseen-neighbor check in focus traversal. Compare CLI selections at successive depths and the ancestors retained for context. | `output/rust-mutants/focus-depth` |
+| `sh scripts/rust-mutants.sh changed-context` | Weaken the check for a selected child with placement evidence. Inspect lowered relationships, cross-state outputs and retained parents under changed-only selection. | `output/rust-mutants/changed-context` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.

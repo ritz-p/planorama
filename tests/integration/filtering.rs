@@ -159,13 +159,14 @@ fn changed_only_keeps_lowered_changes_and_focus_depth_is_effective() {
     let input = plan.to_string();
     let output = support::run_with_args(input.as_bytes(), &["--changed-only"]);
     assert!(output.status.success());
-    assert_eq!(
-        String::from_utf8(output.stdout)
-            .unwrap()
-            .matches("<g id=\"resource-")
-            .count(),
-        2
-    );
+    let svg = String::from_utf8(output.stdout).unwrap();
+    assert_eq!(svg.matches("<g id=\"resource-").count(), 2);
+    for address in ["aws_subnet.private", "aws_route_table.private"] {
+        assert!(
+            svg.contains(&format!("data-terraform-address=\"{address}\"")),
+            "{address}"
+        );
+    }
     for (depth, count) in [("0", 1), ("1", 2)] {
         let output = support::run_with_args(
             input.as_bytes(),
