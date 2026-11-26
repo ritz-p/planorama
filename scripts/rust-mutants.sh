@@ -3,8 +3,8 @@ set -eu
 cd "$(dirname "$0")/.."
 pilot=${1-reference}
 case "$#:$pilot" in
-    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:anonymous-metadata) ;;
-    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|anonymous-metadata]' >&2; exit 1 ;;
+    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:anonymous-metadata) ;;
+    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|anonymous-metadata]' >&2; exit 1 ;;
 esac
 if [ "$(cargo mutants --version)" != 'cargo-mutants 25.3.1' ]; then
     echo 'Install cargo-mutants 25.3.1 before running the pilot.' >&2
@@ -45,6 +45,12 @@ case "$pilot" in
         filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
         set -- "$@" -C=--lib -f src/plan/evidence.rs -F "$filter"
         ;;
+    drift-identity)
+        expected=1
+        output=$output/$pilot
+        filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
+        set -- "$@" -C=--lib -f src/plan/drift.rs -F "$filter"
+        ;;
     anonymous-metadata)
         expected=1
         output=$output/$pilot
@@ -79,6 +85,7 @@ case "$pilot" in
     remote-output) set -- "$@" --exact semantic::cross_state::tests::explicit_mapping_resolves_multiple_sources_and_preserves_failures states::cross_state_resolution_never_substitutes_equal_output_values_for_provenance ;;
     service-scope) set -- "$@" --exact provider::aws::resilience_hub::tests::service_reference_requires_the_same_deployment_scope ;;
     saved-provider) set -- "$@" --exact plan::evidence::tests::evidence_keeps_data_current_deposed_and_removed_objects_distinct plan::evidence::tests::verified_static_snapshot_resolves_exact_module_binding_only ;;
+    drift-identity) set -- "$@" --exact plan::drift::tests::drift_only_and_deposed_objects_are_distinct_and_deterministic plan::drift::tests::conflicting_drift_is_retained_but_not_attached_to_a_different_resource ;;
     anonymous-metadata) set -- "$@" --exact anonymization::anonymized_exports_remove_identifiers_from_all_exported_bytes anonymization::selection_and_legend_settings_do_not_reintroduce_original_names ;;
     diff) set -- "$@" diff_ ;;
     input-file) set -- "$@" --exact states::hard_linked_output_cannot_truncate_single_or_named_inputs ;;

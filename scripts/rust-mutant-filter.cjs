@@ -26,6 +26,11 @@ const pilots = {
     functionName: 'Evidence::apply',
     changes: [['node.deposed_key.is_some() || !node.provider.is_aws()', '||', '&&']],
   },
+  'drift-identity': {
+    source: 'src/plan/drift.rs',
+    functionName: 'collect',
+    changes: [['node.address == address && node.deposed_key == deposed_key', '&&', '||']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
