@@ -7,7 +7,7 @@ fn graph() -> crate::model::ArchitectureGraph {
         "resource_changes": [
             {"address":"module.app[0].aws_instance.web", "type":"aws_instance", "change":{"actions":["update"]}},
             {"address":"module.app[0].aws_instance.web", "deposed":"old", "type":"aws_instance", "change":{"actions":["delete"]}},
-            {"address":"module.app[1].module.db.data.aws_ami.image", "mode":"data", "type":"aws_ami", "change":{"actions":["no-op"]}},
+            {"address":"module.app[\"0\"].module.db.data.aws_ami.image", "mode":"data", "type":"aws_ami", "change":{"actions":["no-op"]}},
             {"address":"module.application.aws_instance.other", "type":"aws_instance", "change":{"actions":["no-op"]}}
         ],
         "configuration":{"root_module":{"module_calls":{"empty":{"module":{}}}}}
@@ -25,6 +25,26 @@ fn module_union_intersection_and_identity() {
     assert_eq!(selected.coverage.input.resources, 4);
     assert_eq!(selected.coverage.selected.resources, 3);
     assert_eq!(selected.nodes.len(), 3);
+    let web = "module.app[0].aws_instance.web";
+    let image = r#"module.app["0"].module.db.data.aws_ami.image"#;
+    for (selector, mut expected) in [
+        ("module.app", vec![web, web, image]),
+        ("module.app[0]", vec![web, web]),
+        (r#"module.app["0"]"#, vec![image]),
+    ] {
+        let scoped = view::single(
+            &source,
+            &view::Options {
+                modules: vec![selector.into()],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let mut actual: Vec<_> = scoped.nodes.iter().map(|n| n.address.as_str()).collect();
+        actual.sort_unstable();
+        expected.sort_unstable();
+        assert_eq!(actual, expected, "{selector}");
+    }
     let duplicate = view::single(
         &source,
         &view::Options {
