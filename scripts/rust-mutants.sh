@@ -3,8 +3,8 @@ set -eu
 cd "$(dirname "$0")/.."
 pilot=${1-reference}
 case "$#:$pilot" in
-    0:reference|1:reference|1:diff|1:input-file) ;;
-    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file]' >&2; exit 1 ;;
+    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path) ;;
+    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path]' >&2; exit 1 ;;
 esac
 if [ "$(cargo mutants --version)" != 'cargo-mutants 25.3.1' ]; then
     echo 'Install cargo-mutants 25.3.1 before running the pilot.' >&2
@@ -27,6 +27,12 @@ case "$pilot" in
         filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
         set -- "$@" -C=--test=cli -f src/diff.rs -F "$filter"
         ;;
+    sensitive-path)
+        expected=1
+        output=$output/$pilot
+        filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
+        set -- "$@" -C=--lib -f src/plan/changed_paths.rs -F "$filter"
+        ;;
     input-file)
         expected=1
         output=$output/$pilot
@@ -46,6 +52,7 @@ mkdir -p "$output"
 set -- "$@" -o "$output" -- --
 case "$pilot" in
     reference) set -- "$@" plan:: provider::cloudflare:: provider::aws::elbv2_tls:: reference_properties ;;
+    sensitive-path) set -- "$@" --exact plan::changed_paths::tests::unavailable_sensitive_and_empty_are_not_conflated plan::operations::tests::sensitive_replacement_paths_are_omitted_before_retaining_keys ;;
     diff) set -- "$@" diff_ ;;
     input-file) set -- "$@" --exact states::hard_linked_output_cannot_truncate_single_or_named_inputs ;;
 esac

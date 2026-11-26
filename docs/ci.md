@@ -366,6 +366,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh reference` (default) | Three instance-key, Cloudflare provider-binding and AWS certificate predicates. Runs the selected library tests. | `output/rust-mutants` |
 | `sh scripts/rust-mutants.sh diff` | Four mutations in resource matching. Invert unique predecessor count, provider equality and mode equality individually, then change the ambiguous-endpoint filter from AND to OR. Runs `cargo test --locked --all-features --test cli -- diff_`; the integration tests invoke the rebuilt Planorama binary. | `output/rust-mutants/diff` |
 | `sh scripts/rust-mutants.sh input-file` | Invert file-handle equality. The CLI test checks that single and named inputs keep their original bytes when output aliases the input, and that a separate file accepts output. | `output/rust-mutants/input-file` |
+| `sh scripts/rust-mutants.sh sensitive-path` | Require both sensitivity masks on an object key and check the serialized change and replacement paths. | `output/rust-mutants/sensitive-path` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
