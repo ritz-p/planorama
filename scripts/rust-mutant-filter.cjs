@@ -106,6 +106,11 @@ const pilots = {
     functionName: 'Index::visit',
     changes: [['straight_low < straight_high', '<', '==']],
   },
+  'port-collision': {
+    source: 'src/layout/routing_shared/slots.rs',
+    functionName: 'opposite_roles_collide',
+    changes: [['other != index', '!=', '==']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',

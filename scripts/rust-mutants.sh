@@ -3,8 +3,8 @@ set -eu
 cd "$(dirname "$0")/.."
 pilot=${1-reference}
 case "$#:$pilot" in
-    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:cached-data|1:memory-headroom|1:json-budget|1:named-limits|1:pseudonym-collision|1:module-instance|1:focus-depth|1:changed-context|1:coverage-scope|1:check-target|1:plan-action|1:containment-parent|1:generation-slice|1:routing-search-budget|1:state-svg-ids|1:frame-contact|1:anonymous-metadata) ;;
-    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|cached-data|memory-headroom|json-budget|named-limits|pseudonym-collision|module-instance|focus-depth|changed-context|coverage-scope|check-target|plan-action|containment-parent|generation-slice|routing-search-budget|state-svg-ids|frame-contact|anonymous-metadata]' >&2; exit 1 ;;
+    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:cached-data|1:memory-headroom|1:json-budget|1:named-limits|1:pseudonym-collision|1:module-instance|1:focus-depth|1:changed-context|1:coverage-scope|1:check-target|1:plan-action|1:containment-parent|1:generation-slice|1:routing-search-budget|1:state-svg-ids|1:frame-contact|1:port-collision|1:anonymous-metadata) ;;
+    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|cached-data|memory-headroom|json-budget|named-limits|pseudonym-collision|module-instance|focus-depth|changed-context|coverage-scope|check-target|plan-action|containment-parent|generation-slice|routing-search-budget|state-svg-ids|frame-contact|port-collision|anonymous-metadata]' >&2; exit 1 ;;
 esac
 if [ "$(cargo mutants --version)" != 'cargo-mutants 25.3.1' ]; then
     echo 'Install cargo-mutants 25.3.1 before running the pilot.' >&2
@@ -146,6 +146,12 @@ case "$pilot" in
         filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
         set -- "$@" -C=--lib -f src/layout/routing_shared/borders.rs -F "$filter"
         ;;
+    port-collision)
+        expected=1
+        output=$output/$pilot
+        filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
+        set -- "$@" -C=--lib -f src/layout/routing_shared/slots.rs -F "$filter"
+        ;;
     anonymous-metadata)
         expected=1
         output=$output/$pilot
@@ -197,6 +203,7 @@ case "$pilot" in
     routing-search-budget) set -- "$@" --exact generation::tests::search_budget_is_retained_across_steps_and_isolated_between_jobs generation::tests::named_routing_charges_one_search_budget_across_states ;;
     state-svg-ids) set -- "$@" --exact states::nested_svg_ids_links_icons_and_markers_are_unique_and_local states::duplicate_addresses_remain_distinct_with_stable_state_scoping ;;
     frame-contact) set -- "$@" --exact layout::routing_shared::borders::tests::perpendicular_boundary_crossings_and_normal_endpoint_stubs_are_free layout::routing_shared::borders::tests::short_and_long_contacts_measure_empty_stroke_gap_for_every_frame_and_edge ;;
+    port-collision) set -- "$@" --exact layout::routing_shared::slots::tests::coincident_ports_are_scoped_to_nodes_and_distinct_opposite_roles layout::tests::ports::reciprocal_container_connections_keep_distinct_final_ports ;;
     anonymous-metadata) set -- "$@" --exact anonymization::anonymized_exports_remove_identifiers_from_all_exported_bytes anonymization::selection_and_legend_settings_do_not_reintroduce_original_names ;;
     diff) set -- "$@" diff_ ;;
     input-file) set -- "$@" --exact states::hard_linked_output_cannot_truncate_single_or_named_inputs ;;
