@@ -116,6 +116,11 @@ const pilots = {
     functionName: 'Scorer::safe_shortcut',
     changes: [['&& self.safe_border_change(old, new)', '&&', '||']],
   },
+  'packing-window': {
+    source: 'src/layout/containers/placement.rs',
+    functionName: 'select_packing',
+    changes: [['compact.0 * 11 && score.1 * 4', '&&', '||']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
