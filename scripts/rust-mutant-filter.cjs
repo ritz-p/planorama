@@ -76,6 +76,11 @@ const pilots = {
     functionName: 'Coverage::collect',
     changes: [['node.provider.is_aws() && node.mode == EntityMode::Managed', '&&', '||']],
   },
+  'check-target': {
+    source: 'src/plan/checks.rs',
+    functionName: 'resource',
+    changes: [['|| address["type"].as_str()? != node.resource_type', '||', '&&']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
