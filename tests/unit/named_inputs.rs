@@ -149,10 +149,12 @@ fn resumable_named_preserves_output_selection_and_stage_boundaries() {
                 ..Default::default()
             };
             let expected = generate_named(&inputs(), &options()).unwrap();
-            for units in [1, 4096] {
+            for sizes in [&[1][..], &[7, 1, 64, 3], &[4096]] {
+                let mut slices = sizes.iter().copied().cycle();
                 let mut job = crate::Generator::new_named(inputs(), options()).unwrap();
                 let stages = Rc::new(RefCell::new(Vec::new()));
                 let actual = loop {
+                    let units = slices.next().unwrap();
                     let captured = stages.clone();
                     if let Some(result) = job
                         .step_with_progress(units, move |stage| {

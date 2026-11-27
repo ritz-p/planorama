@@ -91,6 +91,11 @@ const pilots = {
     functionName: 'parents',
     changes: [['edge.kind == EdgeKind::Containment', '==', '!=']],
   },
+  'generation-slice': {
+    source: 'src/generation.rs',
+    functionName: 'Generator::step_with_progress',
+    changes: [['units > 4096', '>', '>=']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',

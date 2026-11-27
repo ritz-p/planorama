@@ -384,6 +384,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh check-target` | Weaken the mode and type checks on Terraform check targets. Compare instance associations and preserved check statuses. | `output/rust-mutants/check-target` |
 | `sh scripts/rust-mutants.sh plan-action` | Allow either create or delete to trigger replacement. Compare planned action classifications for individual operations and both replacement orders. | `output/rust-mutants/plan-action` |
 | `sh scripts/rust-mutants.sh containment-parent` | Invert the containment edge check. Compare parents, roots and children for dependency-only nodes, nested containers, competing parents and cycles in both edge orders. | `output/rust-mutants/containment-parent` |
+| `sh scripts/rust-mutants.sh generation-slice` | Reject the largest valid generation slice. Compare named SVG, HTML and diagnostics with one-shot output and exercise cancellation and failed generation. | `output/rust-mutants/generation-slice` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
