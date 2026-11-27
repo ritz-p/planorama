@@ -86,6 +86,11 @@ const pilots = {
     functionName: 'parse_action',
     changes: [['actions.contains(&"create") && actions.contains(&"delete")', '&&', '||']],
   },
+  'containment-parent': {
+    source: 'src/layout/containment.rs',
+    functionName: 'parents',
+    changes: [['edge.kind == EdgeKind::Containment', '==', '!=']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
