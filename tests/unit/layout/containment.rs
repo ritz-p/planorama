@@ -4,26 +4,57 @@ use super::*;
 fn hierarchy_preserves_roots_nested_children_ambiguity_and_cycles() {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"aws_vpc.a","type":"aws_vpc"},{"address":"aws_vpc.b","type":"aws_vpc"},{"address":"aws_vpc.c","type":"aws_vpc"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;
-    let edge = |from, to| crate::model::architecture::Edge {
+    let edge = |from, to, kind| crate::model::architecture::Edge {
         from,
         to,
-        kind: EdgeKind::Containment,
+        kind,
         change: None,
     };
-    assert_eq!(ContainmentTree::new(&graph).roots, vec![0, 1, 2]);
-    graph.edges = vec![edge(0, 1), edge(1, 2)];
-    let tree = ContainmentTree::new(&graph);
-    assert_eq!(tree.roots, vec![0]);
-    assert_eq!(tree.children, vec![vec![1], vec![2], vec![]]);
-    assert!(tree.is_ancestor(0, 2));
-    assert!(!tree.is_ancestor(2, 0));
-    graph.edges.reverse();
-    assert_eq!(tree, ContainmentTree::new(&graph));
-    graph.edges.push(edge(0, 2));
-    assert_eq!(
-        ContainmentTree::new(&graph).parents,
-        vec![None, Some(0), None]
+    let mut check =
+        |edges, parents: [Option<usize>; 3], roots: &[usize], children: [Vec<usize>; 3]| {
+            graph.edges = edges;
+            let tree = ContainmentTree::new(&graph);
+            assert_eq!(tree.parents, parents);
+            assert_eq!(tree.roots, roots);
+            assert_eq!(tree.children, children);
+            graph.edges.reverse();
+            assert_eq!(ContainmentTree::new(&graph), tree);
+            tree
+        };
+    use EdgeKind::{Containment, Dependency};
+    check(vec![], [None; 3], &[0, 1, 2], [vec![], vec![], vec![]]);
+    check(
+        vec![edge(0, 1, Containment), edge(1, 2, Dependency)],
+        [None, Some(0), None],
+        &[0, 2],
+        [vec![1], vec![], vec![]],
     );
-    graph.edges = vec![edge(0, 1), edge(1, 0), edge(1, 2)];
-    assert_eq!(ContainmentTree::new(&graph).parents, vec![None, None, None]);
+    let nested = check(
+        vec![edge(0, 1, Containment), edge(1, 2, Containment)],
+        [None, Some(0), Some(1)],
+        &[0],
+        [vec![1], vec![2], vec![]],
+    );
+    assert!(nested.is_ancestor(0, 2));
+    assert!(!nested.is_ancestor(2, 0));
+    check(
+        vec![
+            edge(0, 1, Containment),
+            edge(1, 2, Containment),
+            edge(0, 2, Containment),
+        ],
+        [None, Some(0), None],
+        &[0, 2],
+        [vec![1], vec![], vec![]],
+    );
+    check(
+        vec![
+            edge(0, 1, Containment),
+            edge(1, 0, Containment),
+            edge(1, 2, Containment),
+        ],
+        [None; 3],
+        &[0, 1, 2],
+        [vec![], vec![], vec![]],
+    );
 }
