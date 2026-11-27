@@ -389,6 +389,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh state-svg-ids` | Drop state prefixes from nested SVG IDs. Check unique IDs and state-local resolution of fragment links and arrow markers. | `output/rust-mutants/state-svg-ids` |
 | `sh scripts/rust-mutants.sh frame-contact` | Suppress positive straight overlap along frame borders. Compare free crossings and normal endpoint stubs with parallel contacts. | `output/rust-mutants/frame-contact` |
 | `sh scripts/rust-mutants.sh port-collision` | Invert the distinct-edge check for coincident source and target ports. Check node scoping and the final ports of reciprocal connections. | `output/rust-mutants/port-collision` |
+| `sh scripts/rust-mutants.sh route-shortcut` | Relax the conjunction between obstacle avoidance and frame safety. Compare allowed shortcuts with candidates crossing obstacles or frame boundaries. | `output/rust-mutants/route-shortcut` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
