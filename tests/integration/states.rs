@@ -350,25 +350,33 @@ fn nested_svg_ids_links_icons_and_markers_are_unique_and_local() {
         .unwrap();
     assert!(output.status.success());
     let svg = String::from_utf8(output.stdout).unwrap();
-    let ids: Vec<_> = svg
-        .split(" id=\"")
-        .skip(1)
-        .map(|s| s.split('"').next().unwrap())
-        .collect();
-    let unique: BTreeSet<_> = ids.iter().copied().collect();
-    assert_eq!(ids.len(), unique.len());
-    for section in svg.split("data-state-id=\"").skip(1) {
-        let state = section.split('"').next().unwrap();
-        let prefix = match state {
-            "one" => "state-6f6e65-",
-            "two" => "state-74776f-",
-            _ => unreachable!(),
-        };
-        for token in [" href=\"#", "marker-end=\"url(#"] {
-            for reference in section.split(token).skip(1) {
-                let id = reference.split(['"', ')']).next().unwrap();
-                assert!(unique.contains(id), "missing {id}");
-                assert!(id.starts_with(prefix), "cross-state reference {id}");
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let mut unique = BTreeSet::new();
+    for id in document.descendants().filter_map(|n| n.attribute("id")) {
+        assert!(unique.insert(id), "duplicate {id}");
+    }
+    for (name, prefix) in [("one", "state-6f6e65-"), ("two", "state-74776f-")] {
+        let state = document
+            .descendants()
+            .find(|n| n.attribute("data-state-id") == Some(name))
+            .unwrap();
+        let ids: BTreeSet<_> = state
+            .descendants()
+            .filter_map(|n| n.attribute("id"))
+            .collect();
+        for (attribute, start, end) in [("href", "#", ""), ("marker-end", "url(#", ")")] {
+            let mut references = state
+                .descendants()
+                .filter_map(|n| n.attribute(attribute))
+                .filter_map(|value| value.strip_prefix(start))
+                .map(|value| value.strip_suffix(end).unwrap())
+                .peekable();
+            assert!(references.peek().is_some(), "missing {attribute} in {name}");
+            for id in references {
+                assert!(
+                    id.starts_with(prefix) && ids.contains(id),
+                    "{attribute} in {name} points to {id}"
+                );
             }
         }
     }
