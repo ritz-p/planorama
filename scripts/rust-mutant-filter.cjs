@@ -96,6 +96,11 @@ const pilots = {
     functionName: 'Generator::step_with_progress',
     changes: [['units > 4096', '>', '>=']],
   },
+  'routing-search-budget': {
+    source: 'src/work.rs',
+    functionName: 'search_work',
+    changes: [['remaining - amount', '-', '+']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
