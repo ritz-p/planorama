@@ -274,7 +274,14 @@ fn shortcuts_preserve_ports_and_reject_obstacles_and_conflicts() {
         height: 60,
     };
     let retained = simplify_path(path.clone(), &[blocker], &scorer);
+    assert!(super::super::crosses(path[0], path[5], blocker));
     assert!(retained.len() > 2);
+    assert!(
+        retained
+            .windows(2)
+            .all(|pair| !super::super::crosses(pair[0], pair[1], blocker)),
+        "retained path crosses the blocker: {retained:?}"
+    );
     assert_eq!(retained.first(), path.first());
     assert_eq!(retained.last(), path.last());
     let mut occupied = Scorer::default();

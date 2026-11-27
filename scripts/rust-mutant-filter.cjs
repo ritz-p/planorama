@@ -111,6 +111,11 @@ const pilots = {
     functionName: 'opposite_roles_collide',
     changes: [['other != index', '!=', '==']],
   },
+  'route-shortcut': {
+    source: 'src/layout/routing_shared/scoring.rs',
+    functionName: 'Scorer::safe_shortcut',
+    changes: [['&& self.safe_border_change(old, new)', '&&', '||']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
