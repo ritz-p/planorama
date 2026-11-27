@@ -3,8 +3,8 @@ set -eu
 cd "$(dirname "$0")/.."
 pilot=${1-reference}
 case "$#:$pilot" in
-    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:cached-data|1:memory-headroom|1:json-budget|1:named-limits|1:pseudonym-collision|1:module-instance|1:focus-depth|1:changed-context|1:coverage-scope|1:check-target|1:anonymous-metadata) ;;
-    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|cached-data|memory-headroom|json-budget|named-limits|pseudonym-collision|module-instance|focus-depth|changed-context|coverage-scope|check-target|anonymous-metadata]' >&2; exit 1 ;;
+    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:cached-data|1:memory-headroom|1:json-budget|1:named-limits|1:pseudonym-collision|1:module-instance|1:focus-depth|1:changed-context|1:coverage-scope|1:check-target|1:plan-action|1:anonymous-metadata) ;;
+    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|cached-data|memory-headroom|json-budget|named-limits|pseudonym-collision|module-instance|focus-depth|changed-context|coverage-scope|check-target|plan-action|anonymous-metadata]' >&2; exit 1 ;;
 esac
 if [ "$(cargo mutants --version)" != 'cargo-mutants 25.3.1' ]; then
     echo 'Install cargo-mutants 25.3.1 before running the pilot.' >&2
@@ -111,6 +111,12 @@ case "$pilot" in
         filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
         set -- "$@" -C=--lib -f src/plan/checks.rs -F "$filter"
         ;;
+    plan-action)
+        expected=1
+        output=$output/$pilot
+        filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
+        set -- "$@" -C=--lib -f src/plan.rs -F "$filter"
+        ;;
     anonymous-metadata)
         expected=1
         output=$output/$pilot
@@ -156,6 +162,7 @@ case "$pilot" in
     changed-context) set -- "$@" --exact filtering::changed_only_keeps_lowered_changes_and_focus_depth_is_effective semantic::cross_state::tests::changed_only_keeps_output_only_changes_and_respects_focus view::filter::tests::cache_context_is_retained_only_for_selected_placement_evidence ;;
     coverage-scope) set -- "$@" --exact coverage::tests::scope_denominators_and_current_deposed_data_identity_are_distinct coverage::json_report::tests::shared_accounting_selection_and_details_survive_lowering_and_filtering ;;
     check-target) set -- "$@" --exact plan::checks::tests::conflicting_or_ambiguous_addresses_are_not_associated plan::checks::tests::checks_keep_statuses_and_exact_resource_associations_without_values ;;
+    plan-action) set -- "$@" --exact plan::tests::example_covers_changes_and_module_input_edges plan::drift::tests::drift_does_not_overwrite_any_planned_action_or_expose_values ;;
     anonymous-metadata) set -- "$@" --exact anonymization::anonymized_exports_remove_identifiers_from_all_exported_bytes anonymization::selection_and_legend_settings_do_not_reintroduce_original_names ;;
     diff) set -- "$@" diff_ ;;
     input-file) set -- "$@" --exact states::hard_linked_output_cannot_truncate_single_or_named_inputs ;;

@@ -81,6 +81,11 @@ const pilots = {
     functionName: 'resource',
     changes: [['|| address["type"].as_str()? != node.resource_type', '||', '&&']],
   },
+  'plan-action': {
+    source: 'src/plan.rs',
+    functionName: 'parse_action',
+    changes: [['actions.contains(&"create") && actions.contains(&"delete")', '&&', '||']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',

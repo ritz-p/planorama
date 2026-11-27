@@ -382,6 +382,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh changed-context` | Weaken the check for a selected child with placement evidence. Inspect lowered relationships, cross-state outputs and retained parents under changed-only selection. | `output/rust-mutants/changed-context` |
 | `sh scripts/rust-mutants.sh coverage-scope` | Weaken the managed AWS scope check. Compare coverage denominators and selected resource counts after filtering. | `output/rust-mutants/coverage-scope` |
 | `sh scripts/rust-mutants.sh check-target` | Weaken the mode and type checks on Terraform check targets. Compare instance associations and preserved check statuses. | `output/rust-mutants/check-target` |
+| `sh scripts/rust-mutants.sh plan-action` | Allow either create or delete to trigger replacement. Compare planned action classifications for individual operations and both replacement orders. | `output/rust-mutants/plan-action` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
