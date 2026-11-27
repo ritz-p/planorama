@@ -3,8 +3,8 @@ set -eu
 cd "$(dirname "$0")/.."
 pilot=${1-reference}
 case "$#:$pilot" in
-    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:cached-data|1:memory-headroom|1:json-budget|1:named-limits|1:pseudonym-collision|1:module-instance|1:focus-depth|1:changed-context|1:anonymous-metadata) ;;
-    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|cached-data|memory-headroom|json-budget|named-limits|pseudonym-collision|module-instance|focus-depth|changed-context|anonymous-metadata]' >&2; exit 1 ;;
+    0:reference|1:reference|1:diff|1:input-file|1:sensitive-path|1:remote-output|1:service-scope|1:saved-provider|1:drift-identity|1:cached-data|1:memory-headroom|1:json-budget|1:named-limits|1:pseudonym-collision|1:module-instance|1:focus-depth|1:changed-context|1:coverage-scope|1:anonymous-metadata) ;;
+    *) echo 'Usage: sh scripts/rust-mutants.sh [reference|diff|input-file|sensitive-path|remote-output|service-scope|saved-provider|drift-identity|cached-data|memory-headroom|json-budget|named-limits|pseudonym-collision|module-instance|focus-depth|changed-context|coverage-scope|anonymous-metadata]' >&2; exit 1 ;;
 esac
 if [ "$(cargo mutants --version)" != 'cargo-mutants 25.3.1' ]; then
     echo 'Install cargo-mutants 25.3.1 before running the pilot.' >&2
@@ -99,6 +99,12 @@ case "$pilot" in
         filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
         set -- "$@" -C=--test=cli -C=--lib -f src/view/filter.rs -F "$filter"
         ;;
+    coverage-scope)
+        expected=1
+        output=$output/$pilot
+        filter=$(node scripts/rust-mutant-filter.cjs "$pilot")
+        set -- "$@" -C=--lib -f src/coverage.rs -F "$filter"
+        ;;
     anonymous-metadata)
         expected=1
         output=$output/$pilot
@@ -142,6 +148,7 @@ case "$pilot" in
     module-instance) set -- "$@" --exact model::modules::tests::structural_module_matching_and_validation view::filter::module_tests::module_union_intersection_and_identity ;;
     focus-depth) set -- "$@" --exact filtering::focus_preserves_ancestors_without_unrelated_nodes_and_is_deterministic filtering::changed_only_keeps_lowered_changes_and_focus_depth_is_effective ;;
     changed-context) set -- "$@" --exact filtering::changed_only_keeps_lowered_changes_and_focus_depth_is_effective semantic::cross_state::tests::changed_only_keeps_output_only_changes_and_respects_focus view::filter::tests::cache_context_is_retained_only_for_selected_placement_evidence ;;
+    coverage-scope) set -- "$@" --exact coverage::tests::scope_denominators_and_current_deposed_data_identity_are_distinct coverage::json_report::tests::shared_accounting_selection_and_details_survive_lowering_and_filtering ;;
     anonymous-metadata) set -- "$@" --exact anonymization::anonymized_exports_remove_identifiers_from_all_exported_bytes anonymization::selection_and_legend_settings_do_not_reintroduce_original_names ;;
     diff) set -- "$@" diff_ ;;
     input-file) set -- "$@" --exact states::hard_linked_output_cannot_truncate_single_or_named_inputs ;;

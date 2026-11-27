@@ -71,6 +71,11 @@ const pilots = {
     functionName: 'apply',
     changes: [['&& placement_available(&all.states[&child.0], child.1, |source|', '&&', '||']],
   },
+  'coverage-scope': {
+    source: 'src/coverage.rs',
+    functionName: 'Coverage::collect',
+    changes: [['node.provider.is_aws() && node.mode == EntityMode::Managed', '&&', '||']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
