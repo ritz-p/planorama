@@ -386,6 +386,7 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh containment-parent` | Invert the containment edge check. Compare parents, roots and children for dependency-only nodes, nested containers, competing parents and cycles in both edge orders. | `output/rust-mutants/containment-parent` |
 | `sh scripts/rust-mutants.sh generation-slice` | Reject the largest valid generation slice. Compare named SVG, HTML and diagnostics with one-shot output and exercise cancellation and failed generation. | `output/rust-mutants/generation-slice` |
 | `sh scripts/rust-mutants.sh routing-search-budget` | Add each routing search charge to the remaining budget. Check interleaved jobs with budgets of three and four units and the cumulative cost of two named states. | `output/rust-mutants/routing-search-budget` |
+| `sh scripts/rust-mutants.sh state-svg-ids` | Drop state prefixes from nested SVG IDs. Check unique IDs and state-local resolution of fragment links and arrow markers. | `output/rust-mutants/state-svg-ids` |
 
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
