@@ -101,6 +101,11 @@ const pilots = {
     functionName: 'search_work',
     changes: [['remaining - amount', '-', '+']],
   },
+  'frame-contact': {
+    source: 'src/layout/routing_shared/borders.rs',
+    functionName: 'Index::visit',
+    changes: [['straight_low < straight_high', '<', '==']],
+  },
   'sensitive-path': {
     source: 'src/plan/changed_paths.rs',
     functionName: 'Collector::walk',
