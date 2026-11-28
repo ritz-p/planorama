@@ -46,6 +46,22 @@ try {
       }
     }
   }
+  const paddedPlan = length => JSON.stringify({
+    format_version: '1.2',
+    resource_changes: [{address: 'aws_instance.app', type: 'aws_instance'}],
+    padding: Array(length).fill(0),
+  });
+  const halfBudget = 32_768 / 2;
+  const unpaddedUnits = 12;
+  const small = paddedPlan(0);
+  const half = paddedPlan(halfBudget - unpaddedUnits);
+  const halfPlusOne = paddedPlan(halfBudget - unpaddedUnits + 1);
+  const unchanged = binding.compare_plans(small, small, true);
+  assert.equal(binding.compare_plans(half, small, true), unchanged);
+  assert.equal(binding.compare_plans(small, halfPlusOne, true), unchanged);
+  assert.equal(binding.compare_plans(half, half, true), unchanged);
+  assert.throws(() => binding.compare_plans(half, halfPlusOne, true),
+    error => JSON.parse(String(error)).code === 'resource_limit');
   for (const side of [0, 1]) {
     for (const [input, code] of [['PRIVATE{', 'invalid_json'], [' '.repeat(2 * 1024 * 1024 + 1), 'resource_limit'], [JSON.stringify({extra:Array(32768).fill(0)}), 'resource_limit']]) {
       const inputs = [JSON.stringify(before), JSON.stringify(before)];
