@@ -25,3 +25,20 @@ test('maintained inventories match local test registrations', () => {
   const {registrations} = require('../../scripts/test-inventory/registrations.cjs');
   compare(loadTables().rows,registrations(),['kind']);
 });
+
+test('mutation history distinguishes latest misses, improvements, repeats and unordered suite results', () => {
+  const {mutationHistory} = require('../../scripts/test-inventory/history.cjs');
+  const row = (mutation, revision, result, suite = 'default') => ({behavior:'behavior', mutation, revision, result, suite});
+  const report = mutationHistory([
+    row('improvement','b','killed','extended'), row('improvement','a','survived'),
+    row('miss','b','survived'), row('miss','a','survived'),
+    row('repeat','a','killed'), row('repeat','b','killed'),
+    row('unknown','unrecorded','survived'), row('unknown','b','killed'),
+    row('failed','b','timeout'), row('pending','a','not-evaluated'),
+    row('conflict','b','killed','extended'), row('conflict','b','survived'),
+  ], (a,b) => a === 'a' && b === 'b');
+  assert.deepEqual(report.counts,{missed:1, improved:1, always:1, uncertain:4});
+  assert.equal(report.measurements,12);
+  assert.deepEqual(report.histories[0].records.map(r => [r.suite,r.line]), [['default',3],['extended',2]]);
+  assert.equal(report.histories.find(g => g.mutation === 'unknown').ordered,false);
+});

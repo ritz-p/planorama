@@ -452,6 +452,8 @@ and links to local sources. Rebuild it after editing the TSVs. Scope and countin
   executable test registrations. Rust consumers of shared Lean case data are
   included. The Lean commands are in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
+Open **Actions → Workflow tests → Run workflow**, select the branch and leave the PR validation inputs empty. The **mutation-inventory** job also runs on main when the inventory, generator, template or workflow changes. Its summary links the HTML artifact. Download and extract it, then open `index.html` locally to browse all results offline. The report identifies the source commit separately from the revisions tested. Group totals count exact behavior/mutation pairs; each measurement retains its suite and TSV row. Git ancestry determines revision order when available. Conflicting or incomplete evidence is shown separately.
+
 Mutation outcomes are suite-level measurements in `mutation-results.tsv`. A
 missing measurement for a behavior and revision means **not evaluated**. A
 survivor requires a mutant that built and passed the selected tests. The six
