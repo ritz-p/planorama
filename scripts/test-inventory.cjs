@@ -74,11 +74,18 @@ function check(rows, cargo) {
 }
 
 function html({rows, mutations}) {
+  const {mutationHistory} = require('./test-inventory/history.cjs');
+  const history = mutationHistory(mutations);
+  const revision = require('node:child_process').execFileSync('git', ['rev-parse','HEAD'], {encoding:'utf8'}).trim();
   const output = path.join(root,'output/test-inventory');
   fs.mkdirSync(output,{recursive:true});
   const template = fs.readFileSync(path.join(__dirname,'test-inventory/view.html'),'utf8');
-  const data = JSON.stringify({rows, mutations}).replaceAll('<','\\u003c');
+  const data = JSON.stringify({rows, history, revision}).replaceAll('<','\\u003c');
   fs.writeFileSync(path.join(output,'index.html'),template.replace('INVENTORY_DATA', () => data));
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    const {counts, histories, measurements} = history;
+    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## Mutation inventory\n\nGenerated from ${revision}. ${measurements} measurements of ${histories.length} distinct behavior/mutation pairs.\n\n| Latest missed | Detected after a miss | Always detected | Other or uncertain |\n| ---: | ---: | ---: | ---: |\n| ${counts.missed} | ${counts.improved} | ${counts.always} | ${counts.uncertain} |\n`);
+  }
 }
 
 function main([command, flag, ...extra]) {
