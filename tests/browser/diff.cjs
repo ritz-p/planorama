@@ -24,27 +24,51 @@ try {
   const a = path.join(temp, 'a.json');
   const b = path.join(temp, 'b.json');
   fs.writeFileSync(a, JSON.stringify(before));
-  for (const after of [before, relocated, moved, ambiguous]) {
-    fs.writeFileSync(b, JSON.stringify(after));
-    for (const anonymous of [false, true]) {
-      const expected = JSON.parse(execFileSync(path.join(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama'), ['diff', a, b, ...(anonymous ? ['--anonymize'] : [])]));
-      const actual = JSON.parse(binding.compare_plans(JSON.stringify(before), JSON.stringify(after), anonymous));
-      assert.deepEqual(actual, expected);
-      if (anonymous) {
-        assert(!JSON.stringify(actual).includes('PRIVATE'));
-        if (after === moved) {
-          const [change] = actual.resources.changed;
-          assert.equal(change.before, change.after);
-        }
-        if (after === ambiguous) assert(actual.resources.unknown.length > 0);
-        if (after === relocated) {
-          const added = actual.relationships.added.find(edge => edge.kind === 'containment');
-          const removed = actual.relationships.removed.find(edge => edge.kind === 'containment');
-          assert(added && removed);
-          assert(added.from === removed.from || added.to === removed.to);
-        }
-      }
+  const input = JSON.stringify(before);
+  const compare = (after, anonymous, checkCli = false) => {
+    const next = JSON.stringify(after);
+    const actual = JSON.parse(binding.compare_plans(input, next, anonymous));
+    if (checkCli) {
+      fs.writeFileSync(b, next);
+      const args = ['diff', a, b, ...(anonymous ? ['--anonymize'] : [])];
+      const cli = path.join(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
+      assert.deepEqual(actual, JSON.parse(execFileSync(cli, args)));
     }
+    if (anonymous) assert(!JSON.stringify(actual).includes('PRIVATE'));
+    return actual;
+  };
+  for (const anonymous of [false, true]) {
+    assert.deepEqual(compare(before, anonymous), {
+      schema_version: 1, resources: {added: [], changed: [], removed: [], unknown: []},
+      relationships: {added: [], removed: []},
+    });
+    const {changed} = compare(moved, anonymous, !anonymous).resources;
+    assert.equal(changed.length, 1);
+    if (anonymous) {
+      assert(Number.isInteger(changed[0].before));
+      assert.equal(changed[0].before, changed[0].after);
+    } else {
+      assert.equal(changed[0].before.address, 'aws_instance.PRIVATE');
+      assert.equal(changed[0].after.address, 'aws_instance.renamed');
+    }
+    const {unknown} = compare(ambiguous, anonymous).resources;
+    assert.equal(unknown.length, 2);
+    if (anonymous) {
+      assert(unknown.every(Number.isInteger));
+      assert.equal(new Set(unknown).size, 2);
+    } else {
+      assert.deepEqual(unknown.map(key => key.address).sort(), ['aws_instance.PRIVATE', 'aws_instance.renamed']);
+    }
+    const {added, removed} = compare(relocated, anonymous, anonymous).relationships;
+    assert.equal(added.length, 1);
+    assert.equal(removed.length, 1);
+    assert.equal(added[0].kind, 'containment');
+    assert.equal(removed[0].kind, 'containment');
+    assert.deepEqual(added[0].to, removed[0].to);
+    assert.notDeepEqual(added[0].from, removed[0].from);
+    if (anonymous) assert([added[0].from, removed[0].from, added[0].to].every(Number.isInteger));
+    else assert.deepEqual([removed[0].from.address, added[0].from.address, added[0].to.address],
+      ['aws_subnet.a', 'aws_subnet.b', 'aws_instance.PRIVATE']);
   }
   const paddedPlan = length => JSON.stringify({
     format_version: '1.2',
