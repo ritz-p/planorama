@@ -75,6 +75,17 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Resolve historical measurement commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cut -f5 tests/inventory/mutation-results.tsv | sort -u | while read -r revision; do
+            [[ "$revision" =~ ^[0-9a-f]{40}$ ]] || continue
+            if ! git cat-file -e "$revision^{commit}" 2>/dev/null; then
+              git -c credential.helper='!gh auth git-credential' fetch --quiet --no-tags origin "$revision" ||
+                echo "::warning::Could not resolve measured revision $revision"
+            fi
+          done
       - run: node scripts/test-inventory.cjs html
       - name: Upload offline report
         id: report
