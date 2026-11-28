@@ -392,6 +392,8 @@ Run a pilot manually from the repository root:
 | `sh scripts/rust-mutants.sh route-shortcut` | Relax the conjunction between obstacle avoidance and frame safety. Compare allowed shortcuts with candidates crossing obstacles or frame boundaries. | `output/rust-mutants/route-shortcut` |
 | `sh scripts/rust-mutants.sh packing-window` | Admit candidates satisfying either compactness bound. Compare threshold cases and the packed positions selected using relationship cost. | `output/rust-mutants/packing-window` |
 
+Add or update a pilot in the `pilots` table in `scripts/rust-mutant-filter.cjs`. Each entry selects its production sources, mutation filter and test arguments. A single mutation and the library test target are the defaults.
+
 Each run requires the expected mutant count, executes an unmodified baseline in
 a temporary copy and checks that the baseline ran at least one passing test.
 The mutation run has a 20-minute limit, seven minutes per build and 90 seconds
